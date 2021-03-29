@@ -2,11 +2,15 @@ package com.wiethr.app.model;
 
 import com.wiethr.app.model.enums.EmployeeStatus;
 import com.wiethr.app.model.enums.UserRole;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
+@NoArgsConstructor
+@Data
 public class Employee {
 
     @Id
