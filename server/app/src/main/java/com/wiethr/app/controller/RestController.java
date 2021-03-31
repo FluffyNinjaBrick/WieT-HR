@@ -4,9 +4,7 @@ package com.wiethr.app.controller;
 import com.wiethr.app.model.Employee;
 import com.wiethr.app.repository.WietHRRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -28,5 +26,9 @@ public class RestController {
         return this.repository.getAllEmployees();
     }
 
+    @RequestMapping(value = "/employee/{id}", method = RequestMethod.PUT)
+    public Employee updateEmployeeData(@PathVariable int id) {
+
+    }
 
 }
