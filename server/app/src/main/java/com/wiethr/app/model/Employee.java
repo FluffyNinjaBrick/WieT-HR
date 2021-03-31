@@ -48,6 +48,13 @@ public class Employee {
     @OneToMany(mappedBy = "employee", fetch = FetchType.LAZY)
     private List<AppreciationBonus> appreciationBonusList;
 
-
+    public Employee(long id, String email, String firstName, String lastName, String address, String phone) {
+        this.id = id;
+        this.email = email;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.address = address;
+        this.phone = phone;
+    }
 
 }

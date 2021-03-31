@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class WietHRRepository implements IWietHRRepository {
@@ -40,7 +41,14 @@ public class WietHRRepository implements IWietHRRepository {
         return this.employeeRepository.findAll();
     }
 
+    public Optional<Employee> getEmployee(long id) {
+        return this.employeeRepository.findById(id);
+    }
 
+    public Employee updateOrAddEmployee(Employee employee) {
+        this.permissionsRepository.save(employee.getPermissions());
+        return this.employeeRepository.save(employee);
+    }
 
 
 
