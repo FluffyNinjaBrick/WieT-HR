@@ -12,6 +12,8 @@ import DelegationsView from "./components/delegation/DelegationsView";
 import Profile from "./components/profile/Profile";
 import ContractView from "./components/contract/ContractView";
 import BonusesView from "./components/bonus/BonusesView";
+import EmployeeListViewAdmin from "./components/employee/EmployeeListViewAdmin";
+import EmployeeEditView from "./components/employee/EmployeeEditView";
 
 function App() {
   return (
@@ -28,6 +30,12 @@ function App() {
           </Route>
           <Route path="/delegations">
             <DelegationsView />
+          </Route>
+          <Route exact path="/employees">
+            <EmployeeListViewAdmin />
+          </Route>
+          <Route path="/employees/edit/:id">
+            <EmployeeEditView />
           </Route>
           <Route path="/leaves">
             <LeavesView />
