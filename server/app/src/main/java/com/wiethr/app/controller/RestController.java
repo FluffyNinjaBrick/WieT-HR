@@ -1,13 +1,16 @@
 package com.wiethr.app.controller;
 
 
-import com.wiethr.app.model.Employee;
-import com.wiethr.app.model.Permissions;
+import com.wiethr.app.model.*;
+import com.wiethr.app.model.helpers.AddContractHelper;
+import com.wiethr.app.model.helpers.AddDaysOffRequestHelper;
+import com.wiethr.app.model.helpers.AddDelegationRequestHelper;
 import com.wiethr.app.repository.WietHRRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,6 +23,78 @@ public class RestController {
     @Autowired
     public RestController(WietHRRepository repository) {
         this.repository = repository;
+    }
+
+
+
+    // ---------- CONTRACT ----------
+    @PostMapping(value = "/documents/create/contract")
+    public void createContract(@RequestBody AddContractHelper helper) {
+
+        Contract contract = new Contract();
+
+        Employee employee = this.repository.getEmployee(helper.getEmployeeID()).get();
+
+        // inherited from document
+        contract.setEmployee(employee);
+        contract.setNameAtSigning(employee.getFirstName() + " " + employee.getLastName());
+        contract.setDateIssued(new Date());
+        contract.setSigned(false);
+        contract.setDateFrom(helper.getDateFrom());
+        contract.setDateTo(helper.getDateTo());
+
+        // own fields
+        contract.setSalary(helper.getSalary());
+        contract.setDutyAllowance(helper.getDutyAllowance());
+        contract.setWorkingHours(helper.getWorkingHours());
+        contract.setAnnualLeaveDays(helper.getAnnualLeaveDays());
+        contract.setType(helper.getType());
+        contract.setAnnexes(new ArrayList<>());
+
+        this.repository.createContract(contract);
+
+    }
+
+    // ---------- DAYS OFF REQUEST ----------
+    @PostMapping(value = "/documents/create/daysoff")
+    public void createDaysOffRequest(@RequestBody AddDaysOffRequestHelper helper) {
+        DaysOffRequest request = new DaysOffRequest();
+
+        Employee employee = this.repository.getEmployee(helper.getEmployeeID()).get();
+
+        // inherited from document
+        request.setEmployee(employee);
+        request.setNameAtSigning(employee.getFirstName() + " " + employee.getLastName());
+        request.setDateIssued(new Date());
+        request.setSigned(false);
+        request.setDateFrom(helper.getDateFrom());
+        request.setDateTo(helper.getDateTo());
+
+        // own
+        request.setLeaveType(helper.getLeaveType());
+
+        this.repository.createDaysOffRequest(request);
+    }
+
+    // ---------- DELEGATION REQUEST ----------
+    @PostMapping(value = "/documents/create/delegation")
+    public void createDelegationRequest(@RequestBody AddDelegationRequestHelper helper) {
+        DelegationRequest request = new DelegationRequest();
+
+        Employee employee = this.repository.getEmployee(helper.getEmployeeID()).get();
+
+        // inherited from document
+        request.setEmployee(employee);
+        request.setNameAtSigning(employee.getFirstName() + " " + employee.getLastName());
+        request.setDateIssued(new Date());
+        request.setSigned(false);
+        request.setDateFrom(helper.getDateFrom());
+        request.setDateTo(helper.getDateTo());
+
+        // own
+        request.setDestination(helper.getDestination());
+
+        this.repository.createDelegationRequest(request);
     }
 
 

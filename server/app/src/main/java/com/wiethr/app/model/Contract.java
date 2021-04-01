@@ -16,6 +16,8 @@ public class Contract extends Document {
     private float dutyAllowance;
     private int workingHours;
     private int annualLeaveDays;
+
+    @Enumerated(EnumType.STRING)
     private ContractType type;
 
     @OneToMany

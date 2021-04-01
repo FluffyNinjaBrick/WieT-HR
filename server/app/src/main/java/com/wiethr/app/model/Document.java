@@ -1,5 +1,6 @@
 package com.wiethr.app.model;
 
+import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.lang.Nullable;
 
@@ -8,6 +9,7 @@ import java.util.Date;
 
 @MappedSuperclass
 @EqualsAndHashCode
+@Data
 public abstract class Document {
 
     @Id
