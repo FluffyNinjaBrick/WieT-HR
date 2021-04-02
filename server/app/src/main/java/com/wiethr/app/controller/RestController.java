@@ -9,6 +9,8 @@ import com.wiethr.app.repository.WietHRRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -65,7 +67,7 @@ public class RestController {
         // inherited from document
         request.setEmployee(employee);
         request.setNameAtSigning(employee.getFirstName() + " " + employee.getLastName());
-        request.setDateIssued(new Date());
+        request.setDateIssued(LocalDate.now());
         request.setSigned(false);
         request.setDateFrom(helper.getDateFrom());
         request.setDateTo(helper.getDateTo());
@@ -86,7 +88,7 @@ public class RestController {
         // inherited from document
         request.setEmployee(employee);
         request.setNameAtSigning(employee.getFirstName() + " " + employee.getLastName());
-        request.setDateIssued(new Date());
+        request.setDateIssued(LocalDate.now());
         request.setSigned(false);
         request.setDateFrom(helper.getDateFrom());
         request.setDateTo(helper.getDateTo());
@@ -155,4 +157,9 @@ public class RestController {
         return null;
     }
 
+    @GetMapping("/employees/getAbsent/{from}/{to}")
+    public List<AbsentEmployees> getAbsentEmployees(@PathVariable String from, @PathVariable String to) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return this.repository.getAbsentEmployees(LocalDate.parse(from, formatter), LocalDate.parse(to, formatter));
+    }
 }

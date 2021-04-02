@@ -1,13 +1,13 @@
 package com.wiethr.app.repository;
 
-import com.wiethr.app.model.Contract;
-import com.wiethr.app.model.DaysOffRequest;
-import com.wiethr.app.model.DelegationRequest;
-import com.wiethr.app.model.Employee;
+import com.wiethr.app.model.*;
+import com.wiethr.app.model.helpers.AbsentEmployees;
 import com.wiethr.app.repository.jpaRepos.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -53,6 +53,34 @@ public class WietHRRepository implements IWietHRRepository {
         this.daysOffRequestRepository.save(daysOffRequest);
     }
 
+    @Override
+    public List<AbsentEmployees> getAbsentEmployees(LocalDate from, LocalDate to) {
+
+        ArrayList<AbsentEmployees> absences = new ArrayList<>();
+
+        ArrayList<Document> requests = new ArrayList<>();
+        requests.addAll(this.daysOffRequestRepository.findAll());
+        requests.addAll(this.delegationRequestRepository.findAll());
+
+
+        LocalDate current = from;
+        do {
+
+            AbsentEmployees absencesForDay = new AbsentEmployees(current);
+
+            for (Document request: requests)
+                if (!current.isBefore(request.getDateFrom()) && !current.isAfter(request.getDateTo()))
+                    absencesForDay.addEmployee(request.getNameAtSigning());
+
+            absences.add(absencesForDay);
+            current = current.plusDays(1);
+
+        } while(!current.isAfter(to));
+
+        return absences;
+
+    }
+
 
     // ---------- DELEGATION REQUEST ----------
     @Override
@@ -74,6 +102,7 @@ public class WietHRRepository implements IWietHRRepository {
         this.permissionsRepository.save(employee.getPermissions());
         return this.employeeRepository.save(employee);
     }
+
 
 
 

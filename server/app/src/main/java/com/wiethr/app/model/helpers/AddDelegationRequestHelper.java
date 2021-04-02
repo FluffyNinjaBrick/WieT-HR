@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Data
@@ -12,7 +13,7 @@ import java.util.Date;
 public class AddDelegationRequestHelper {
 
     private long employeeID;
-    private Date dateFrom, dateTo;
+    private LocalDate dateFrom, dateTo;
     private String destination;
 
 }
