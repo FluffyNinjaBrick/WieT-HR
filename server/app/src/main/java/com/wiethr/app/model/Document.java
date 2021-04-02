@@ -5,7 +5,7 @@ import lombok.EqualsAndHashCode;
 import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDate;
 
 @MappedSuperclass
 @EqualsAndHashCode
@@ -21,12 +21,12 @@ public abstract class Document {
 
     private String nameAtSigning;
 
-    private Date dateIssued;
+    private LocalDate dateIssued;
 
     private boolean signed;
 
     @Nullable
-    private Date dateSigned;
+    private LocalDate dateSigned;
 
     @Nullable
     @ManyToOne
@@ -37,10 +37,10 @@ public abstract class Document {
     )
     private Employee signedBy;
 
-    private Date dateFrom;
+    private LocalDate dateFrom;
 
     @Nullable
-    private Date dateTo;
+    private LocalDate dateTo;
 
 
     public void sign(Employee employee) {

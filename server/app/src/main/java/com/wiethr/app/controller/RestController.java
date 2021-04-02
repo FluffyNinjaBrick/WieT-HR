@@ -2,6 +2,7 @@ package com.wiethr.app.controller;
 
 
 import com.wiethr.app.model.*;
+import com.wiethr.app.model.helpers.AbsentEmployees;
 import com.wiethr.app.model.helpers.AddContractHelper;
 import com.wiethr.app.model.helpers.AddDaysOffRequestHelper;
 import com.wiethr.app.model.helpers.AddDelegationRequestHelper;
@@ -40,7 +41,7 @@ public class RestController {
         // inherited from document
         contract.setEmployee(employee);
         contract.setNameAtSigning(employee.getFirstName() + " " + employee.getLastName());
-        contract.setDateIssued(new Date());
+        contract.setDateIssued(LocalDate.now());
         contract.setSigned(false);
         contract.setDateFrom(helper.getDateFrom());
         contract.setDateTo(helper.getDateTo());
@@ -101,12 +102,12 @@ public class RestController {
 
 
     // ---------- EMPLOYEE ----------
-    @RequestMapping(value = "/employee", method = RequestMethod.GET)
+    @RequestMapping(value = "/employees", method = RequestMethod.GET)
     public List<Employee> getAllEmployees() {
         return this.repository.getAllEmployees();
     }
 
-    @PostMapping("/employee/{employeeId}/edit/data")
+    @PostMapping("/employees/{employeeId}/edit/data")
     @ResponseBody
     public Employee updateEmployeeData(@PathVariable long employeeId, @RequestBody Employee updatedEmployee) {
         Optional<Employee> currentEmployeeOptional = repository.getEmployee(employeeId);
@@ -124,7 +125,7 @@ public class RestController {
         return null;
     }
 
-    @PostMapping("/employee/{employeeId}/edit/permissions")
+    @PostMapping("/employees/{employeeId}/edit/permissions")
     @ResponseBody
     public Employee updateEmployeePermissions(@PathVariable long employeeId, @RequestBody Permissions updatedPermissions) {
         Optional<Employee> employeeOptional = repository.getEmployee(employeeId);

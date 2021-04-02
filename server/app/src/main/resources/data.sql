@@ -1,6 +1,6 @@
 
 
-/* example employee who can't do anything*/
+/* example employee who can't do anything  */
 INSERT INTO EMPLOYEE (id, address, email, first_name, last_name, last_year_days_off, password, phone, status, this_year_days_off, user_role, years_of_service) VALUES (1, 'Grodzka 12a, 30-851 Kraków', 'mail@mailowo.com', 'Jan', 'Kowalski', 0, 'haslo', '987654321', 'WORKING', 10, 'EMPLOYEE', 2);
 INSERT INTO EMPLOYEE (id, address, email, first_name, last_name, last_year_days_off, password, phone, status, this_year_days_off, user_role, years_of_service) VALUES (2, 'Jasnogórska 1, 30-851 Kraków', 'mail@mailowo.com', 'Adam', 'Nowak', 0, 'haslo', '212312311', 'WORKING', 10, 'EMPLOYEE', 2);
 INSERT INTO EMPLOYEE (id, address, email, first_name, last_name, last_year_days_off, password, phone, status, this_year_days_off, user_role, years_of_service) VALUES (3, 'Kuźnia Talentów 55b, 30-851 Kraków', 'mail@mailowo.com', 'Marek', 'Kilof', 0, 'haslo', '123112311', 'WORKING', 10, 'EMPLOYEE', 2);
@@ -26,3 +26,7 @@ INSERT INTO DAYS_OFF_REQUEST (id, date_from, date_issued, date_signed, date_to, 
 INSERT INTO DAYS_OFF_REQUEST (id, date_from, date_issued, date_signed, date_to, name_at_signing, signed, leave_type, employee_id) VALUES (4, '2021-03-18', '2021-02-01', NULL, '2021-03-21', 'Adam Nowak', false, 'RECREATIONAL', 2);
 
 
+
+/* delegation request */
+INSERT INTO DELEGATION_REQUEST (id, date_from, date_issued, date_signed, date_to, name_at_signing, signed, destination, employee_id) VALUES (5, '2021-03-02', '2021-02-01', NULL, '2021-03-15', 'Adam Nowak', false, 'Ulaanbaatar', 2);
+INSERT INTO DELEGATION_REQUEST (id, date_from, date_issued, date_signed, date_to, name_at_signing, signed, destination, employee_id) VALUES (6, '2021-03-02', '2021-02-01', NULL, '2021-03-15', 'Marek Kilof', false, 'Wieliczka', 3);
