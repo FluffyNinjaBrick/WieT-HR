@@ -1,3 +1,10 @@
+import CalendarComponent from "../calendar/CalendarComponent";
+
 export default function LeavesView() {
-  return <h1>Urlopy</h1>;
+  return(
+    <div className="container justify-content-sm-center">
+      <div><h1>Pracownicy/Urlopy</h1></div>
+      <CalendarComponent />
+    </div>
+  );
 }

@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Table, ThemeProvider } from "react-bootstrap";
 import SingleEmployeeRecord from "./SingleEmployeeRecord";
 import { API_URL } from "../../api/Api";
+import { Chart } from "react-google-charts";
+import CalendarComponent from "../calendar/CalendarComponent";
 
 export default function EmployeeListViewAdmin() {
   const [employees, setEmployees] = useState([]);

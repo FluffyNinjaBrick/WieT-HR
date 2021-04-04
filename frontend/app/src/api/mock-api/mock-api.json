@@ -58,5 +58,58 @@
       "add_users": "true",
       "modify_bonus_budget": "true"
     }
+  ],
+  "absence":[
+    {
+      "day": "2021-03-01",
+      "absentEmployees":[]
+    },
+    {
+      "day": "2021-03-21",
+      "absentEmployees":[
+        "Jan Kowalski",
+        "Adam Topór"
+      ]
+    },
+    {
+      "day": "2021-03-11",
+      "absentEmployees":[
+        "Jan Kowalski",
+        "Adam Topór",
+        "Adam Topór",
+        "Adam Topór",
+        "Adam Topór"
+      ]
+    },
+    {
+      "day": "2021-03-09",
+      "absentEmployees":[
+        "Jan Kowalski",
+        "Adam Topór",
+        "Adam Topór",
+        "Adam Topór",
+        "Adam Topór",
+        "Adam Topór",
+        "Adam Topór"
+      ]
+    },
+    {
+      "day": "2021-04-01",
+      "absentEmployees":[
+        "Jan Kowalski",
+        "Adam Topór",
+        "Adam Topór",
+        "Adam Topór",
+        "Adam Topór",
+        "Adam Topór",
+        "Adam Topór",
+        "Adam Topór",
+        "Adam Topór",
+        "Adam Topór",
+        "Adam Topór",
+        "Adam Topór",
+        "Adam Topór"
+      ]
+    }
   ]
 }

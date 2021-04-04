@@ -37,6 +37,11 @@ function App() {
           <Route path="/employees/edit/:id">
             <EmployeeEditView />
           </Route>
+          {/* tutaj trzeba bedzie zrobic routy dla urlopu pracownika i urlopow wszystkich 
+          pracownikow, jak sie maprawa do ich wyswietlania, dropdown pracownicy -> urlopy */}
+          <Route path="/employees/leaves">
+            <LeavesView />
+          </Route>
           <Route path="/leaves">
             <LeavesView />
           </Route>
