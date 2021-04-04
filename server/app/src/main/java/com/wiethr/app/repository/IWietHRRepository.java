@@ -36,10 +36,9 @@ public interface IWietHRRepository {
 
     // ---------- EMPLOYEE ----------
     List<Employee> getAllEmployees();
-
     Optional<Employee> getEmployee(long id);
-
-    Employee updateOrAddEmployee(Employee employee);
+    Employee updateEmployee(Employee employee);
+    void createEmployee(Employee newEmployee);
 
 
 

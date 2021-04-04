@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -107,21 +106,29 @@ public class RestController {
         return this.repository.getAllEmployees();
     }
 
+    @PostMapping("/employees/create")
+    public void createEmployee(@RequestBody Employee newEmployee) {
+        this.repository.createEmployee(newEmployee);
+    }
+
     @PostMapping("/employees/{employeeId}/edit/data")
     @ResponseBody
     public Employee updateEmployeeData(@PathVariable long employeeId, @RequestBody Employee updatedEmployee) {
+
         Optional<Employee> currentEmployeeOptional = repository.getEmployee(employeeId);
+
         if (currentEmployeeOptional.isPresent()) {
+
             Employee currentEmployee = currentEmployeeOptional.get();
-            if (currentEmployee.getId() == employeeId) {
-                currentEmployee.setFirstName(updatedEmployee.getFirstName());
-                currentEmployee.setLastName(updatedEmployee.getLastName());
-                currentEmployee.setEmail(updatedEmployee.getEmail());
-                currentEmployee.setPhone(updatedEmployee.getPhone());
-                currentEmployee.setAddress(updatedEmployee.getAddress());
-                return repository.updateOrAddEmployee(currentEmployee);
-            }
+            currentEmployee.setFirstName(updatedEmployee.getFirstName());
+            currentEmployee.setLastName(updatedEmployee.getLastName());
+            currentEmployee.setEmail(updatedEmployee.getEmail());
+            currentEmployee.setPhone(updatedEmployee.getPhone());
+            currentEmployee.setAddress(updatedEmployee.getAddress());
+
+            return repository.updateEmployee(currentEmployee);
         }
+
         return null;
     }
 
@@ -129,32 +136,40 @@ public class RestController {
     @ResponseBody
     public Employee updateEmployeePermissions(@PathVariable long employeeId, @RequestBody Permissions updatedPermissions) {
         Optional<Employee> employeeOptional = repository.getEmployee(employeeId);
+
         if (employeeOptional.isPresent()) {
+
             Employee employee = employeeOptional.get();
-            if (employee.getId() == employeeId) {
-                employee.getPermissions().setManagedUsers(updatedPermissions.getManagedUsers());
-                employee.getPermissions().setModifyBonusBudget(updatedPermissions.isModifyBonusBudget());
-                employee.setPermissions(updatedPermissions);
-                return repository.updateOrAddEmployee(employee);
-            }
+            employee.getPermissions().setManagedUsers(updatedPermissions.getManagedUsers());
+            employee.getPermissions().setModifyBonusBudget(updatedPermissions.isModifyBonusBudget());
+            employee.setPermissions(updatedPermissions);
+
+            return repository.updateEmployee(employee);
         }
+
         return null;
     }
 
     @PostMapping("/employees/{employeeId}/edit/subordinates")
     @ResponseBody
     public Employee updateSubordinatesOfEmployee(@PathVariable long employeeId, @RequestBody long[] subordinates) {
+
         Optional<Employee> employeeOptional = repository.getEmployee(employeeId);
+
         if (employeeOptional.isPresent()) {
+
             Employee employee = employeeOptional.get();
             List<Employee> managedUsers = new ArrayList<>();
+
             for (long l : subordinates) {
                 Optional<Employee> employeeOptionalTmp = repository.getEmployee(l);
                 employeeOptionalTmp.ifPresent(managedUsers::add);
             }
+
             employee.getPermissions().setManagedUsers(managedUsers);
-            return repository.updateOrAddEmployee(employee);
+            return repository.updateEmployee(employee);
         }
+
         return null;
     }
 

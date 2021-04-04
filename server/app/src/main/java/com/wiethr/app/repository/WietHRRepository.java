@@ -98,12 +98,15 @@ public class WietHRRepository implements IWietHRRepository {
         return this.employeeRepository.findById(id);
     }
 
-    public Employee updateOrAddEmployee(Employee employee) {
+    public Employee updateEmployee(Employee employee) {
         this.permissionsRepository.save(employee.getPermissions());
         return this.employeeRepository.save(employee);
     }
 
-
-
+    @Override
+    public void createEmployee(Employee newEmployee) {
+        this.permissionsRepository.save(newEmployee.getPermissions());
+        this.employeeRepository.save(newEmployee);
+    }
 
 }

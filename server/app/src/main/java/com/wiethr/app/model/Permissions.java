@@ -11,10 +11,12 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @Data
+@SequenceGenerator(name = "permGen", initialValue = 3)
 public class Permissions {
 
     @Id
-    private long userId;
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "permGen")
+    private long id;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
@@ -28,8 +30,7 @@ public class Permissions {
     private boolean modifyBonusBudget;
 
 
-    public Permissions(long userId, boolean addUsers, boolean modifyBonusBudget) {
-        this.userId = userId;
+    public Permissions(boolean addUsers, boolean modifyBonusBudget) {
         this.addUsers = addUsers;
         this.modifyBonusBudget = modifyBonusBudget;
         this.managedUsers = new ArrayList<>();

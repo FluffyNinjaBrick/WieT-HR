@@ -11,10 +11,11 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @Data
+@SequenceGenerator(name = "empGen", initialValue = 3)
 public class Employee {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "empGen")
     private long id;
 
     @OneToOne
