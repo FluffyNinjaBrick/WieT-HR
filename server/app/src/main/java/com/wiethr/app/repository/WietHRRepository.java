@@ -46,6 +46,16 @@ public class WietHRRepository implements IWietHRRepository {
         this.contractRepository.save(contract);
     }
 
+    private List<Contract> getSignedContractsForEmployee(long id) {
+        ArrayList<Contract> contracts = new ArrayList<>();
+
+        for (Contract c: this.contractRepository.findAll())
+            if (c.getEmployee().getId() == id && c.isSigned())
+                contracts.add(c);
+
+        return contracts;
+    }
+
 
     // ---------- DAYS OFF REQUEST ----------
     @Override
@@ -107,6 +117,16 @@ public class WietHRRepository implements IWietHRRepository {
     public void createEmployee(Employee newEmployee) {
         this.permissionsRepository.save(newEmployee.getPermissions());
         this.employeeRepository.save(newEmployee);
+    }
+
+    @Override
+    public void removeEmployee(long id) {
+        Optional<Employee> optional = getEmployee(id);
+        if (optional.isEmpty()) return;                       // check if employee even exists
+        if (getSignedContractsForEmployee(id).size() != 0)    // check if employee has signed contracts
+            throw new IllegalStateException("Error: employee has signed contracts, cannot remove");
+
+        this.employeeRepository.delete(optional.get());
     }
 
 }

@@ -39,6 +39,7 @@ public interface IWietHRRepository {
     Optional<Employee> getEmployee(long id);
     Employee updateEmployee(Employee employee);
     void createEmployee(Employee newEmployee);
+    void removeEmployee(long id);
 
 
 

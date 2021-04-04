@@ -20,7 +20,7 @@ public class Contract extends Document {
     @Enumerated(EnumType.STRING)
     private ContractType type;
 
-    @OneToMany
+    @OneToMany(orphanRemoval = true)
     @JoinTable(
             name="Contract_Annexes",
             joinColumns = {@JoinColumn(name="originals")},

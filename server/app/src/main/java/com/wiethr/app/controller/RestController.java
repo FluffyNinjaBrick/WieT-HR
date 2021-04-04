@@ -111,6 +111,11 @@ public class RestController {
         this.repository.createEmployee(newEmployee);
     }
 
+    @DeleteMapping("/employees/{id}")
+    public void removeEmployee(@PathVariable long id) {
+        this.repository.removeEmployee(id);
+    }
+
     @PostMapping("/employees/{employeeId}/edit/data")
     @ResponseBody
     public Employee updateEmployeeData(@PathVariable long employeeId, @RequestBody Employee updatedEmployee) {
