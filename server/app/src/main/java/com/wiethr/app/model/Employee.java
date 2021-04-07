@@ -1,5 +1,6 @@
 package com.wiethr.app.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wiethr.app.model.enums.EmployeeStatus;
 import com.wiethr.app.model.enums.UserRole;
 import lombok.Data;
@@ -11,11 +12,13 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @Data
-@SequenceGenerator(name = "empGen", initialValue = 3)
+//@SequenceGenerator(name = "empGen", initialValue = 3)
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Employee {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "empGen")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    //@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "empGen")
     private long id;
 
     @OneToOne

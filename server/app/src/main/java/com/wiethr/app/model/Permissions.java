@@ -11,11 +11,12 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @Data
-@SequenceGenerator(name = "permGen", initialValue = 3)
+//@SequenceGenerator(name = "permGen", initialValue = 3)
 public class Permissions {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "permGen")
+    //@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "permGen")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @ManyToMany(fetch = FetchType.LAZY)

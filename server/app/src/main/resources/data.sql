@@ -29,4 +29,9 @@ INSERT INTO DAYS_OFF_REQUEST (id, date_from, date_issued, date_signed, date_to, 
 
 /* delegation request */
 INSERT INTO DELEGATION_REQUEST (id, date_from, date_issued, date_signed, date_to, name_at_signing, signed, destination, employee_id) VALUES (5, '2021-03-02', '2021-02-01', NULL, '2021-03-15', 'Adam Nowak', false, 'Ulaanbaatar', 1);
-INSERT INTO DELEGATION_REQUEST (id, date_from, date_issued, date_signed, date_to, name_at_signing, signed, destination, employee_id) VALUES (6, '2021-03-02', '2021-02-01', NULL, '2021-03-15', 'Marek Kilof', false, 'Wieliczka', 2);
+INSERT INTO DELEGATION_REQUEST (id, date_from, date_issued, date_signed, date_to, name_at_signing, signed, destination, employee_id) VALUES (0, '2021-03-02', '2021-02-01', NULL, '2021-03-15', 'Marek Kilof', false, 'Wieliczka', 2);
+
+alter sequence employee_id_seq restart with 3;
+alter sequence permissions_id_seq restart with 3;
+-- alter sequence days_off_request_id_seq restart with 6;
+-- alter sequence delegation_request_id_seq restart with 6;

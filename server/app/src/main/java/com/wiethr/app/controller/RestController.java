@@ -78,6 +78,21 @@ public class RestController {
         this.repository.createDaysOffRequest(request);
     }
 
+    @PostMapping(value = "/documents/update/daysoff/{documentID}")
+    public void updateDaysOffRequest(@PathVariable long documentID, @RequestBody AddDaysOffRequestHelper addDaysOffRequestHelper){
+        this.repository.updateDaysOffRequest(documentID, addDaysOffRequestHelper);
+    }
+
+    @DeleteMapping(value = "/documents/delete/daysoff/{documentID}")
+    public void removeDaysOffRequest(@PathVariable long documentID){
+        this.repository.removeDaysOffRequest(documentID);
+    }
+
+    @GetMapping(value = "/documents/daysoff")
+    public List<DaysOffRequest> getAllDaysOffRequests(){
+        return this.repository.getAllDaysOffRequests();
+    }
+
     // ---------- DELEGATION REQUEST ----------
     @PostMapping(value = "/documents/create/delegation")
     public void createDelegationRequest(@RequestBody AddDelegationRequestHelper helper) {
@@ -97,6 +112,21 @@ public class RestController {
         request.setDestination(helper.getDestination());
 
         this.repository.createDelegationRequest(request);
+    }
+
+    @PostMapping(value = "/documents/update/delegation/{documentID}")
+    public void updateDelegationRequest(@PathVariable long documentID, @RequestBody AddDelegationRequestHelper delegationRequestHelper){
+        this.repository.updateDelegationRequest(documentID, delegationRequestHelper);
+    }
+
+    @DeleteMapping(value = "/documents/delete/delegation/{documentID}")
+    public void removeDelegationRequest(@PathVariable long documentID){
+        this.repository.removeDelegationRequest(documentID);
+    }
+
+    @GetMapping(value = "/documents/delegation")
+    public List<DelegationRequest> getAllDelegationRequests(){
+        return this.repository.getAllDelegationRequests();
     }
 
 

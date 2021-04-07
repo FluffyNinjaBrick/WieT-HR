@@ -2,6 +2,8 @@ package com.wiethr.app.repository;
 
 import com.wiethr.app.model.*;
 import com.wiethr.app.model.helpers.AbsentEmployees;
+import com.wiethr.app.model.helpers.AddDaysOffRequestHelper;
+import com.wiethr.app.model.helpers.AddDelegationRequestHelper;
 import com.wiethr.app.repository.jpaRepos.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -64,31 +66,43 @@ public class WietHRRepository implements IWietHRRepository {
     }
 
     @Override
-    public List<AbsentEmployees> getAbsentEmployees(LocalDate from, LocalDate to) {
+    public void updateDaysOffRequest(long documentID, AddDaysOffRequestHelper addDaysOffRequestHelper) {
+        Optional<DaysOffRequest> daysOffRequest = this.daysOffRequestRepository.findById(documentID);
+        Optional<Employee> employee = this.employeeRepository.findById(addDaysOffRequestHelper.getEmployeeID());
 
-        ArrayList<AbsentEmployees> absences = new ArrayList<>();
+        if(daysOffRequest.isPresent() && employee.isPresent()){
+            Employee employeeToSet = employee.get();
+            DaysOffRequest currentDaysOffRequest = daysOffRequest.get();
+            // daysOffRequest
+            currentDaysOffRequest.setLeaveType(addDaysOffRequestHelper.getLeaveType());
+            // document
+            currentDaysOffRequest.setDateFrom(addDaysOffRequestHelper.getDateFrom());
+            currentDaysOffRequest.setDateTo(addDaysOffRequestHelper.getDateTo());
+            currentDaysOffRequest.setDateIssued(LocalDate.now());
+            currentDaysOffRequest.setSigned(false);
+            currentDaysOffRequest.setEmployee(employeeToSet);
+            currentDaysOffRequest.setNameAtSigning(employeeToSet.getFirstName()+" "+employeeToSet.getLastName());
 
-        ArrayList<Document> requests = new ArrayList<>();
-        requests.addAll(this.daysOffRequestRepository.findAll());
-        requests.addAll(this.delegationRequestRepository.findAll());
+            this.daysOffRequestRepository.save(currentDaysOffRequest);
+        }
+    }
 
+    @Override
+    public void removeDaysOffRequest(long documentID) {
+        Optional<DaysOffRequest> daysOffRequest = this.daysOffRequestRepository.findById(documentID);
+        if(daysOffRequest.isEmpty()) return;
 
-        LocalDate current = from;
-        do {
+        DaysOffRequest currentDaysOffRequest = daysOffRequest.get();
+        if(currentDaysOffRequest.isSigned()){
+            throw new IllegalArgumentException("ERROR: Cannot remove signed DaysOffRequest document");
+        } else{
+            this.daysOffRequestRepository.delete(currentDaysOffRequest);
+        }
+    }
 
-            AbsentEmployees absencesForDay = new AbsentEmployees(current);
-
-            for (Document request: requests)
-                if (!current.isBefore(request.getDateFrom()) && !current.isAfter(request.getDateTo()))
-                    absencesForDay.addEmployee(request.getNameAtSigning());
-
-            absences.add(absencesForDay);
-            current = current.plusDays(1);
-
-        } while(!current.isAfter(to));
-
-        return absences;
-
+    @Override
+    public List<DaysOffRequest> getAllDaysOffRequests() {
+        return this.daysOffRequestRepository.findAll();
     }
 
 
@@ -97,6 +111,47 @@ public class WietHRRepository implements IWietHRRepository {
     public void createDelegationRequest(DelegationRequest delegationRequest) {
         this.delegationRequestRepository.save(delegationRequest);
     }
+
+    @Override
+    public void updateDelegationRequest(long documentID, AddDelegationRequestHelper delegationRequestHelper) {
+        Optional<DelegationRequest> delegationRequest = this.delegationRequestRepository.findById(documentID);
+        Optional<Employee> employee = this.employeeRepository.findById(delegationRequestHelper.getEmployeeID());
+
+        if(delegationRequest.isPresent() && employee.isPresent()){
+            Employee employeeToSet = employee.get();
+            DelegationRequest currentDelegationRequest = delegationRequest.get();
+            // delegationRequest
+            currentDelegationRequest.setDestination(delegationRequestHelper.getDestination());
+            // document
+            currentDelegationRequest.setDateFrom(delegationRequestHelper.getDateFrom());
+            currentDelegationRequest.setDateTo(delegationRequestHelper.getDateTo());
+            currentDelegationRequest.setDateIssued(LocalDate.now());
+            currentDelegationRequest.setSigned(false);
+            currentDelegationRequest.setEmployee(employeeToSet);
+            currentDelegationRequest.setNameAtSigning(employeeToSet.getFirstName()+" "+employeeToSet.getLastName());
+
+            this.delegationRequestRepository.save(currentDelegationRequest);
+        }
+    }
+
+    @Override
+    public void removeDelegationRequest(long documentID) {
+        Optional<DelegationRequest> delegationRequest = this.delegationRequestRepository.findById(documentID);
+        if(delegationRequest.isEmpty()) return;
+
+        DelegationRequest currentDelegationRequest = delegationRequest.get();
+        if(currentDelegationRequest.isSigned()){
+            throw new IllegalArgumentException("ERROR: Cannot remove signed DaysOffRequest document");
+        } else{
+            this.delegationRequestRepository.delete(currentDelegationRequest);
+        }
+    }
+
+    @Override
+    public List<DelegationRequest> getAllDelegationRequests() {
+        return this.delegationRequestRepository.findAll();
+    }
+
 
     // ---------- EMPLOYEE ----------
     @Override
@@ -129,4 +184,30 @@ public class WietHRRepository implements IWietHRRepository {
         this.employeeRepository.delete(optional.get());
     }
 
+    @Override
+    public List<AbsentEmployees> getAbsentEmployees(LocalDate from, LocalDate to) {
+
+        ArrayList<AbsentEmployees> absences = new ArrayList<>();
+
+        ArrayList<Document> requests = new ArrayList<>();
+        requests.addAll(this.daysOffRequestRepository.findAll());
+        requests.addAll(this.delegationRequestRepository.findAll());
+
+
+        LocalDate current = from;
+        do {
+
+            AbsentEmployees absencesForDay = new AbsentEmployees(current);
+
+            for (Document request: requests)
+                if (!current.isBefore(request.getDateFrom()) && !current.isAfter(request.getDateTo()))
+                    absencesForDay.addEmployee(request.getNameAtSigning());
+
+            absences.add(absencesForDay);
+            current = current.plusDays(1);
+
+        } while(!current.isAfter(to));
+
+        return absences;
+    }
 }

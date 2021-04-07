@@ -13,7 +13,8 @@ import java.time.LocalDate;
 public abstract class Document {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    //@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "docGen")
     private long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -29,7 +30,7 @@ public abstract class Document {
     private LocalDate dateSigned;
 
     @Nullable
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinTable(
             name = "Document_Signed_By",
             joinColumns = {@JoinColumn(name = "document")},
