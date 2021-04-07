@@ -14,6 +14,7 @@ import ContractView from "./components/contract/ContractView";
 import BonusesView from "./components/bonus/BonusesView";
 import EmployeeListViewAdmin from "./components/employee/EmployeeListViewAdmin";
 import EmployeeEditView from "./components/employee/EmployeeEditView";
+import LoginView from "./components/auth/LoginView";
 
 function App() {
   return (
@@ -50,6 +51,9 @@ function App() {
           </Route>
           <Route path="/bonuses">
             <BonusesView />
+          </Route>
+          <Route path="/login">
+            <LoginView />
           </Route>
         </Switch>
       </div>
