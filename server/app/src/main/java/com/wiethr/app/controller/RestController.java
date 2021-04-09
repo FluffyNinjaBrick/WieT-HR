@@ -7,7 +7,16 @@ import com.wiethr.app.model.helpers.AddContractHelper;
 import com.wiethr.app.model.helpers.AddDaysOffRequestHelper;
 import com.wiethr.app.model.helpers.AddDelegationRequestHelper;
 import com.wiethr.app.repository.WietHRRepository;
+import com.wiethr.app.security.AuthenticationRequest;
+import com.wiethr.app.security.AuthenticationResponse;
+import com.wiethr.app.security.JwtUtil;
+import com.wiethr.app.security.MyUserDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -23,10 +32,9 @@ public class RestController {
     private final WietHRRepository repository;
 
     @Autowired
-    public RestController(WietHRRepository repository) {
+    public RestController(WietHRRepository repository, AuthenticationManager authenticationManager, MyUserDetailService userDetailService, JwtUtil jwtUtil) {
         this.repository = repository;
     }
-
 
 
     // ---------- CONTRACT ----------
@@ -131,7 +139,7 @@ public class RestController {
 
 
     // ---------- EMPLOYEE ----------
-    @RequestMapping(value = "/employees", method = RequestMethod.GET)
+    @GetMapping(value = "/employees")
     public List<Employee> getAllEmployees() {
         return this.repository.getAllEmployees();
     }

@@ -163,6 +163,10 @@ public class WietHRRepository implements IWietHRRepository {
         return this.employeeRepository.findById(id);
     }
 
+    public Optional<Employee> getEmployeeByEmail(String email) {
+        return this.employeeRepository.findByEmail(email);
+    }
+
     public Employee updateEmployee(Employee employee) {
         this.permissionsRepository.save(employee.getPermissions());
         return this.employeeRepository.save(employee);
