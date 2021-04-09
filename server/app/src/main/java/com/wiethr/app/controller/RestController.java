@@ -30,12 +30,31 @@ import java.util.Optional;
 public class RestController {
 
     private final WietHRRepository repository;
+    private final AuthenticationManager authenticationManager;
+    private final MyUserDetailService userDetailService;
+    private final JwtUtil jwtUtil;
 
     @Autowired
     public RestController(WietHRRepository repository, AuthenticationManager authenticationManager, MyUserDetailService userDetailService, JwtUtil jwtUtil) {
         this.repository = repository;
+        this.authenticationManager = authenticationManager;
+        this.userDetailService = userDetailService;
+        this.jwtUtil = jwtUtil;
     }
 
+
+    // ---------- AUTHENTICATION ------------------
+    @PostMapping(value = "/authenticate")
+    public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest request) throws Exception {
+        try{
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+        } catch (BadCredentialsException e){
+            throw new Exception("Incorrect email or password");
+        }
+        final UserDetails userDetails = this.userDetailService.loadUserByUsername(request.getEmail());
+        final String jwt = jwtUtil.generateToken(userDetails);
+        return ResponseEntity.ok(new AuthenticationResponse(jwt));
+    }
 
     // ---------- CONTRACT ----------
     @PostMapping(value = "/documents/create/contract")
