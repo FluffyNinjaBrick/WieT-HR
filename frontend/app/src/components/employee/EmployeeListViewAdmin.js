@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { Table, ThemeProvider } from "react-bootstrap";
+import { Button, Table, ThemeProvider } from "react-bootstrap";
 import SingleEmployeeRecord from "./SingleEmployeeRecord";
 import { API_URL } from "../../api/Api";
 import { Chart } from "react-google-charts";
 import CalendarComponent from "../calendar/CalendarComponent";
+import { Link } from "react-router-dom";
 
 export default function EmployeeListViewAdmin() {
   const [employees, setEmployees] = useState([]);
@@ -29,6 +30,11 @@ export default function EmployeeListViewAdmin() {
   return (
     <div className="container mt-3">
       <h2>Pracownicy</h2>
+      <Link to="/employees/create">
+        <Button className="my-4" variant="primary">
+          Dodaj pracownika
+        </Button>
+      </Link>
       <Table bordered hover size="sm">
         <thead>
           <tr>

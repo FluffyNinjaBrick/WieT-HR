@@ -15,6 +15,7 @@ import BonusesView from "./components/bonus/BonusesView";
 import EmployeeListViewAdmin from "./components/employee/EmployeeListViewAdmin";
 import EmployeeEditView from "./components/employee/EmployeeEditView";
 import LoginView from "./components/auth/LoginView";
+import EmployeeCreateView from "./components/employee/EmployeeCreateView";
 
 function App() {
   return (
@@ -37,6 +38,9 @@ function App() {
           </Route>
           <Route path="/employees/edit/:id">
             <EmployeeEditView />
+          </Route>
+          <Route path="/employees/create">
+            <EmployeeCreateView />
           </Route>
           {/* tutaj trzeba bedzie zrobic routy dla urlopu pracownika i urlopow wszystkich 
           pracownikow, jak sie maprawa do ich wyswietlania, dropdown pracownicy -> urlopy */}
