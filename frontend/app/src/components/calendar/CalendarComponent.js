@@ -129,7 +129,7 @@ import { Table } from "react-bootstrap";
                     var selection = chart.getSelection()[0];
                     if(selection !== undefined && 'row' in selection){
                         var checkedDay = new Date(selection["date"]).toISOString().slice(0, 10);
-                        if(currentViewedDay == checkedDay){
+                        if(currentViewedDay === checkedDay){
                             currentViewedDay = null;
                             setcurrentEmployeesShown();
                         }

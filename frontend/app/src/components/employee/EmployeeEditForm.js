@@ -5,24 +5,29 @@ import FormInputErrorMessage from "../utils/FormInputErrorMessage";
 import SubordinateEmployeeList from "./SubordinateEmployeeList";
 import { useEffect, useState } from "react";
 import { API_URL } from "../../api/Api";
-import { useHistory } from "react-router";
+import { useHistory, useLocation } from "react-router";
 
-export default function EmployeeCreateForm() {
+export default function EmployeeEditForm() {
   const {
     register,
     formState: { errors },
     handleSubmit,
   } = useForm();
 
+  let location = useLocation();
   const history = useHistory();
   const [managedEmployees, setManagedEmployees] = useState([]);
   const [employees, setEmployees] = useState([]);
+  const employeeToEdit = (location.state && location.state.employee) || {};
 
   useEffect(() => {
-    setManagedEmployees([]);
+    console.log(employeeToEdit);
+    if(employeeToEdit.hasOwnProperty("permissions")) {
+      setManagedEmployees(employeeToEdit.permissions.managedUsers);
+    }
 
     const fetchEmployees = async () => {
-      const response = await fetch(API_URL + "/employees", {
+      const response = await fetch(API_URL + "employees", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -84,13 +89,14 @@ export default function EmployeeCreateForm() {
   return (
     <div className="my-5">
       <h3>Dane personalne</h3>
-      <Form className="FormContainer" onSubmit={handleSubmit(createEmployee)}>
+      <Form onSubmit={handleSubmit(createEmployee)}>
         <Form.Group>
           <Form.Label htmlFor="firstName">Imię</Form.Label>
           <Form.Control
             type="text"
             name="firstName"
             placeholder="Podaj imię"
+            defaultValue= {employeeToEdit.firstName}
             {...register("firstName", { required: true })}
           />
           {errors.firstName && (
@@ -103,6 +109,7 @@ export default function EmployeeCreateForm() {
             type="text"
             name="lastName"
             placeholder="Podaj nazwisko"
+            defaultValue= {employeeToEdit.lastName}
             {...register("lastName", { required: true })}
           />
           {errors.lastName && (
@@ -116,6 +123,7 @@ export default function EmployeeCreateForm() {
             type="text"
             name="address"
             placeholder="Podaj adres zamieszkania"
+            defaultValue= {employeeToEdit.address}
             {...register("address", { required: true })}
           />
           {errors.address && (
@@ -128,6 +136,7 @@ export default function EmployeeCreateForm() {
             type="text"
             name="phone"
             placeholder="Podaj numer telefonu"
+            defaultValue= {employeeToEdit.phone}
             {...register("phone", { required: true })}
           />
           {errors.phone && (
@@ -140,6 +149,7 @@ export default function EmployeeCreateForm() {
             type="email"
             name="email"
             placeholder="Podaj adres e-mail"
+            defaultValue= {employeeToEdit.email}
             {...register("email", { required: true })}
           />
           {errors.email && (
@@ -187,7 +197,7 @@ export default function EmployeeCreateForm() {
 
         <div>
           <Button className="mt-5 mr-3" variant="primary" type="submit">
-            Dodaj pracownika
+            {employeeToEdit.hasOwnProperty("firstName") ? "Zapisz zmiany" : "Dodaj pracownika"}
           </Button>
           <Button
             className="mt-5"

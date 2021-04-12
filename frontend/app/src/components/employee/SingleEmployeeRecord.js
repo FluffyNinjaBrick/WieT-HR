@@ -12,7 +12,12 @@ export default function SingleEmployeeRecord({ employee }) {
       <td>{employee.phone}</td>
       <td>{employee.status}</td>
       <td className="d-flex justify-content-center">
-        <Link to={"/employees/edit/" + employee.id}>
+        <Link to={{
+          pathname: "/employees/edit/" + employee.id,
+          state:{
+            employee: employee
+          }
+          }}>
           <Button>Edytuj</Button>
         </Link>
       </td>
