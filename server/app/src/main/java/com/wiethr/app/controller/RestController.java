@@ -2,10 +2,7 @@ package com.wiethr.app.controller;
 
 
 import com.wiethr.app.model.*;
-import com.wiethr.app.model.helpers.AbsentEmployees;
-import com.wiethr.app.model.helpers.AddContractHelper;
-import com.wiethr.app.model.helpers.AddDaysOffRequestHelper;
-import com.wiethr.app.model.helpers.AddDelegationRequestHelper;
+import com.wiethr.app.model.helpers.*;
 import com.wiethr.app.repository.WietHRRepository;
 import com.wiethr.app.security.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -161,8 +158,8 @@ public class RestController {
     }
 
     @PostMapping("/employees/create")
-    public void createEmployee(@RequestBody Employee newEmployee) {
-        this.repository.createEmployee(newEmployee);
+    public void createEmployee(@RequestBody AddEmployeeHelper helper) {
+        this.repository.createEmployee(helper);
     }
 
     @DeleteMapping("/employees/{id}")

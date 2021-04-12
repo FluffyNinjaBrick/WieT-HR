@@ -37,4 +37,8 @@ public class Permissions {
         this.managedUsers = new ArrayList<>();
     }
 
+    public void addManagedUser(Employee user) {
+        this.managedUsers.add(user);
+    }
+
 }

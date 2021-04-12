@@ -1,9 +1,7 @@
 package com.wiethr.app.repository;
 
 import com.wiethr.app.model.*;
-import com.wiethr.app.model.helpers.AbsentEmployees;
-import com.wiethr.app.model.helpers.AddDaysOffRequestHelper;
-import com.wiethr.app.model.helpers.AddDelegationRequestHelper;
+import com.wiethr.app.model.helpers.*;
 import com.wiethr.app.repository.jpaRepos.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -173,9 +171,33 @@ public class WietHRRepository implements IWietHRRepository {
     }
 
     @Override
-    public void createEmployee(Employee newEmployee) {
-        this.permissionsRepository.save(newEmployee.getPermissions());
-        this.employeeRepository.save(newEmployee);
+    public void createEmployee(AddEmployeeHelper helper) {
+
+        // create and save permissions
+        PermissionHelper permHelper = helper.getPermissionHelper();
+        Permissions permissions = new Permissions(permHelper.isAddUsers(), permHelper.isModifyBonusBudget());
+        for (Employee user: this.employeeRepository.findAllById(permHelper.getManagedUsers()))
+            permissions.addManagedUser(user);
+
+        this.permissionsRepository.save(permissions);
+
+        // create and save employee
+        Employee employee = new Employee();
+        employee.setPermissions(permissions);
+        employee.setEmail(helper.getEmail());
+        employee.setFirstName(helper.getFirstName());
+        employee.setLastName(helper.getLastName());
+        employee.setPassword(helper.getPassword());
+        employee.setAddress(helper.getAddress());
+        employee.setPhone(helper.getPhone());
+        employee.setUserRole(helper.getUserRole());
+        employee.setStatus(helper.getStatus());
+        employee.setYearsOfService(helper.getYearsOfService());
+        employee.setThisYearDaysOff(helper.getThisYearDaysOff());
+        employee.setLastYearDaysOff(helper.getLastYearDaysOff());
+        employee.setAppreciationBonusList(new ArrayList<>());
+
+        this.employeeRepository.save(employee);
     }
 
     @Override

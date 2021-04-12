@@ -1,14 +1,14 @@
 
 
 /* example employee who can't do anything  */
-INSERT INTO EMPLOYEE (id, address, email, first_name, last_name, last_year_days_off, password, phone, status, this_year_days_off, user_role, years_of_service) VALUES (0, 'Grodzka 12a, 30-851 Kraków', 'mail1@mailowo.com', 'Jan', 'Kowalski', 0, 'haslo', '987654321', 'WORKING', 10, 'EMPLOYEE', 2);
+INSERT INTO EMPLOYEE (id, address, email, first_name, last_name, last_year_days_off, password, phone, status, this_year_days_off, user_role, years_of_service) VALUES (0, 'Grodzka 12a, 30-851 Kraków', 'mail1@mailowo.com', 'Jan', 'Kowalski', 0, 'haslo', '987654321', 'WORKING', 10, 'ADMIN', 2);
 INSERT INTO EMPLOYEE (id, address, email, first_name, last_name, last_year_days_off, password, phone, status, this_year_days_off, user_role, years_of_service) VALUES (1, 'Jasnogórska 1, 30-851 Kraków', 'mail2@mailowo.com', 'Adam', 'Nowak', 0, 'haslo', '212312311', 'WORKING', 10, 'EMPLOYEE', 2);
 INSERT INTO EMPLOYEE (id, address, email, first_name, last_name, last_year_days_off, password, phone, status, this_year_days_off, user_role, years_of_service) VALUES (2, 'Kuźnia Talentów 55b, 30-851 Kraków', 'mail3@mailowo.com', 'Marek', 'Kilof', 0, 'haslo', '123112311', 'WORKING', 10, 'EMPLOYEE', 2);
 
 
 
 /* example permissions*/
-INSERT INTO PERMISSIONS (id, add_users, modify_bonus_budget) VALUES (0, FALSE, FALSE);
+INSERT INTO PERMISSIONS (id, add_users, modify_bonus_budget) VALUES (0, TRUE, TRUE);
 INSERT INTO PERMISSION_OWNERS (perm_holder, perm_setid) VALUES  (0, 0);
 
 INSERT INTO PERMISSIONS (id, add_users, modify_bonus_budget) VALUES (1, FALSE, FALSE);

@@ -7,6 +7,7 @@ import com.wiethr.app.model.Employee;
 import com.wiethr.app.model.helpers.AbsentEmployees;
 import com.wiethr.app.model.helpers.AddDaysOffRequestHelper;
 import com.wiethr.app.model.helpers.AddDelegationRequestHelper;
+import com.wiethr.app.model.helpers.AddEmployeeHelper;
 
 import javax.swing.text.html.Option;
 import java.time.LocalDate;
@@ -46,7 +47,7 @@ public interface IWietHRRepository {
     Optional<Employee> getEmployee(long id);
     Optional<Employee> getEmployeeByEmail(String email);
     Employee updateEmployee(Employee employee);
-    void createEmployee(Employee newEmployee);
+    void createEmployee(AddEmployeeHelper helper);
     void removeEmployee(long id);
     List<AbsentEmployees> getAbsentEmployees(LocalDate from, LocalDate to);
 

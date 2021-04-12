@@ -3,6 +3,7 @@ package com.wiethr.app.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wiethr.app.model.enums.EmployeeStatus;
 import com.wiethr.app.model.enums.UserRole;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
