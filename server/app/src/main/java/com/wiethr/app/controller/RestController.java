@@ -7,10 +7,7 @@ import com.wiethr.app.model.helpers.AddContractHelper;
 import com.wiethr.app.model.helpers.AddDaysOffRequestHelper;
 import com.wiethr.app.model.helpers.AddDelegationRequestHelper;
 import com.wiethr.app.repository.WietHRRepository;
-import com.wiethr.app.security.AuthenticationRequest;
-import com.wiethr.app.security.AuthenticationResponse;
-import com.wiethr.app.security.JwtUtil;
-import com.wiethr.app.security.MyUserDetailService;
+import com.wiethr.app.security.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -51,9 +48,9 @@ public class RestController {
         } catch (BadCredentialsException e){
             throw new Exception("Incorrect email or password");
         }
-        final UserDetails userDetails = this.userDetailService.loadUserByUsername(request.getEmail());
+        final MyUserDetails userDetails = (MyUserDetails) this.userDetailService.loadUserByUsername(request.getEmail());
         final String jwt = jwtUtil.generateToken(userDetails);
-        return ResponseEntity.ok(new AuthenticationResponse(jwt));
+        return ResponseEntity.ok(new AuthenticationResponse(jwt, userDetails.getUserRole(), userDetails.getId()));
     }
 
     // ---------- CONTRACT ----------
