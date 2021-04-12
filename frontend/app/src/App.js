@@ -16,6 +16,8 @@ import EmployeeListViewAdmin from "./components/employee/EmployeeListViewAdmin";
 import EmployeeEditView from "./components/employee/EmployeeEditView";
 import LoginView from "./components/auth/LoginView";
 import EmployeeCreateView from "./components/employee/EmployeeCreateView";
+import LeaveCreateForm from "./components/leave/LeaveCreateForm";
+import DelegationCreateForm from "./components/delegation/DelegationCreateForm";
 
 function App() {
   return (
@@ -29,6 +31,9 @@ function App() {
           </Route>
           <Route path="/profile">
             <Profile />
+          </Route>
+          <Route path="/delegations/add">
+            <DelegationCreateForm />
           </Route>
           <Route path="/delegations">
             <DelegationsView />
@@ -46,6 +51,9 @@ function App() {
           pracownikow, jak sie maprawa do ich wyswietlania, dropdown pracownicy -> urlopy */}
           <Route path="/employees/leaves">
             <LeavesView />
+          </Route>
+          <Route path="/leaves/add">
+            <LeaveCreateForm />
           </Route>
           <Route path="/leaves">
             <LeavesView />

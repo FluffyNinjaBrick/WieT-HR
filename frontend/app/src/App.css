@@ -1,9 +1,22 @@
-.AuthFormContainer {
+.AuthFormContainer{
   display: flex;
   align-items: center;
   justify-content: center;
 }
-
 .AuthForm {
   min-width: 300px;
+}
+.leavesViewForm{
+  align-items: center;
+  justify-content: center;
+  margin-top: 3em;
+  margin-left: 2em;
+}
+.LeavesForm{
+  min-width: 280px;
+}
+.LeavesFormContainer{
+  display: flex;
+  align-items: center;
+  margin-top: 3em;
 }
