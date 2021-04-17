@@ -12,6 +12,12 @@ import DelegationsView from "./components/delegation/DelegationsView";
 import Profile from "./components/profile/Profile";
 import ContractView from "./components/contract/ContractView";
 import BonusesView from "./components/bonus/BonusesView";
+import EmployeeListViewAdmin from "./components/employee/EmployeeListViewAdmin";
+import EmployeeEditView from "./components/employee/EmployeeEditView";
+import LoginView from "./components/auth/LoginView";
+import EmployeeCreateView from "./components/employee/EmployeeCreateView";
+import LeaveCreateForm from "./components/leave/LeaveCreateForm";
+import DelegationCreateForm from "./components/delegation/DelegationCreateForm";
 
 function App() {
   return (
@@ -26,8 +32,28 @@ function App() {
           <Route path="/profile">
             <Profile />
           </Route>
+          <Route path="/delegations/add">
+            <DelegationCreateForm />
+          </Route>
           <Route path="/delegations">
             <DelegationsView />
+          </Route>
+          <Route exact path="/employees">
+            <EmployeeListViewAdmin />
+          </Route>
+          <Route path="/employees/edit/:id">
+            <EmployeeEditView />
+          </Route>
+          <Route path="/employees/create">
+            <EmployeeCreateView />
+          </Route>
+          {/* tutaj trzeba bedzie zrobic routy dla urlopu pracownika i urlopow wszystkich 
+          pracownikow, jak sie maprawa do ich wyswietlania, dropdown pracownicy -> urlopy */}
+          <Route path="/employees/leaves">
+            <LeavesView />
+          </Route>
+          <Route path="/leaves/add">
+            <LeaveCreateForm />
           </Route>
           <Route path="/leaves">
             <LeavesView />
@@ -37,6 +63,9 @@ function App() {
           </Route>
           <Route path="/bonuses">
             <BonusesView />
+          </Route>
+          <Route path="/login">
+            <LoginView />
           </Route>
         </Switch>
       </div>

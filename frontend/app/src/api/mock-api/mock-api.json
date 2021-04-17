@@ -1,0 +1,115 @@
+{
+  "employees": [
+    {
+      "id": 1,
+      "first_name": "John",
+      "last_name": "Doe",
+      "email": "johndoe@abc.com",
+      "address": "Krakow, ul. Bajeczna 15",
+      "phone": "123 456 789",
+      "status": "jakisstatus"
+    },
+    {
+      "id": 2,
+      "first_name": "Jane",
+      "last_name": "Doe",
+      "email": "janedoe@abc.com",
+      "address": "Krakow, ul. Bajeczna 15",
+      "phone": "123 456 789",
+      "status": "jakisstatus"
+    },
+    {
+      "id": 3,
+      "first_name": "Alice",
+      "last_name": "Doe",
+      "email": "alicedoe@abc.com",
+      "address": "Krakow, ul. Bajeczna 15",
+      "phone": "123 456 789",
+      "status": "jakisstatus"
+    },
+    {
+      "id": 4,
+      "first_name": "Bob",
+      "last_name": "Doe",
+      "email": "bobdoe@abc.com",
+      "address": "Krakow, ul. Bajeczna 15",
+      "phone": "123 456 789",
+      "status": "jakisstatus"
+    }
+  ],
+  "permissions": [
+    {
+      "id": 1,
+      "add_users": "true",
+      "modify_bonus_budget": "true"
+    },
+    {
+      "id": 2,
+      "add_users": "true",
+      "modify_bonus_budget": "true"
+    },
+    {
+      "id": 3,
+      "add_users": "true",
+      "modify_bonus_budget": "true"
+    },
+    {
+      "id": 4,
+      "add_users": "true",
+      "modify_bonus_budget": "true"
+    }
+  ],
+  "absence":[
+    {
+      "day": "2021-03-01",
+      "absentEmployees":[]
+    },
+    {
+      "day": "2021-03-21",
+      "absentEmployees":[
+        "Jan Kowalski",
+        "Adam Topór"
+      ]
+    },
+    {
+      "day": "2021-03-11",
+      "absentEmployees":[
+        "Jan Kowalski",
+        "Adam Topór",
+        "Adam Topór",
+        "Adam Topór",
+        "Adam Topór"
+      ]
+    },
+    {
+      "day": "2021-03-09",
+      "absentEmployees":[
+        "Jan Kowalski",
+        "Adam Topór",
+        "Adam Topór",
+        "Adam Topór",
+        "Adam Topór",
+        "Adam Topór",
+        "Adam Topór"
+      ]
+    },
+    {
+      "day": "2021-04-01",
+      "absentEmployees":[
+        "Jan Kowalski",
+        "Adam Topór",
+        "Adam Topór",
+        "Adam Topór",
+        "Adam Topór",
+        "Adam Topór",
+        "Adam Topór",
+        "Adam Topór",
+        "Adam Topór",
+        "Adam Topór",
+        "Adam Topór",
+        "Adam Topór",
+        "Adam Topór"
+      ]
+    }
+  ]
+}
