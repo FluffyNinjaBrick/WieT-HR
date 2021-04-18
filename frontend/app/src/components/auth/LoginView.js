@@ -2,6 +2,11 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { useForm } from "react-hook-form";
 import FormInputErrorMessage from "../utils/FormInputErrorMessage";
+import { API_URL } from "../../api/Api";
+import { useContext, useState } from "react";
+import { useHistory } from "react-router";
+import { Alert } from "react-bootstrap";
+import { getCurrentUser, login } from "../../services/AuthService";
 
 export default function LoginView() {
   const {
@@ -10,13 +15,29 @@ export default function LoginView() {
     handleSubmit,
   } = useForm();
 
-  const handleLogin = (formData) => {
-    console.log(formData);
-    //TODO: post data
+  const [error, setError] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
+
+  const history = useHistory();
+
+  const handleLogin = async (formData) => {
+    const response = await login(formData);
+
+    if (!response.ok) {
+      setError(true);
+      setShowAlert(true);
+    } else {
+      history.push("/profile");
+    }
   };
 
   return (
-    <div className="AuthFormContainer">
+    <div className="d-flex flex-column align-items-center justify-content-center mt-5">
+      {error && showAlert && (
+        <Alert variant="danger" onClose={() => setShowAlert(false)} dismissible>
+          Wystąpił błąd.
+        </Alert>
+      )}
       <Form className="AuthForm" onSubmit={handleSubmit(handleLogin)}>
         <Form.Group>
           <Form.Label htmlFor="email">Email address</Form.Label>
