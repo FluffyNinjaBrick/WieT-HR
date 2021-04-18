@@ -21,6 +21,9 @@ export default function LoginView() {
   const history = useHistory();
 
   const handleLogin = async (formData) => {
+    setError(false);
+    setShowAlert(false);
+
     const response = await login(formData);
 
     if (!response.ok) {

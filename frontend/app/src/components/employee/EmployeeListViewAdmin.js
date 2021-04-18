@@ -5,17 +5,10 @@ import { API_URL } from "../../api/Api";
 import { Chart } from "react-google-charts";
 import CalendarComponent from "../calendar/CalendarComponent";
 import { Link } from "react-router-dom";
+import { fetchEmployees } from "../../services/EmployeeService";
 
 export default function EmployeeListViewAdmin() {
   const [employees, setEmployees] = useState([]);
-
-  const fetchEmployees = async () => {
-    const emp = await fetch(API_URL + "employees", {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-    });
-    return emp.json();
-  };
 
   useEffect(() => {
     fetchEmployees().then((data) => setEmployees(data));

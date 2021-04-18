@@ -7,17 +7,25 @@ import FormInputErrorMessage from "../utils/FormInputErrorMessage";
 import React from "react";
 import { useHistory } from "react-router";
 import { API_URL } from "../../api/Api";
+import { getCurrentUser } from "../../services/AuthService";
 
 export default function LeaveCreateForm() {
   const {
     register,
     formState: { errors },
-    handleSubmit, getValues,
-    reset, watch, control
+    handleSubmit,
+    getValues,
+    reset,
+    watch,
+    control,
   } = useForm();
 
   const [error, setError] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
+
+  const token = JSON.parse(getCurrentUser()).jwt;
+  const id = JSON.parse(getCurrentUser()).id;
+  const auth = "Bearer " + token;
 
   const history = useHistory();
 
@@ -25,19 +33,22 @@ export default function LeaveCreateForm() {
     history.push("/leaves");
   };
 
-  // "/documents/create/daysoff"
-
   const handleFormSubmit = async (formData) => {
     setError(false);
     setShowAlert(false);
+
+    const data = {
+      id: id,
+      ...formData,
+    };
 
     const response = await fetch(API_URL + "documents/create/daysoff", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        //todo add authentication token
+        Authorization: auth,
       },
-      body: JSON.stringify(formData),
+      body: JSON.stringify(data),
     });
 
     if (!response.ok) {
@@ -47,41 +58,31 @@ export default function LeaveCreateForm() {
       history.push("/leaves");
     }
 
-    console.log(formData);
+    console.log(data);
   };
 
   return (
     <div className="d-flex flex-column align-items-center justify-content-center mt-5">
-
       <h1>Wypełnij wniosek o urlop</h1>
 
-      {error && showAlert &&
+      {error && showAlert && (
         <Alert variant="danger" onClose={() => setShowAlert(false)} dismissible>
           Wystąpił błąd.
-          </Alert>
-      }
+        </Alert>
+      )}
 
       <div className="mt-5">
         <Form className="LeavesForm" onSubmit={handleSubmit(handleFormSubmit)}>
-          <Form.Group>
-            <Form.Label htmlFor="employeeID">Tymczasowe ID pracownika</Form.Label>
-            <Form.Control
-              type="employeeID"
-              name="employeeID"
-              placeholder="Podaj ID pracownika"
-              {...register("employeeID", { required: true })}
-            />
-            {errors.employeeID && (
-              <FormInputErrorMessage errorMessage="ID jest wymagane" />
-            )}
-          </Form.Group>
           <Form.Group>
             <Form.Label htmlFor="Date">Początek urlopu</Form.Label>
             <Form.Control
               type="date"
               name="dateFrom"
               id="dateFrom"
-              {...register("dateFrom", { required: true, validate: () => getValues("dateFrom") <= getValues("dateTo") })}
+              {...register("dateFrom", {
+                required: true,
+                validate: () => getValues("dateFrom") <= getValues("dateTo"),
+              })}
             />
             {errors.dateTo && errors.dateTo.type === "required" && (
               <FormInputErrorMessage errorMessage="Data jest wymagana" />
@@ -96,7 +97,10 @@ export default function LeaveCreateForm() {
               type="date"
               name="dateTo"
               id="dateTo"
-              {...register("dateTo", { required: true, validate: () => getValues("dateFrom") <= getValues("dateTo") })}
+              {...register("dateTo", {
+                required: true,
+                validate: () => getValues("dateFrom") <= getValues("dateTo"),
+              })}
             />
             {errors.dateTo && errors.dateTo.type === "required" && (
               <FormInputErrorMessage errorMessage="Data jest wymagana" />
@@ -112,16 +116,16 @@ export default function LeaveCreateForm() {
               defaultValue="Wybierz typ urlopu"
               name="leaveType"
               id="leaveType"
-              {...register("leaveType", { required: true })}>
+              {...register("leaveType", { required: true })}
+            >
               <option value="MATERNITY">Macierzyński</option>
               <option value="SICK">Chorobowy</option>
               <option value="RECREATIONAL">Rekreacyjny</option>
-
             </Form.Control>
           </Form.Group>
           <Button className="mt-3 mr-3" variant="primary" type="submit">
             Złóż wniosek
-            </Button>
+          </Button>
           <Button
             className="mt-3"
             variant="secondary"
@@ -130,9 +134,7 @@ export default function LeaveCreateForm() {
             Anuluj
           </Button>
         </Form>
-
       </div>
     </div>
-
   );
 }
