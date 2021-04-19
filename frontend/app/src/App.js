@@ -6,6 +6,7 @@ import {
   Redirect,
   Link,
 } from "react-router-dom";
+import React, { useContext, createContext, useState } from "react";
 import Navigation from "./components/navigation/Navigation";
 import LeavesView from "./components/leave/LeavesView";
 import DelegationsView from "./components/delegation/DelegationsView";
@@ -18,58 +19,62 @@ import LoginView from "./components/auth/LoginView";
 import EmployeeCreateView from "./components/employee/EmployeeCreateView";
 import LeaveCreateForm from "./components/leave/LeaveCreateForm";
 import DelegationCreateForm from "./components/delegation/DelegationCreateForm";
+import { ProvideAuth } from "./components/auth/useAuth";
+import PrivateRoute from "./components/utils/PrivateRoute";
 
 function App() {
   return (
-    <Router>
-      <div>
-        <Navigation />
+    <ProvideAuth>
+      <Router>
+        <div>
+          <Navigation />
 
-        <Switch>
-          <Route exact path="/">
-            <Redirect to="/profile" />
-          </Route>
-          <Route path="/profile">
-            <Profile />
-          </Route>
-          <Route path="/delegations/add">
-            <DelegationCreateForm />
-          </Route>
-          <Route path="/delegations">
-            <DelegationsView />
-          </Route>
-          <Route exact path="/employees">
-            <EmployeeListViewAdmin />
-          </Route>
-          <Route path="/employees/edit/:id">
-            <EmployeeEditView />
-          </Route>
-          <Route path="/employees/create">
-            <EmployeeCreateView />
-          </Route>
-          {/* tutaj trzeba bedzie zrobic routy dla urlopu pracownika i urlopow wszystkich 
+          <Switch>
+            <PrivateRoute exact path="/" role="any">
+              <Redirect to="/profile" />
+            </PrivateRoute>
+            <PrivateRoute path="/profile" role="any">
+              <Profile />
+            </PrivateRoute>
+            <PrivateRoute path="/delegations/add" role="any">
+              <DelegationCreateForm />
+            </PrivateRoute>
+            <PrivateRoute path="/delegations" role="any">
+              <DelegationsView />
+            </PrivateRoute>
+            <PrivateRoute exact path="/employees" role="ADMIN">
+              <EmployeeListViewAdmin />
+            </PrivateRoute>
+            <PrivateRoute path="/employees/edit/:id" role="ADMIN">
+              <EmployeeEditView />
+            </PrivateRoute>
+            <PrivateRoute path="/employees/create" role="ADMIN">
+              <EmployeeCreateView />
+            </PrivateRoute>
+            {/* tutaj trzeba bedzie zrobic routy dla urlopu pracownika i urlopow wszystkich 
           pracownikow, jak sie maprawa do ich wyswietlania, dropdown pracownicy -> urlopy */}
-          <Route path="/employees/leaves">
-            <LeavesView />
-          </Route>
-          <Route path="/leaves/add">
-            <LeaveCreateForm />
-          </Route>
-          <Route path="/leaves">
-            <LeavesView />
-          </Route>
-          <Route path="/contract">
-            <ContractView />
-          </Route>
-          <Route path="/bonuses">
-            <BonusesView />
-          </Route>
-          <Route path="/login">
-            <LoginView />
-          </Route>
-        </Switch>
-      </div>
-    </Router>
+            <PrivateRoute path="/employees/leaves" role="ADMIN">
+              <LeavesView />
+            </PrivateRoute>
+            <PrivateRoute path="/leaves/add" role="any">
+              <LeaveCreateForm />
+            </PrivateRoute>
+            <PrivateRoute path="/leaves" role="any">
+              <LeavesView />
+            </PrivateRoute>
+            <PrivateRoute path="/contract" role="any">
+              <ContractView />
+            </PrivateRoute>
+            <PrivateRoute path="/bonuses" role="any">
+              <BonusesView />
+            </PrivateRoute>
+            <Route path="/login">
+              <LoginView />
+            </Route>
+          </Switch>
+        </div>
+      </Router>
+    </ProvideAuth>
   );
 }
 

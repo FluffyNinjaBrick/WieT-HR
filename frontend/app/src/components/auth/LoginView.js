@@ -4,9 +4,9 @@ import { useForm } from "react-hook-form";
 import FormInputErrorMessage from "../utils/FormInputErrorMessage";
 import { API_URL } from "../../api/Api";
 import { useContext, useState } from "react";
-import { useHistory } from "react-router";
+import { Redirect, useHistory } from "react-router";
 import { Alert } from "react-bootstrap";
-import { getCurrentUser, login } from "../../services/AuthService";
+import { useAuth } from "../auth/useAuth";
 
 export default function LoginView() {
   const {
@@ -14,6 +14,8 @@ export default function LoginView() {
     formState: { errors },
     handleSubmit,
   } = useForm();
+
+  const auth = useAuth();
 
   const [error, setError] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
@@ -24,7 +26,7 @@ export default function LoginView() {
     setError(false);
     setShowAlert(false);
 
-    const response = await login(formData);
+    const response = await auth.login(formData.email, formData.password);
 
     if (!response.ok) {
       setError(true);
@@ -33,6 +35,10 @@ export default function LoginView() {
       history.push("/profile");
     }
   };
+
+  if (auth.user) {
+    return <Redirect to="/" />;
+  }
 
   return (
     <div className="d-flex flex-column align-items-center justify-content-center mt-5">

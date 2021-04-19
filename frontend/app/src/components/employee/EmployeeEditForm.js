@@ -5,7 +5,8 @@ import FormInputErrorMessage from "../utils/FormInputErrorMessage";
 import SubordinateEmployeeList from "./SubordinateEmployeeList";
 import { useEffect, useState } from "react";
 import { API_URL } from "../../api/Api";
-import { useHistory, useLocation } from "react-router";
+import { Redirect, useHistory, useLocation } from "react-router";
+import { getCurrentUser } from "../../services/AuthService";
 
 export default function EmployeeEditForm() {
   const {
@@ -19,23 +20,41 @@ export default function EmployeeEditForm() {
   const [managedEmployees, setManagedEmployees] = useState([]);
   const [employees, setEmployees] = useState([]);
   const employeeToEdit = (location.state && location.state.employee) || {};
+  const [submitSuccessful, setSubmitSuccessful] = useState(false);
 
   useEffect(() => {
-    console.log(employeeToEdit);
-    if(employeeToEdit.hasOwnProperty("permissions")) {
-      setManagedEmployees(employeeToEdit.permissions.managedUsers);
-    }
+    const user = JSON.parse(getCurrentUser());
+    const token = user ? user.jwt : "";
+    const auth = "Bearer " + token;
 
     const fetchEmployees = async () => {
       const response = await fetch(API_URL + "employees", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
+          Authorization: auth,
         },
       });
 
       const data = await response.json();
-      setEmployees(data);
+
+      let filteredEmployees = data;
+      if (employeeToEdit.hasOwnProperty("permissions")) {
+        setManagedEmployees(employeeToEdit.permissions.managedUsers);
+        filteredEmployees = data.filter(
+          (item) =>
+            !employeeToEdit.permissions.managedUsers
+              .map((e) => e.id)
+              .includes(item.id)
+        );
+      }
+      if (employeeToEdit) {
+        filteredEmployees = filteredEmployees.filter(
+          (e) => e.id != employeeToEdit.id
+        );
+      }
+
+      setEmployees(filteredEmployees);
     };
 
     fetchEmployees();
@@ -63,28 +82,35 @@ export default function EmployeeEditForm() {
 
     const data = {
       ...formData,
-      permissions: {
+      permissionHelper: {
         ...permissions,
-        managedUsers: managedEmployees,
+        managedUsers: managedEmployees.map((employee) => employee.id),
       },
+      status: "WORKING",
       password: password,
     };
 
-    fetch(API_URL + "/employees/create", {
+    const user = JSON.parse(getCurrentUser());
+    const token = user ? user.jwt : "";
+    const auth = "Bearer " + token;
+
+    fetch(API_URL + "employees/create", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        //todo add authentication token
+        Authorization: auth,
       },
       body: JSON.stringify(data),
-    });
-
-    console.log(data);
+    }).then(setSubmitSuccessful(true));
   };
 
   const handleCancel = () => {
     history.push("/employees");
   };
+
+  if (submitSuccessful) {
+    return <Redirect to="/employees" />;
+  }
 
   return (
     <div className="my-5">
@@ -96,7 +122,7 @@ export default function EmployeeEditForm() {
             type="text"
             name="firstName"
             placeholder="Podaj imię"
-            defaultValue= {employeeToEdit.firstName}
+            defaultValue={employeeToEdit.firstName}
             {...register("firstName", { required: true })}
           />
           {errors.firstName && (
@@ -109,7 +135,7 @@ export default function EmployeeEditForm() {
             type="text"
             name="lastName"
             placeholder="Podaj nazwisko"
-            defaultValue= {employeeToEdit.lastName}
+            defaultValue={employeeToEdit.lastName}
             {...register("lastName", { required: true })}
           />
           {errors.lastName && (
@@ -123,7 +149,7 @@ export default function EmployeeEditForm() {
             type="text"
             name="address"
             placeholder="Podaj adres zamieszkania"
-            defaultValue= {employeeToEdit.address}
+            defaultValue={employeeToEdit.address}
             {...register("address", { required: true })}
           />
           {errors.address && (
@@ -136,7 +162,7 @@ export default function EmployeeEditForm() {
             type="text"
             name="phone"
             placeholder="Podaj numer telefonu"
-            defaultValue= {employeeToEdit.phone}
+            defaultValue={employeeToEdit.phone}
             {...register("phone", { required: true })}
           />
           {errors.phone && (
@@ -149,7 +175,7 @@ export default function EmployeeEditForm() {
             type="email"
             name="email"
             placeholder="Podaj adres e-mail"
-            defaultValue= {employeeToEdit.email}
+            defaultValue={employeeToEdit.email}
             {...register("email", { required: true })}
           />
           {errors.email && (
@@ -197,7 +223,9 @@ export default function EmployeeEditForm() {
 
         <div>
           <Button className="mt-5 mr-3" variant="primary" type="submit">
-            {employeeToEdit.hasOwnProperty("firstName") ? "Zapisz zmiany" : "Dodaj pracownika"}
+            {employeeToEdit.hasOwnProperty("firstName")
+              ? "Zapisz zmiany"
+              : "Dodaj pracownika"}
           </Button>
           <Button
             className="mt-5"

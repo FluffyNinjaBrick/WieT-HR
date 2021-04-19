@@ -9,14 +9,15 @@ import { fetchEmployees } from "../../services/EmployeeService";
 
 export default function EmployeeListViewAdmin() {
   const [employees, setEmployees] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    fetchEmployees().then((data) => setEmployees(data));
-  }, []);
+    setLoading(true);
 
-  const employeesTableView = employees.map((employee) => {
-    return <SingleEmployeeRecord key={employee.id} employee={employee} />;
-  });
+    fetchEmployees()
+      .then((data) => setEmployees(data))
+      .then(setLoading(false));
+  }, []);
 
   const editEmployee = () => {};
 
@@ -41,7 +42,17 @@ export default function EmployeeListViewAdmin() {
             <th>Edycja</th>
           </tr>
         </thead>
-        <tbody>{employeesTableView}</tbody>
+
+        {loading ? (
+          <tbody></tbody>
+        ) : (
+          <tbody>
+            {employees.length &&
+              employees.map((employee) => (
+                <SingleEmployeeRecord key={employee.id} employee={employee} />
+              ))}
+          </tbody>
+        )}
       </Table>
     </div>
   );
