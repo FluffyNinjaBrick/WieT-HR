@@ -6,6 +6,7 @@ import com.wiethr.app.model.helpers.*;
 import com.wiethr.app.repository.WietHRRepository;
 import com.wiethr.app.security.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -42,8 +43,9 @@ public class RestController {
     public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest request) throws Exception {
         try{
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
-        } catch (BadCredentialsException e){
-            throw new Exception("Incorrect email or password");
+        } catch (Exception e){
+//            throw new Exception("Incorrect email or password");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid username or password");
         }
         final MyUserDetails userDetails = (MyUserDetails) this.userDetailService.loadUserByUsername(request.getEmail());
         final String jwt = jwtUtil.generateToken(userDetails);
