@@ -22,6 +22,7 @@ import LeaveCreateForm from "./components/leave/LeaveCreateForm";
 import DelegationCreateForm from "./components/delegation/DelegationCreateForm";
 import { ProvideAuth } from "./components/auth/useAuth";
 import PrivateRoute from "./components/utils/PrivateRoute";
+import "font-awesome/css/font-awesome.min.css";
 
 function App() {
   return (
@@ -29,7 +30,6 @@ function App() {
       <Router>
         <div>
           <Navigation />
-
           <Switch>
             <PrivateRoute exact path="/" role="any">
               <Redirect to="/profile" />
