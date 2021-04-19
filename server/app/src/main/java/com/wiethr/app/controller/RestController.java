@@ -22,6 +22,7 @@ import java.util.Optional;
 
 @org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api")
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class RestController {
 
     private final WietHRRepository repository;
