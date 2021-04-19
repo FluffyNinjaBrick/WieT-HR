@@ -25,16 +25,16 @@ export default function Navigation() {
             <Link to="/leaves">Urlopy</Link>
           </Nav.Link>
           <Nav.Link>
-            <Link to="/profile">Profil</Link>
-          </Nav.Link>
-          <Nav.Link>
             <Link to="/delegations">Delegacje</Link>
           </Nav.Link>
           <Nav.Link>
-            <Link to="/contract">Umowa</Link>
+            <Link to="/bonuses">Premie</Link>
           </Nav.Link>
           <Nav.Link>
-            <Link to="/bonuses">Premie</Link>
+            <Link to="/profile">Profil</Link>
+          </Nav.Link>
+          <Nav.Link>
+            <Link to="/contract">Umowa</Link>
           </Nav.Link>
           {auth.user && auth.user.userRole === "ADMIN" && (
             <NavDropdown title="Pracownicy" id="basic-nav-dropdown">

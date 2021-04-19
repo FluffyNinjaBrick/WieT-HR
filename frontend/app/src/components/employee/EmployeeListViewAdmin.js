@@ -22,10 +22,10 @@ export default function EmployeeListViewAdmin() {
   const editEmployee = () => {};
 
   return (
-    <div className="container mt-3">
-      <h2>Pracownicy</h2>
+    <div className="container">
+      <h1 className="my-3">Pracownicy</h1>
       <Link to="/employees/create">
-        <Button className="my-4" variant="primary">
+        <Button className="mb-3" variant="primary">
           Dodaj pracownika
         </Button>
       </Link>

@@ -47,34 +47,35 @@ export default function LoginView() {
           Wystąpił błąd.
         </Alert>
       )}
+      <h1 className="my-4">Zaloguj się</h1>
       <Form className="AuthForm" onSubmit={handleSubmit(handleLogin)}>
         <Form.Group>
-          <Form.Label htmlFor="email">Email address</Form.Label>
+          <Form.Label htmlFor="email">Adres email</Form.Label>
           <Form.Control
             type="email"
             name="email"
-            placeholder="Enter email"
+            placeholder="Podaj adres email"
             {...register("email", { required: true })}
           />
           {errors.email && (
-            <FormInputErrorMessage errorMessage="Email is required" />
+            <FormInputErrorMessage errorMessage="Adres email jest wymagany" />
           )}
         </Form.Group>
 
         <Form.Group>
-          <Form.Label htmlFor="password">Password</Form.Label>
+          <Form.Label htmlFor="password">Hasło</Form.Label>
           <Form.Control
             type="password"
             name="password"
-            placeholder="Password"
+            placeholder="Podaj hasło"
             {...register("password", { required: true })}
           />
           {errors.password && (
-            <FormInputErrorMessage errorMessage="Password is required" />
+            <FormInputErrorMessage errorMessage="Hasło jest wymagane" />
           )}
         </Form.Group>
 
-        <Button variant="primary" type="submit">
+        <Button variant="primary" type="submit" className="w-100 mt-3">
           Log in
         </Button>
       </Form>

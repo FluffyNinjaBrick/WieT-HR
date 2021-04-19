@@ -8,6 +8,7 @@ import {
 } from "react-router-dom";
 import React, { useContext, createContext, useState } from "react";
 import Navigation from "./components/navigation/Navigation";
+import LeavesViewAdmin from "./components/leave/LeavesViewAdmin";
 import LeavesView from "./components/leave/LeavesView";
 import DelegationsView from "./components/delegation/DelegationsView";
 import Profile from "./components/profile/Profile";
@@ -54,7 +55,7 @@ function App() {
             {/* tutaj trzeba bedzie zrobic routy dla urlopu pracownika i urlopow wszystkich 
           pracownikow, jak sie maprawa do ich wyswietlania, dropdown pracownicy -> urlopy */}
             <PrivateRoute path="/employees/leaves" role="ADMIN">
-              <LeavesView />
+              <LeavesViewAdmin />
             </PrivateRoute>
             <PrivateRoute path="/leaves/add" role="any">
               <LeaveCreateForm />
