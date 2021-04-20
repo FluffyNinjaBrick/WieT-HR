@@ -29,7 +29,10 @@ INSERT INTO DAYS_OFF_REQUEST (id, date_from, date_issued, date_signed, date_to, 
 
 /* delegation request */
 INSERT INTO DELEGATION_REQUEST (id, date_from, date_issued, date_signed, date_to, name_at_signing, signed, destination, employee_id) VALUES (5, '2021-03-02', '2021-02-01', NULL, '2021-03-15', 'Adam Nowak', false, 'Ulaanbaatar', 1);
-INSERT INTO DELEGATION_REQUEST (id, date_from, date_issued, date_signed, date_to, name_at_signing, signed, destination, employee_id) VALUES (0, '2021-03-02', '2021-02-01', NULL, '2021-03-15', 'Marek Kilof', false, 'Wieliczka', 2);
+INSERT INTO DELEGATION_REQUEST (id, date_from, date_issued, date_signed, date_to, name_at_signing, signed, destination, employee_id) VALUES (6, '2021-03-02', '2021-02-01', NULL, '2021-03-15', 'Marek Kilof', false, 'Wieliczka', 2);
+INSERT INTO DELEGATION_REQUEST (id, date_from, date_issued, date_signed, date_to, name_at_signing, signed, destination, employee_id) VALUES (7, '2020-12-02', '2020-12-01', NULL, '2020-12-08', 'Marek Kilof', false, 'Kraków', 2);
+INSERT INTO DELEGATION_REQUEST (id, date_from, date_issued, date_signed, date_to, name_at_signing, signed, destination, employee_id) VALUES (8, '2021-01-10', '2021-01-01', NULL, '2021-01-20', 'Marek Kilof', false, 'Warszawa', 2);
+INSERT INTO DELEGATION_REQUEST (id, date_from, date_issued, date_signed, date_to, name_at_signing, signed, destination, employee_id) VALUES (9, '2021-05-02', '2021-05-01', NULL, '2021-05-10', 'Marek Kilof', false, 'Szczecin', 2);
 
 alter sequence employee_id_seq restart with 3;
 alter sequence permissions_id_seq restart with 3;

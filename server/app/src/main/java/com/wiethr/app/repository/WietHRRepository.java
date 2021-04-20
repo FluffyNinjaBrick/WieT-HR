@@ -8,8 +8,10 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 public class WietHRRepository implements IWietHRRepository {
@@ -235,5 +237,29 @@ public class WietHRRepository implements IWietHRRepository {
         } while(!current.isAfter(to));
 
         return absences;
+    }
+
+    public List<DelegationRequest> getEmployeeDelegationRequests(long id, LocalDate from, LocalDate to) {
+        if(to.isBefore(from)){
+            throw new IllegalArgumentException("Error: getEmployeeDelegationRequests function wrong dates: from, to");
+        }
+
+        ArrayList<DelegationRequest> requests = new ArrayList<>(this.delegationRequestRepository.findAll());
+        return requests.stream().filter(
+                req -> req.getEmployee().getId() == id && !req.getDateTo().isBefore(from) && !req.getDateFrom().isAfter(to))
+                .sorted(Comparator.comparing(DelegationRequest::getDateFrom).reversed())
+                .collect(Collectors.toList());
+    }
+
+    public List<DaysOffRequest> getEmployeeDaysOffRequests(long id, LocalDate from, LocalDate to) {
+        if(to.isBefore(from)){
+            throw new IllegalArgumentException("Error: getEmployeeDaysOffRequests function wrong dates: from, to");
+        }
+
+        ArrayList<DaysOffRequest> requests = new ArrayList<>(this.daysOffRequestRepository.findAll());
+        return requests.stream().filter(
+                req -> req.getEmployee().getId() == id && !req.getDateTo().isBefore(from) && !req.getDateFrom().isAfter(to))
+                .sorted(Comparator.comparing(DaysOffRequest::getDateFrom).reversed())
+                .collect(Collectors.toList());
     }
 }

@@ -9,9 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -236,5 +234,17 @@ public class RestController {
     public List<AbsentEmployees> getAbsentEmployees(@PathVariable String from, @PathVariable String to) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         return this.repository.getAbsentEmployees(LocalDate.parse(from, formatter), LocalDate.parse(to, formatter));
+    }
+
+    @GetMapping("/employees/{id}/documents/delegation/{from}/{to}")
+    public List<DelegationRequest> getEmployeeDelegationRequests(@PathVariable long id, @PathVariable String from, @PathVariable String to){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return this.repository.getEmployeeDelegationRequests(id, LocalDate.parse(from, formatter), LocalDate.parse(to, formatter));
+    }
+
+    @GetMapping("/employees/{id}/documents/daysoff/{from}/{to}")
+    public List<DaysOffRequest> getEmployeeDaysOffRequests(@PathVariable long id, @PathVariable String from, @PathVariable String to){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return this.repository.getEmployeeDaysOffRequests(id, LocalDate.parse(from, formatter), LocalDate.parse(to, formatter));
     }
 }

@@ -51,7 +51,8 @@ public interface IWietHRRepository {
     void removeEmployee(long id);
     List<AbsentEmployees> getAbsentEmployees(LocalDate from, LocalDate to);
 
-
+    List<DelegationRequest> getEmployeeDelegationRequests(long id, LocalDate from, LocalDate to);
+    List<DaysOffRequest> getEmployeeDaysOffRequests(long id, LocalDate from, LocalDate to);
 
 
     // ---------- PERMISSIONS ----------
