@@ -103,6 +103,11 @@ public class WietHRRepository implements IWietHRRepository {
         return this.daysOffRequestRepository.findAll();
     }
 
+    @Override
+    public DaysOffRequest getDaysOffRequestByID(long documentID) {
+        return this.daysOffRequestRepository.findById(documentID).orElseThrow();
+    }
+
 
     // ---------- DELEGATION REQUEST ----------
     @Override

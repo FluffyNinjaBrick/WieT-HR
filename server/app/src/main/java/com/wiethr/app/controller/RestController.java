@@ -1,8 +1,10 @@
 package com.wiethr.app.controller;
 
 
+import com.itextpdf.text.DocumentException;
 import com.wiethr.app.model.*;
 import com.wiethr.app.model.helpers.*;
+import com.wiethr.app.repository.GeneratePDF;
 import com.wiethr.app.repository.WietHRRepository;
 import com.wiethr.app.security.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -81,6 +84,7 @@ public class RestController {
 
     }
 
+
     // ---------- DAYS OFF REQUEST ----------
     @PostMapping(value = "/documents/create/daysoff")
     public void createDaysOffRequest(@RequestBody AddDaysOffRequestHelper helper) {
@@ -116,6 +120,13 @@ public class RestController {
     public List<DaysOffRequest> getAllDaysOffRequests(){
         return this.repository.getAllDaysOffRequests();
     }
+
+    @GetMapping(value = "/documents/daysoff/pdf/{id}")
+    public ResponseEntity<byte[]> getDaysOffRequestPDF(@PathVariable long id) throws IOException, DocumentException {
+        DaysOffRequest request = this.repository.getDaysOffRequestByID(id);
+        return GeneratePDF.fromDaysOffRequest(request);
+    }
+
 
     // ---------- DELEGATION REQUEST ----------
     @PostMapping(value = "/documents/create/delegation")

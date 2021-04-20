@@ -31,6 +31,7 @@ public interface IWietHRRepository {
 
     // ---------- DAYS OFF REQUEST ----------
     void createDaysOffRequest(DaysOffRequest daysOffRequest);
+    DaysOffRequest getDaysOffRequestByID(long documentID);
     void updateDaysOffRequest(long documentID, AddDaysOffRequestHelper addDaysOffRequestHelper);
     void removeDaysOffRequest(long documentID);
     List<DaysOffRequest> getAllDaysOffRequests();
