@@ -247,4 +247,9 @@ public class RestController {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         return this.repository.getEmployeeDaysOffRequests(id, LocalDate.parse(from, formatter), LocalDate.parse(to, formatter));
     }
+
+    @GetMapping("/employees/getDaysOff/{employeeId}")
+    public int getEmployeesDaysOffLeft(@PathVariable long employeeId) {
+        return this.repository.getEmployeesDaysOffLeft(employeeId);
+    }
 }

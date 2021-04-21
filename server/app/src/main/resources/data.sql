@@ -1,7 +1,7 @@
 
 
 /* example employee who can't do anything  */
-INSERT INTO EMPLOYEE (id, address, email, first_name, last_name, last_year_days_off, password, phone, status, this_year_days_off, user_role, years_of_service) VALUES (0, 'Grodzka 12a, 30-851 Kraków', 'mail1@mailowo.com', 'Jan', 'Kowalski', 0, 'haslo', '987654321', 'WORKING', 10, 'ADMIN', 2);
+INSERT INTO EMPLOYEE (id, address, email, first_name, last_name, last_year_days_off, password, phone, status, this_year_days_off, user_role, years_of_service) VALUES (0, 'Grodzka 12a, 30-851 Kraków', 'mail1@mailowo.com', 'Jan', 'Kowalski', 0, 'haslo', '987654321', 'WORKING', 100, 'ADMIN', 2);
 INSERT INTO EMPLOYEE (id, address, email, first_name, last_name, last_year_days_off, password, phone, status, this_year_days_off, user_role, years_of_service) VALUES (1, 'Jasnogórska 1, 30-851 Kraków', 'mail2@mailowo.com', 'Adam', 'Nowak', 0, 'haslo', '212312311', 'WORKING', 10, 'EMPLOYEE', 2);
 INSERT INTO EMPLOYEE (id, address, email, first_name, last_name, last_year_days_off, password, phone, status, this_year_days_off, user_role, years_of_service) VALUES (2, 'Kuźnia Talentów 55b, 30-851 Kraków', 'mail3@mailowo.com', 'Marek', 'Kilof', 0, 'haslo', '123112311', 'WORKING', 10, 'EMPLOYEE', 2);
 

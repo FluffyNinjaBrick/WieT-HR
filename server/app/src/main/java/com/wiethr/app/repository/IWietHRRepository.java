@@ -54,6 +54,8 @@ public interface IWietHRRepository {
     List<DelegationRequest> getEmployeeDelegationRequests(long id, LocalDate from, LocalDate to);
     List<DaysOffRequest> getEmployeeDaysOffRequests(long id, LocalDate from, LocalDate to);
 
+    int getEmployeesDaysOffLeft(long id);
+
 
     // ---------- PERMISSIONS ----------
 
