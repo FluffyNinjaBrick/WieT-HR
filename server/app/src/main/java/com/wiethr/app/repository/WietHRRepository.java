@@ -240,12 +240,9 @@ public class WietHRRepository implements IWietHRRepository {
 
     @Override
     public void removeEmployee(long id) {
-        Optional<Employee> optional = getEmployee(id);
-        if (optional.isEmpty()) return;                       // check if employee even exists
         if (getSignedContractsForEmployee(id).size() != 0)    // check if employee has signed contracts
             throw new IllegalStateException("Error: employee has signed contracts, cannot remove");
-
-        this.employeeRepository.delete(optional.get());
+        this.employeeRepository.delete(this.getEmployee(id));
     }
 
     @Override

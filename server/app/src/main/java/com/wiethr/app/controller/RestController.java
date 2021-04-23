@@ -55,11 +55,11 @@ public class RestController {
     // ---------- CONTRACT ----------
     @PreAuthorize("hasAnyRole('ROLE_MANAGER','ROLE_ADMIN')")
     @PostMapping(value = "/documents/create/contract")
-    public void createContract(@RequestBody AddContractHelper helper) {
+    public void createContract(@RequestBody AddContractHelper helper, @RequestHeader("Authorization") String token) throws IllegalAccessException {
 
         Contract contract = new Contract();
 
-        Employee employee = this.repository.getEmployee(helper.getEmployeeID()).get();
+        Employee employee = this.repository.getEmployee(helper.getEmployeeID());
 
         // inherited from document
         contract.setEmployee(employee);
@@ -91,7 +91,7 @@ public class RestController {
     {
         DaysOffRequest request = new DaysOffRequest();
 
-        Employee employee = this.repository.getEmployee(helper.getEmployeeID()).get();
+        Employee employee = this.repository.getEmployee(helper.getEmployeeID());
 
         // inherited from document
         request.setEmployee(employee);
@@ -142,7 +142,7 @@ public class RestController {
     ) {
         DelegationRequest request = new DelegationRequest();
 
-        Employee employee = this.repository.getEmployee(helper.getEmployeeID()).get();
+        Employee employee = this.repository.getEmployee(helper.getEmployeeID());
 
         // inherited from document
         request.setEmployee(employee);
@@ -216,66 +216,58 @@ public class RestController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/employees/{employeeId}/edit/data")
     @ResponseBody
-    public Employee updateEmployeeData(@PathVariable long employeeId, @RequestBody Employee updatedEmployee) {
+    public Employee updateEmployeeData(
+            @PathVariable long employeeId,
+            @RequestBody Employee updatedEmployee,
+            @RequestHeader("Authorization") String token
+    ) throws IllegalAccessException {
+        //TODO send EmployeeHelper in json (or new structure because we don't save permissions in this method)
+        Employee currentEmployee = repository.getEmployee(employeeId);
+        currentEmployee.setFirstName(updatedEmployee.getFirstName());
+        currentEmployee.setLastName(updatedEmployee.getLastName());
+        currentEmployee.setEmail(updatedEmployee.getEmail());
+        currentEmployee.setPhone(updatedEmployee.getPhone());
+        currentEmployee.setAddress(updatedEmployee.getAddress());
 
-        Optional<Employee> currentEmployeeOptional = repository.getEmployee(employeeId);
-
-        if (currentEmployeeOptional.isPresent()) {
-
-            Employee currentEmployee = currentEmployeeOptional.get();
-            currentEmployee.setFirstName(updatedEmployee.getFirstName());
-            currentEmployee.setLastName(updatedEmployee.getLastName());
-            currentEmployee.setEmail(updatedEmployee.getEmail());
-            currentEmployee.setPhone(updatedEmployee.getPhone());
-            currentEmployee.setAddress(updatedEmployee.getAddress());
-
-            return repository.updateEmployee(currentEmployee);
-        }
-
-        return null;
+        return repository.updateEmployee(currentEmployee, jwtUtil.extractUsernameFromRaw(token));
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
     @PostMapping("/employees/{employeeId}/edit/permissions")
     @ResponseBody
-    public Employee updateEmployeePermissions(@PathVariable long employeeId, @RequestBody Permissions updatedPermissions) {
-        Optional<Employee> employeeOptional = repository.getEmployee(employeeId);
+    public Employee updateEmployeePermissions(
+            @PathVariable long employeeId,
+            @RequestBody Permissions updatedPermissions,
+            @RequestHeader("Authorization") String token
+    ) throws IllegalAccessException {
+        //TODO send PermissionHelper in json
+        Employee employee = repository.getEmployee(employeeId);
+        employee.getPermissions().setManagedUsers(updatedPermissions.getManagedUsers());
+        employee.getPermissions().setModifyBonusBudget(updatedPermissions.isModifyBonusBudget());
+        employee.setPermissions(updatedPermissions);
 
-        if (employeeOptional.isPresent()) {
-
-            Employee employee = employeeOptional.get();
-            employee.getPermissions().setManagedUsers(updatedPermissions.getManagedUsers());
-            employee.getPermissions().setModifyBonusBudget(updatedPermissions.isModifyBonusBudget());
-            employee.setPermissions(updatedPermissions);
-
-            return repository.updateEmployee(employee);
-        }
-
-        return null;
+        return repository.updateEmployee(employee, jwtUtil.extractUsernameFromRaw(token));
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
     @PostMapping("/employees/{employeeId}/edit/subordinates")
     @ResponseBody
-    public Employee updateSubordinatesOfEmployee(@PathVariable long employeeId, @RequestBody long[] subordinates) {
+    public Employee updateSubordinatesOfEmployee(
+            @PathVariable long employeeId,
+            @RequestBody long[] subordinates,
+            @RequestHeader("Authorization") String token
+    ) throws IllegalAccessException {
+        //TODO fix adding subordinates - saving them to the managed users table
+        Employee employee = repository.getEmployee(employeeId);
+        List<Employee> managedUsers = new ArrayList<>();
 
-        Optional<Employee> employeeOptional = repository.getEmployee(employeeId);
-
-        if (employeeOptional.isPresent()) {
-
-            Employee employee = employeeOptional.get();
-            List<Employee> managedUsers = new ArrayList<>();
-
-            for (long l : subordinates) {
-                Optional<Employee> employeeOptionalTmp = repository.getEmployee(l);
-                employeeOptionalTmp.ifPresent(managedUsers::add);
-            }
-
-            employee.getPermissions().setManagedUsers(managedUsers);
-            return repository.updateEmployee(employee);
+        for (long l : subordinates) {
+            Employee subordinate = repository.getEmployee(l);
+            managedUsers.add(subordinate);
         }
 
-        return null;
+        employee.getPermissions().setManagedUsers(managedUsers);
+        return repository.updateEmployee(employee, jwtUtil.extractUsernameFromRaw(token));
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
