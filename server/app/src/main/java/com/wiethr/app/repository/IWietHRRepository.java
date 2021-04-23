@@ -25,36 +25,36 @@ public interface IWietHRRepository {
 
 
     // ---------- CONTRACT ----------
-    void createContract(Contract contract);
+    void createContract(Contract contract, String email) throws IllegalAccessException;
 
 
 
     // ---------- DAYS OFF REQUEST ----------
-    void createDaysOffRequest(DaysOffRequest daysOffRequest);
-    void updateDaysOffRequest(long documentID, AddDaysOffRequestHelper addDaysOffRequestHelper);
-    void removeDaysOffRequest(long documentID);
+    void createDaysOffRequest(DaysOffRequest daysOffRequest, String email) throws IllegalAccessException;
+    void updateDaysOffRequest(long documentID, AddDaysOffRequestHelper addDaysOffRequestHelper, String email) throws IllegalAccessException;
+    void removeDaysOffRequest(long documentID, String email) throws IllegalAccessException;
     List<DaysOffRequest> getAllDaysOffRequests();
 
 
     // ---------- DELEGATION REQUEST ----------
     void createDelegationRequest(DelegationRequest delegationRequest);
-    void updateDelegationRequest(long documentID, AddDelegationRequestHelper delegationRequestHelper);
-    void removeDelegationRequest(long documentID);
+    void updateDelegationRequest(long documentID, AddDelegationRequestHelper delegationRequestHelper, String email) throws IllegalAccessException;
+    void removeDelegationRequest(long documentID, String email) throws IllegalAccessException;
     List<DelegationRequest> getAllDelegationRequests();
 
     // ---------- EMPLOYEE ----------
     List<Employee> getAllEmployees();
-    Optional<Employee> getEmployee(long id);
-    Optional<Employee> getEmployeeByEmail(String email);
-    Employee updateEmployee(Employee employee);
+    Employee getEmployee(long id, String email) throws IllegalAccessException;
+    Employee getEmployeeByEmail(String email, String requestingEmail) throws IllegalAccessException;
+    Employee updateEmployee(Employee employee, String email) throws IllegalAccessException;
     void createEmployee(AddEmployeeHelper helper);
     void removeEmployee(long id);
-    List<AbsentEmployees> getAbsentEmployees(LocalDate from, LocalDate to);
+    List<AbsentEmployees> getAbsentEmployees(LocalDate from, LocalDate to, String email) throws IllegalAccessException;
 
-    List<DelegationRequest> getEmployeeDelegationRequests(long id, LocalDate from, LocalDate to);
-    List<DaysOffRequest> getEmployeeDaysOffRequests(long id, LocalDate from, LocalDate to);
+    List<DelegationRequest> getEmployeeDelegationRequests(long id, LocalDate from, LocalDate to, String email) throws IllegalAccessException;
+    List<DaysOffRequest> getEmployeeDaysOffRequests(long id, LocalDate from, LocalDate to, String email) throws IllegalAccessException;
 
-    int getEmployeesDaysOffLeft(long id);
+    int getEmployeesDaysOffLeft(long id, String email) throws IllegalAccessException;
 
 
     // ---------- PERMISSIONS ----------

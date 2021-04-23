@@ -13,8 +13,8 @@ import java.time.LocalDate;
 public abstract class Document {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    //@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "docGen")
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "docGen")
     private long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

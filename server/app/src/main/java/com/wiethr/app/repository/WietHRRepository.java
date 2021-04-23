@@ -3,6 +3,7 @@ package com.wiethr.app.repository;
 import com.wiethr.app.model.*;
 import com.wiethr.app.model.helpers.*;
 import com.wiethr.app.repository.jpaRepos.*;
+import com.wiethr.app.security.RoleValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ public class WietHRRepository implements IWietHRRepository {
     private final EmployeeRepository employeeRepository;
     private final PermissionsRepository permissionsRepository;
     private final DaysOffRequestRepository daysOffRequestRepository;
+    private final RoleValidator roleValidator;
 
     @Autowired
     public WietHRRepository(
@@ -33,7 +35,8 @@ public class WietHRRepository implements IWietHRRepository {
             ContractRepository contractRepository,
             DelegationRequestRepository delegationRequestRepository, DaysOffRequestRepository daysOffRequestRepository,
             EmployeeRepository employeeRepository,
-            PermissionsRepository permissionsRepository) {
+            PermissionsRepository permissionsRepository,
+            RoleValidator roleValidator) {
         this.appreciationBonusRepository = appreciationBonusRepository;
         this.bonusBudgetRepository = bonusBudgetRepository;
         this.contractRepository = contractRepository;
@@ -41,8 +44,8 @@ public class WietHRRepository implements IWietHRRepository {
         this.employeeRepository = employeeRepository;
         this.permissionsRepository = permissionsRepository;
         this.daysOffRequestRepository = daysOffRequestRepository;
+        this.roleValidator = roleValidator;
     }
-
 
     // ---------- CONTRACT ----------
     @Override
@@ -72,18 +75,18 @@ public class WietHRRepository implements IWietHRRepository {
         Optional<DaysOffRequest> daysOffRequest = this.daysOffRequestRepository.findById(documentID);
         Optional<Employee> employee = this.employeeRepository.findById(addDaysOffRequestHelper.getEmployeeID());
 
-        if(daysOffRequest.isPresent() && employee.isPresent()){
-            Employee employeeToSet = employee.get();
-            DaysOffRequest currentDaysOffRequest = daysOffRequest.get();
-            // daysOffRequest
-            currentDaysOffRequest.setLeaveType(addDaysOffRequestHelper.getLeaveType());
-            // document
-            currentDaysOffRequest.setDateFrom(addDaysOffRequestHelper.getDateFrom());
-            currentDaysOffRequest.setDateTo(addDaysOffRequestHelper.getDateTo());
-            currentDaysOffRequest.setDateIssued(LocalDate.now());
-            currentDaysOffRequest.setSigned(false);
-            currentDaysOffRequest.setEmployee(employeeToSet);
-            currentDaysOffRequest.setNameAtSigning(employeeToSet.getFirstName()+" "+employeeToSet.getLastName());
+        this.roleValidator.validate(this.getEmployeeByEmail(email), daysOffRequest.get().getEmployee().getId());
+
+        DaysOffRequest currentDaysOffRequest = daysOffRequest.get();
+        // daysOffRequest
+        currentDaysOffRequest.setLeaveType(addDaysOffRequestHelper.getLeaveType());
+        // document
+        currentDaysOffRequest.setDateFrom(addDaysOffRequestHelper.getDateFrom());
+        currentDaysOffRequest.setDateTo(addDaysOffRequestHelper.getDateTo());
+        currentDaysOffRequest.setDateIssued(LocalDate.now());
+        currentDaysOffRequest.setSigned(false);
+        currentDaysOffRequest.setEmployee(employee);
+        currentDaysOffRequest.setNameAtSigning(employee.getFirstName() + " " + employee.getLastName());
 
             this.daysOffRequestRepository.save(currentDaysOffRequest);
         }
@@ -161,12 +164,18 @@ public class WietHRRepository implements IWietHRRepository {
         return this.employeeRepository.findAll();
     }
 
-    public Optional<Employee> getEmployee(long id) {
-        return this.employeeRepository.findById(id);
+    @Override
+    public Employee getEmployee(long id, String email) throws IllegalAccessException {
+        this.roleValidator.validate(this.getEmployeeByEmail(email), id);
+        return this.employeeRepository.findById(id).orElseThrow();
     }
 
-    public Optional<Employee> getEmployeeByEmail(String email) {
-        return this.employeeRepository.findByEmail(email);
+    @Override
+    public Employee getEmployeeByEmail(String email, String requestingEmail) throws IllegalAccessException {
+        Employee queried = this.employeeRepository.findByEmail(email).orElseThrow();
+        Employee requesting = this.employeeRepository.findByEmail(requestingEmail).orElseThrow();
+        this.roleValidator.validate(requesting, queried.getId());
+        return queried;
     }
 
     public Employee updateEmployee(Employee employee) {

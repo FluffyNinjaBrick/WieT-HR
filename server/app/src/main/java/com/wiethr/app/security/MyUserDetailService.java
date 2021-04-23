@@ -23,10 +23,7 @@ public class MyUserDetailService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Optional<Employee> employeeOptional = repository.getEmployeeByEmail(email);
-        UserDetails user = null;
-        if (employeeOptional.isPresent()) {
-            Employee employee = employeeOptional.get();
+        Employee employee = repository.getEmployeeByEmail(email);
 //            user = new User(employee.getEmail(), employee.getPassword(), new ArrayList<>());
             user = new MyUserDetails(employee.getId(), employee.getEmail(), employee.getPassword(), employee.getUserRole(), new ArrayList<>());
         }
