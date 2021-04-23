@@ -8,6 +8,7 @@ import com.wiethr.app.security.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
@@ -52,6 +53,7 @@ public class RestController {
     }
 
     // ---------- CONTRACT ----------
+    @PreAuthorize("hasAnyRole('ROLE_MANAGER','ROLE_ADMIN')")
     @PostMapping(value = "/documents/create/contract")
     public void createContract(@RequestBody AddContractHelper helper) {
 
@@ -80,6 +82,8 @@ public class RestController {
     }
 
     // ---------- DAYS OFF REQUEST ----------
+
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_MANAGER', 'ROLE_ADMIN')")
     @PostMapping(value = "/documents/create/daysoff")
     public void createDaysOffRequest(
             @RequestBody AddDaysOffRequestHelper helper,
@@ -103,6 +107,7 @@ public class RestController {
         this.repository.createDaysOffRequest(request, jwtUtil.extractUsernameFromRaw(token));
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_MANAGER', 'ROLE_ADMIN')")
     @PostMapping(value = "/documents/update/daysoff/{documentID}")
     public void updateDaysOffRequest(
             @PathVariable long documentID,
@@ -180,21 +185,35 @@ public class RestController {
 
 
     // ---------- EMPLOYEE ----------
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping(value = "/employees")
     public List<Employee> getAllEmployees() {
         return this.repository.getAllEmployees();
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping(value = "/employees/{id}")
+    public Employee getEmployeeById(
+            @PathVariable long id,
+            @RequestHeader("Authorization") String token
+    ) throws IllegalAccessException {
+        return this.repository.getEmployee(id, jwtUtil.extractUsernameFromRaw(token));
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/employees/create")
     public void createEmployee(@RequestBody AddEmployeeHelper helper) {
         this.repository.createEmployee(helper);
-    }
+        }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/employees/{id}")
     public void removeEmployee(@PathVariable long id) {
         this.repository.removeEmployee(id);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/employees/{employeeId}/edit/data")
     @ResponseBody
     public Employee updateEmployeeData(@PathVariable long employeeId, @RequestBody Employee updatedEmployee) {
