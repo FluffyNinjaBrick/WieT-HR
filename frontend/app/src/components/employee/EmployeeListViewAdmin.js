@@ -1,9 +1,6 @@
 import { useEffect, useState } from "react";
-import { Button, Table, ThemeProvider } from "react-bootstrap";
+import { Button, Table } from "react-bootstrap";
 import SingleEmployeeRecord from "./SingleEmployeeRecord";
-import { API_URL } from "../../api/Api";
-import { Chart } from "react-google-charts";
-import CalendarView from "../calendar/CalendarView";
 import { Link } from "react-router-dom";
 import { fetchEmployees } from "../../services/EmployeeService";
 
