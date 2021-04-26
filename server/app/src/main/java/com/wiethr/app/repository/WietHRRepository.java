@@ -116,6 +116,11 @@ public class WietHRRepository implements IWietHRRepository {
     }
 
     @Override
+    public DelegationRequest getDelegationRequestByID(long id) {
+        return this.delegationRequestRepository.findById(id).orElseThrow();
+    }
+
+    @Override
     public void updateDelegationRequest(long documentID, AddDelegationRequestHelper delegationRequestHelper) {
         Optional<DelegationRequest> delegationRequest = this.delegationRequestRepository.findById(documentID);
         Optional<Employee> employee = this.employeeRepository.findById(delegationRequestHelper.getEmployeeID());

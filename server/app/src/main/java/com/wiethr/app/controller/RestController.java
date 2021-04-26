@@ -164,6 +164,12 @@ public class RestController {
         return this.repository.getAllDelegationRequests();
     }
 
+    @GetMapping(value = "/documents/delegation/pdf/{id}")
+    public ResponseEntity<byte[]> getDelegationRequestPDF(@PathVariable long id) throws IOException, DocumentException {
+        DelegationRequest request = this.repository.getDelegationRequestByID(id);
+        return GeneratePDF.fromDelegationRequest(request);
+    }
+
 
     // ---------- EMPLOYEE ----------
     @GetMapping(value = "/employees")
