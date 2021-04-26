@@ -33,7 +33,7 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
         //TODO check
         http.cors().and().csrf().disable()
                 .authorizeRequests().antMatchers("/api/authenticate").permitAll()
-                .anyRequest().authenticated()
+                .anyRequest().permitAll()
                 .and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
