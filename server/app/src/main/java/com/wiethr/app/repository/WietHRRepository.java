@@ -3,13 +3,18 @@ package com.wiethr.app.repository;
 import com.wiethr.app.model.*;
 import com.wiethr.app.model.helpers.*;
 import com.wiethr.app.repository.jpaRepos.*;
+import com.wiethr.app.security.RoleValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
+import javax.swing.text.html.Option;
+import java.time.Duration;
+import java.time.temporal.TemporalUnit;
+import java.util.*;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 public class WietHRRepository implements IWietHRRepository {
@@ -21,6 +26,7 @@ public class WietHRRepository implements IWietHRRepository {
     private final EmployeeRepository employeeRepository;
     private final PermissionsRepository permissionsRepository;
     private final DaysOffRequestRepository daysOffRequestRepository;
+    private final RoleValidator roleValidator;
 
     @Autowired
     public WietHRRepository(
@@ -29,7 +35,8 @@ public class WietHRRepository implements IWietHRRepository {
             ContractRepository contractRepository,
             DelegationRequestRepository delegationRequestRepository, DaysOffRequestRepository daysOffRequestRepository,
             EmployeeRepository employeeRepository,
-            PermissionsRepository permissionsRepository) {
+            PermissionsRepository permissionsRepository,
+            RoleValidator roleValidator) {
         this.appreciationBonusRepository = appreciationBonusRepository;
         this.bonusBudgetRepository = bonusBudgetRepository;
         this.contractRepository = contractRepository;
@@ -37,12 +44,13 @@ public class WietHRRepository implements IWietHRRepository {
         this.employeeRepository = employeeRepository;
         this.permissionsRepository = permissionsRepository;
         this.daysOffRequestRepository = daysOffRequestRepository;
+        this.roleValidator = roleValidator;
     }
-
 
     // ---------- CONTRACT ----------
     @Override
-    public void createContract(Contract contract) {
+    public void createContract(Contract contract, String email) throws IllegalAccessException {
+        this.roleValidator.validate(this.getEmployeeByEmail(email), contract.getEmployee().getId());
         this.contractRepository.save(contract);
     }
 
@@ -59,41 +67,47 @@ public class WietHRRepository implements IWietHRRepository {
 
     // ---------- DAYS OFF REQUEST ----------
     @Override
-    public void createDaysOffRequest(DaysOffRequest daysOffRequest) {
+    public void createDaysOffRequest(DaysOffRequest daysOffRequest, String email) throws IllegalAccessException {
+        this.roleValidator.validate(this.getEmployeeByEmail(email), daysOffRequest.getEmployee().getId());
         this.daysOffRequestRepository.save(daysOffRequest);
     }
 
     @Override
-    public void updateDaysOffRequest(long documentID, AddDaysOffRequestHelper addDaysOffRequestHelper) {
+    public void updateDaysOffRequest(
+            long documentID,
+            AddDaysOffRequestHelper addDaysOffRequestHelper,
+            String email
+    ) throws IllegalAccessException {
         Optional<DaysOffRequest> daysOffRequest = this.daysOffRequestRepository.findById(documentID);
-        Optional<Employee> employee = this.employeeRepository.findById(addDaysOffRequestHelper.getEmployeeID());
+        Employee employee = this.getEmployee(addDaysOffRequestHelper.getEmployeeID());
 
-        if(daysOffRequest.isPresent() && employee.isPresent()){
-            Employee employeeToSet = employee.get();
-            DaysOffRequest currentDaysOffRequest = daysOffRequest.get();
-            // daysOffRequest
-            currentDaysOffRequest.setLeaveType(addDaysOffRequestHelper.getLeaveType());
-            // document
-            currentDaysOffRequest.setDateFrom(addDaysOffRequestHelper.getDateFrom());
-            currentDaysOffRequest.setDateTo(addDaysOffRequestHelper.getDateTo());
-            currentDaysOffRequest.setDateIssued(LocalDate.now());
-            currentDaysOffRequest.setSigned(false);
-            currentDaysOffRequest.setEmployee(employeeToSet);
-            currentDaysOffRequest.setNameAtSigning(employeeToSet.getFirstName()+" "+employeeToSet.getLastName());
+        this.roleValidator.validate(this.getEmployeeByEmail(email), daysOffRequest.get().getEmployee().getId());
 
-            this.daysOffRequestRepository.save(currentDaysOffRequest);
-        }
+        DaysOffRequest currentDaysOffRequest = daysOffRequest.get();
+        // daysOffRequest
+        currentDaysOffRequest.setLeaveType(addDaysOffRequestHelper.getLeaveType());
+        // document
+        currentDaysOffRequest.setDateFrom(addDaysOffRequestHelper.getDateFrom());
+        currentDaysOffRequest.setDateTo(addDaysOffRequestHelper.getDateTo());
+        currentDaysOffRequest.setDateIssued(LocalDate.now());
+        currentDaysOffRequest.setSigned(false);
+        currentDaysOffRequest.setEmployee(employee);
+        currentDaysOffRequest.setNameAtSigning(employee.getFirstName() + " " + employee.getLastName());
+
+        this.daysOffRequestRepository.save(currentDaysOffRequest);
     }
 
     @Override
-    public void removeDaysOffRequest(long documentID) {
+    public void removeDaysOffRequest(long documentID, String email) throws IllegalAccessException {
         Optional<DaysOffRequest> daysOffRequest = this.daysOffRequestRepository.findById(documentID);
         if(daysOffRequest.isEmpty()) return;
 
+        this.roleValidator.validate(this.getEmployeeByEmail(email), daysOffRequest.get().getEmployee().getId());
+
         DaysOffRequest currentDaysOffRequest = daysOffRequest.get();
-        if(currentDaysOffRequest.isSigned()){
+        if (currentDaysOffRequest.isSigned()) {
             throw new IllegalArgumentException("ERROR: Cannot remove signed DaysOffRequest document");
-        } else{
+        } else {
             this.daysOffRequestRepository.delete(currentDaysOffRequest);
         }
     }
@@ -101,11 +115,6 @@ public class WietHRRepository implements IWietHRRepository {
     @Override
     public List<DaysOffRequest> getAllDaysOffRequests() {
         return this.daysOffRequestRepository.findAll();
-    }
-
-    @Override
-    public DaysOffRequest getDaysOffRequestByID(long documentID) {
-        return this.daysOffRequestRepository.findById(documentID).orElseThrow();
     }
 
 
@@ -116,16 +125,17 @@ public class WietHRRepository implements IWietHRRepository {
     }
 
     @Override
-    public DelegationRequest getDelegationRequestByID(long id) {
-        return this.delegationRequestRepository.findById(id).orElseThrow();
-    }
-
-    @Override
-    public void updateDelegationRequest(long documentID, AddDelegationRequestHelper delegationRequestHelper) {
+    public void updateDelegationRequest(
+            long documentID,
+            AddDelegationRequestHelper delegationRequestHelper,
+            String email
+    ) throws IllegalAccessException {
         Optional<DelegationRequest> delegationRequest = this.delegationRequestRepository.findById(documentID);
         Optional<Employee> employee = this.employeeRepository.findById(delegationRequestHelper.getEmployeeID());
 
-        if(delegationRequest.isPresent() && employee.isPresent()){
+        this.roleValidator.validate(this.getEmployeeByEmail(email), delegationRequest.get().getEmployee().getId());
+
+        if(delegationRequest.isPresent() && employee.isPresent()) {
             Employee employeeToSet = employee.get();
             DelegationRequest currentDelegationRequest = delegationRequest.get();
             // delegationRequest
@@ -136,16 +146,18 @@ public class WietHRRepository implements IWietHRRepository {
             currentDelegationRequest.setDateIssued(LocalDate.now());
             currentDelegationRequest.setSigned(false);
             currentDelegationRequest.setEmployee(employeeToSet);
-            currentDelegationRequest.setNameAtSigning(employeeToSet.getFirstName()+" "+employeeToSet.getLastName());
+            currentDelegationRequest.setNameAtSigning(employeeToSet.getFirstName() + " " + employeeToSet.getLastName());
 
             this.delegationRequestRepository.save(currentDelegationRequest);
         }
     }
 
     @Override
-    public void removeDelegationRequest(long documentID) {
+    public void removeDelegationRequest(long documentID, String email) throws IllegalAccessException {
         Optional<DelegationRequest> delegationRequest = this.delegationRequestRepository.findById(documentID);
         if(delegationRequest.isEmpty()) return;
+
+        this.roleValidator.validate(this.getEmployeeByEmail(email), delegationRequest.get().getEmployee().getId());
 
         DelegationRequest currentDelegationRequest = delegationRequest.get();
         if(currentDelegationRequest.isSigned()){
@@ -167,17 +179,33 @@ public class WietHRRepository implements IWietHRRepository {
         return this.employeeRepository.findAll();
     }
 
-    public Optional<Employee> getEmployee(long id) {
-        return this.employeeRepository.findById(id);
+    @Override
+    public Employee getEmployee(long id, String email) throws IllegalAccessException {
+        this.roleValidator.validate(this.getEmployeeByEmail(email), id);
+        return this.employeeRepository.findById(id).orElseThrow();
     }
 
-    public Optional<Employee> getEmployeeByEmail(String email) {
-        return this.employeeRepository.findByEmail(email);
+    public Employee getEmployee(long id) {
+        return this.employeeRepository.findById(id).orElseThrow();
     }
 
-    public Employee updateEmployee(Employee employee) {
-        this.permissionsRepository.save(employee.getPermissions());
-        return this.employeeRepository.save(employee);
+    @Override
+    public Employee getEmployeeByEmail(String email, String requestingEmail) throws IllegalAccessException {
+        Employee queried = this.employeeRepository.findByEmail(email).orElseThrow();
+        Employee requesting = this.employeeRepository.findByEmail(requestingEmail).orElseThrow();
+        this.roleValidator.validate(requesting, queried.getId());
+        return queried;
+    }
+
+    public Employee getEmployeeByEmail(String email) {
+        return this.employeeRepository.findByEmail(email).orElseThrow();
+    }
+
+    @Override
+    public Employee updateEmployee(Employee changedEmployee, String email) throws IllegalAccessException {
+        this.roleValidator.validate(this.getEmployeeByEmail(email), changedEmployee.getId());
+        this.permissionsRepository.save(changedEmployee.getPermissions());
+        return this.employeeRepository.save(changedEmployee);
     }
 
     @Override
@@ -212,16 +240,19 @@ public class WietHRRepository implements IWietHRRepository {
 
     @Override
     public void removeEmployee(long id) {
-        Optional<Employee> optional = getEmployee(id);
-        if (optional.isEmpty()) return;                       // check if employee even exists
         if (getSignedContractsForEmployee(id).size() != 0)    // check if employee has signed contracts
             throw new IllegalStateException("Error: employee has signed contracts, cannot remove");
-
-        this.employeeRepository.delete(optional.get());
+        this.employeeRepository.delete(this.getEmployee(id));
     }
 
     @Override
-    public List<AbsentEmployees> getAbsentEmployees(LocalDate from, LocalDate to) {
+    public List<AbsentEmployees> getAbsentEmployees(
+            LocalDate from,
+            LocalDate to,
+            String email
+    ) throws IllegalAccessException {
+
+        this.roleValidator.validateAbsent(this.getEmployeeByEmail(email));
 
         ArrayList<AbsentEmployees> absences = new ArrayList<>();
 
@@ -245,5 +276,69 @@ public class WietHRRepository implements IWietHRRepository {
         } while(!current.isAfter(to));
 
         return absences;
+    }
+
+    @Override
+    public List<DelegationRequest> getEmployeeDelegationRequests(
+            long id,
+            LocalDate from,
+            LocalDate to,
+            String email
+    ) throws IllegalAccessException{
+
+        this.roleValidator.validate(this.getEmployeeByEmail(email), id);
+
+        if(to.isBefore(from)){
+            throw new IllegalArgumentException("Error: getEmployeeDelegationRequests function wrong dates: from, to");
+        }
+
+        ArrayList<DelegationRequest> requests = new ArrayList<>(this.delegationRequestRepository.findAll());
+        return requests.stream().filter(
+                req -> req.getEmployee().getId() == id && !req.getDateTo().isBefore(from) && !req.getDateFrom().isAfter(to))
+                .sorted(Comparator.comparing(DelegationRequest::getDateFrom).reversed())
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<DaysOffRequest> getEmployeeDaysOffRequests(
+            long id,
+            LocalDate from,
+            LocalDate to,
+            String email
+    ) throws IllegalAccessException{
+
+        this.roleValidator.validate(this.getEmployeeByEmail(email), id);
+
+        if(to.isBefore(from)){
+            throw new IllegalArgumentException("Error: getEmployeeDaysOffRequests function wrong dates: from, to");
+        }
+
+        ArrayList<DaysOffRequest> requests = new ArrayList<>(this.daysOffRequestRepository.findAll());
+        return requests.stream().filter(
+                req -> req.getEmployee().getId() == id && !req.getDateTo().isBefore(from) && !req.getDateFrom().isAfter(to))
+                .sorted(Comparator.comparing(DaysOffRequest::getDateFrom).reversed())
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public int getEmployeesDaysOffLeft(long id, String email) throws IllegalAccessException {
+
+        this.roleValidator.validate(this.getEmployeeByEmail(email), id);
+
+        List<DaysOffRequest> daysOffRequestList = daysOffRequestRepository.findAllByEmployeeIdAndDateFromAfter(id, LocalDate.now());
+        Optional<Employee> employeeOptional = employeeRepository.findById(id);
+        if (employeeOptional.isPresent()) {
+            Employee employee = employeeOptional.get();
+            int daysLeft = employee.getLastYearDaysOff() + employee.getThisYearDaysOff();
+            for (DaysOffRequest request : daysOffRequestList) {
+                Date from = new Date(request.getDateFrom().getYear(), request.getDateFrom().getMonthValue(), request.getDateFrom().getDayOfMonth());
+                Date to = new Date(request.getDateTo().getYear(), request.getDateTo().getMonthValue(), request.getDateTo().getDayOfMonth());
+                int days = (int) (to.getTime() - from.getTime()) / 1000 / 60 / 60 / 24;
+                daysLeft -= days;
+            }
+            return daysLeft;
+        }
+        // this should not happen
+        return -1;
     }
 }

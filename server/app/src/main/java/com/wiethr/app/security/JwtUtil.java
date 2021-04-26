@@ -22,6 +22,11 @@ public class JwtUtil {
         return extractClaims(token, Claims::getSubject);
     }
 
+    public String extractUsernameFromRaw(String rawToken) {
+        String jwt = rawToken.substring(7);
+        return extractUsername(jwt);
+    }
+
     public Date extractExpiration(String  token) {
         return extractClaims(token, Claims::getExpiration);
     }

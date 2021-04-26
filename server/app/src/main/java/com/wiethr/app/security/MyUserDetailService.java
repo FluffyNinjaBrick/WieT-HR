@@ -3,12 +3,15 @@ package com.wiethr.app.security;
 import com.wiethr.app.model.Employee;
 import com.wiethr.app.repository.WietHRRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Optional;
 
 @Service
@@ -23,13 +26,11 @@ public class MyUserDetailService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Optional<Employee> employeeOptional = repository.getEmployeeByEmail(email);
-        UserDetails user = null;
-        if (employeeOptional.isPresent()) {
-            Employee employee = employeeOptional.get();
+        Employee employee = repository.getEmployeeByEmail(email);
 //            user = new User(employee.getEmail(), employee.getPassword(), new ArrayList<>());
-            user = new MyUserDetails(employee.getId(), employee.getEmail(), employee.getPassword(), employee.getUserRole(), new ArrayList<>());
-        }
+        Collection<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + employee.getUserRole()));
+        UserDetails user = new MyUserDetails(employee.getId(), employee.getEmail(), employee.getPassword(), employee.getUserRole(), authorities);
         return user;
     }
 }
