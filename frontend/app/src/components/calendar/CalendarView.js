@@ -5,7 +5,7 @@ import { Table } from "react-bootstrap";
 import { getCurrentUser } from "../../services/AuthService";
 import { Loading } from "../loader/LoadingView";
 
-
+//TODO mozliwosc wyboru roku
 export default function CalendarView() {
   const token = JSON.parse(getCurrentUser()).jwt;
   const id = JSON.parse(getCurrentUser()).id;

@@ -52,7 +52,7 @@ export default function DelegationCreateForm() {
       setError(true);
       setShowAlert(true);
     } else {
-      history.push("/leaves");
+      history.push("/delegations");
     }
 
     console.log(data);
