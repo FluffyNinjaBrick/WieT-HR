@@ -1,5 +1,9 @@
 import { Link } from "react-router-dom";
-import { Button, ProgressBar } from "react-bootstrap";
+import { Button, ProgressBar, Table } from "react-bootstrap";
+import { fetchUserDaysOff } from "../../services/DocumentsService";
+import { useEffect, useState } from "react";
+import SingleLeaveDocument from "./SingleLeaveDocument";
+
 
 //TODO wziac info o pracowniku z api i wtedy wyciagnac jego dni wolne.
 //TODO przeniesc yearsDaysOff jako zmienna bardziej globalna xd
@@ -22,6 +26,19 @@ export default function LeavesView() {
           colorVariant = "info";
           break;   
   }
+
+  const [daysOff, setDaysOff] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setLoading(true);
+
+    fetchUserDaysOff()
+      .then((data) => setDaysOff(data))
+      .then(setLoading(false));
+  }, []);
+
+
   
   return (
     <div className="container justify-content-sm-center">
@@ -36,6 +53,32 @@ export default function LeavesView() {
         <Link to="/leaves/add">
           <Button variant="primary">Złóż wniosek o urlop</Button>
         </Link>
+      </div>
+      <div>
+        <h3 className="mt-5">Moje wnioski urlopowe</h3>
+      </div>
+      <div>
+    <Table bordered hover size="sm" className="my-3 col-sm-8">
+            <thead>
+              <tr>
+                <th>Data rozpoczęcia</th>
+                <th>Data zakończenia</th>
+                <th>Typ urlopu</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+
+            {loading ? (
+              <tbody></tbody>
+            ) : (
+              <tbody>
+                {daysOff.length &&
+                  daysOff.map((leave) => (
+                    <SingleLeaveDocument key={leave.id} leave={leave} />
+                ))}
+              </tbody>
+            )}
+          </Table>
       </div>
     </div>
   );
