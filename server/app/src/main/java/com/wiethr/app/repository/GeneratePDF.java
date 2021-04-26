@@ -169,7 +169,7 @@ public class GeneratePDF {
         // request text
         document.add(createDelegationRequestText(regular, request));
         Paragraph destination = new Paragraph(
-                "Cel podróży: " + request.getDestination(),
+                "Cel podrozy: " + request.getDestination(),
                 regular
         );
         document.add(destination);

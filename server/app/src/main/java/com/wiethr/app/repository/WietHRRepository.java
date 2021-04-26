@@ -73,6 +73,11 @@ public class WietHRRepository implements IWietHRRepository {
     }
 
     @Override
+    public DaysOffRequest getDaysOffRequestByID(long documentID) {
+        return this.daysOffRequestRepository.findById(documentID).orElseThrow();
+    }
+
+    @Override
     public void updateDaysOffRequest(
             long documentID,
             AddDaysOffRequestHelper addDaysOffRequestHelper,
@@ -122,6 +127,11 @@ public class WietHRRepository implements IWietHRRepository {
     @Override
     public void createDelegationRequest(DelegationRequest delegationRequest) {
         this.delegationRequestRepository.save(delegationRequest);
+    }
+
+    @Override
+    public DelegationRequest getDelegationRequestByID(long documentID) {
+        return this.delegationRequestRepository.findById(documentID).orElseThrow();
     }
 
     @Override
