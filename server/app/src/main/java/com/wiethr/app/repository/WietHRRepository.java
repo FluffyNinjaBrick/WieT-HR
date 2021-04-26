@@ -73,8 +73,10 @@ public class WietHRRepository implements IWietHRRepository {
     }
 
     @Override
-    public DaysOffRequest getDaysOffRequestByID(long documentID) {
-        return this.daysOffRequestRepository.findById(documentID).orElseThrow();
+    public DaysOffRequest getDaysOffRequestByID(long documentID, String email) throws IllegalAccessException {
+        DaysOffRequest request = this.daysOffRequestRepository.findById(documentID).orElseThrow();
+        this.roleValidator.validate(this.getEmployeeByEmail(email), request.getEmployee().getId());
+        return request;
     }
 
     @Override
@@ -130,8 +132,10 @@ public class WietHRRepository implements IWietHRRepository {
     }
 
     @Override
-    public DelegationRequest getDelegationRequestByID(long documentID) {
-        return this.delegationRequestRepository.findById(documentID).orElseThrow();
+    public DelegationRequest getDelegationRequestByID(long documentID, String email) throws IllegalAccessException {
+        DelegationRequest request = this.delegationRequestRepository.findById(documentID).orElseThrow();
+        this.roleValidator.validate(this.getEmployeeByEmail(email), request.getEmployee().getId());
+        return request;
     }
 
     @Override

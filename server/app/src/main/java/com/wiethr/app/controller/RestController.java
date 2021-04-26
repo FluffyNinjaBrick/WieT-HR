@@ -137,8 +137,11 @@ public class RestController {
     }
 
     @GetMapping(value = "/documents/daysoff/pdf/{id}")
-    public ResponseEntity<byte[]> getDaysOffRequestPDF(@PathVariable long id) throws IOException, DocumentException {
-        DaysOffRequest request = this.repository.getDaysOffRequestByID(id);
+    public ResponseEntity<byte[]> getDaysOffRequestPDF(
+            @PathVariable long id,
+            @RequestHeader("Authorization") String token
+    ) throws DocumentException, IllegalAccessException {
+        DaysOffRequest request = this.repository.getDaysOffRequestByID(id, jwtUtil.extractUsernameFromRaw(token));
         return GeneratePDF.fromDaysOffRequest(request);
     }
 
@@ -195,8 +198,11 @@ public class RestController {
     }
 
     @GetMapping(value = "/documents/delegation/pdf/{id}")
-    public ResponseEntity<byte[]> getDelegationRequestPDF(@PathVariable long id) throws IOException, DocumentException {
-        DelegationRequest request = this.repository.getDelegationRequestByID(id);
+    public ResponseEntity<byte[]> getDelegationRequestPDF(
+            @PathVariable long id,
+            @RequestHeader("Authorization") String token
+    ) throws DocumentException, IllegalAccessException {
+        DelegationRequest request = this.repository.getDelegationRequestByID(id, jwtUtil.extractUsernameFromRaw(token));
         return GeneratePDF.fromDelegationRequest(request);
     }
 

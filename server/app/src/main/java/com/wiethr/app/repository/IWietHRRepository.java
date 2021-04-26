@@ -31,7 +31,7 @@ public interface IWietHRRepository {
 
     // ---------- DAYS OFF REQUEST ----------
     void createDaysOffRequest(DaysOffRequest daysOffRequest, String email) throws IllegalAccessException;
-    DaysOffRequest getDaysOffRequestByID(long documentID);
+    DaysOffRequest getDaysOffRequestByID(long documentID, String email) throws IllegalAccessException;
     void updateDaysOffRequest(long documentID, AddDaysOffRequestHelper addDaysOffRequestHelper, String email) throws IllegalAccessException;
     void removeDaysOffRequest(long documentID, String email) throws IllegalAccessException;
     List<DaysOffRequest> getAllDaysOffRequests();
@@ -39,7 +39,7 @@ public interface IWietHRRepository {
 
     // ---------- DELEGATION REQUEST ----------
     void createDelegationRequest(DelegationRequest delegationRequest);
-    DelegationRequest getDelegationRequestByID(long documentID);
+    DelegationRequest getDelegationRequestByID(long documentID, String email) throws IllegalAccessException;
     void updateDelegationRequest(long documentID, AddDelegationRequestHelper delegationRequestHelper, String email) throws IllegalAccessException;
     void removeDelegationRequest(long documentID, String email) throws IllegalAccessException;
     List<DelegationRequest> getAllDelegationRequests();
