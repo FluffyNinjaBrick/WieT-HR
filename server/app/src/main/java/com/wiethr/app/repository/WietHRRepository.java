@@ -1,6 +1,7 @@
 package com.wiethr.app.repository;
 
 import com.wiethr.app.model.*;
+import com.wiethr.app.model.enums.UserRole;
 import com.wiethr.app.model.helpers.*;
 import com.wiethr.app.repository.jpaRepos.*;
 import com.wiethr.app.security.RoleValidator;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.swing.text.html.Option;
 import java.time.Duration;
+import java.time.Period;
 import java.time.temporal.TemporalUnit;
 import java.util.*;
 import java.time.LocalDate;
@@ -335,24 +337,48 @@ public class WietHRRepository implements IWietHRRepository {
     }
 
     @Override
-    public int getEmployeesDaysOffLeft(long id, String email) throws IllegalAccessException {
+    public EmployeeDaysOffDetails getEmployeeDaysOffLeft(long id, String email) throws IllegalAccessException {
 
         this.roleValidator.validate(this.getEmployeeByEmail(email), id);
 
-        List<DaysOffRequest> daysOffRequestList = daysOffRequestRepository.findAllByEmployeeIdAndDateFromAfter(id, LocalDate.now());
-        Optional<Employee> employeeOptional = employeeRepository.findById(id);
-        if (employeeOptional.isPresent()) {
-            Employee employee = employeeOptional.get();
-            int daysLeft = employee.getLastYearDaysOff() + employee.getThisYearDaysOff();
-            for (DaysOffRequest request : daysOffRequestList) {
-                Date from = new Date(request.getDateFrom().getYear(), request.getDateFrom().getMonthValue(), request.getDateFrom().getDayOfMonth());
-                Date to = new Date(request.getDateTo().getYear(), request.getDateTo().getMonthValue(), request.getDateTo().getDayOfMonth());
-                int days = (int) (to.getTime() - from.getTime()) / 1000 / 60 / 60 / 24;
-                daysLeft -= days;
-            }
-            return daysLeft;
+        // get all requests from this year
+        List<DaysOffRequest> daysOffRequestList = daysOffRequestRepository
+                .findAllByEmployeeIdAndDateFromAfter(id, LocalDate.of(LocalDate.now().getYear(), 1, 1));
+
+        Employee employee = employeeRepository.findById(id).orElseThrow();
+        int daysLeft = employee.getLastYearDaysOff() + employee.getThisYearDaysOff();
+        int daysUsed = 0;
+
+        for (DaysOffRequest request : daysOffRequestList) {
+            if (!request.isSigned() || request.getDateTo() == null) continue;   // ignore all requests that aren't signed or are indefinite
+            daysUsed = Utilities.getTotalWorkingDays(request.getDateFrom(), request.getDateTo());
         }
-        // this should not happen
-        return -1;
+
+        return new EmployeeDaysOffDetails(id, employee.getFirstName() + " " + employee.getLastName(), daysUsed, daysLeft);
     }
+
+    @Override
+    public GroupDaysOffDetails getGroupDaysOffLeft(String email) throws IllegalAccessException {
+
+        List<EmployeeDaysOffDetails> employeeDaysOffDetails = new ArrayList<>();
+        int totalDaysOffUsed = 0;
+        int totalDaysOffLeft = 0;
+
+        // iterate over all subordinates of person asking
+        Employee asking = this.getEmployeeByEmail(email);
+        List<Employee> subordinates;
+        if (asking.getUserRole().equals(UserRole.ADMIN)) subordinates = this.employeeRepository.findAll();
+        else subordinates = asking.getPermissions().getManagedUsers();
+
+        for (Employee e: subordinates) {
+            EmployeeDaysOffDetails details = this.getEmployeeDaysOffLeft(e.getId(), email);  // this is horrible
+            totalDaysOffUsed += details.getDaysOffUsed();
+            totalDaysOffLeft += details.getDaysOffLeft();
+            employeeDaysOffDetails.add(details);
+        }
+
+        return new GroupDaysOffDetails(employeeDaysOffDetails, totalDaysOffUsed, totalDaysOffLeft);
+
+    }
+
 }

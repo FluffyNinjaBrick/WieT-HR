@@ -4,10 +4,7 @@ import com.wiethr.app.model.Contract;
 import com.wiethr.app.model.DaysOffRequest;
 import com.wiethr.app.model.DelegationRequest;
 import com.wiethr.app.model.Employee;
-import com.wiethr.app.model.helpers.AbsentEmployees;
-import com.wiethr.app.model.helpers.AddDaysOffRequestHelper;
-import com.wiethr.app.model.helpers.AddDelegationRequestHelper;
-import com.wiethr.app.model.helpers.AddEmployeeHelper;
+import com.wiethr.app.model.helpers.*;
 
 import javax.swing.text.html.Option;
 import java.time.LocalDate;
@@ -56,7 +53,8 @@ public interface IWietHRRepository {
     List<DelegationRequest> getEmployeeDelegationRequests(long id, LocalDate from, LocalDate to, String email) throws IllegalAccessException;
     List<DaysOffRequest> getEmployeeDaysOffRequests(long id, LocalDate from, LocalDate to, String email) throws IllegalAccessException;
 
-    int getEmployeesDaysOffLeft(long id, String email) throws IllegalAccessException;
+    EmployeeDaysOffDetails getEmployeeDaysOffLeft(long id, String email) throws IllegalAccessException;
+    GroupDaysOffDetails getGroupDaysOffLeft(String email) throws IllegalAccessException;
 
 
     // ---------- PERMISSIONS ----------

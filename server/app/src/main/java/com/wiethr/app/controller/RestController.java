@@ -15,12 +15,10 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api")
@@ -330,10 +328,19 @@ public class RestController {
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
     @GetMapping("/employees/getDaysOff/{employeeId}")
-    public int getEmployeesDaysOffLeft(
+    public EmployeeDaysOffDetails getEmployeeDaysOffLeft(
             @PathVariable long employeeId,
             @RequestHeader("Authorization") String token
     ) throws IllegalAccessException {
-        return this.repository.getEmployeesDaysOffLeft(employeeId, jwtUtil.extractUsernameFromRaw(token));
+        return this.repository.getEmployeeDaysOffLeft(employeeId, jwtUtil.extractUsernameFromRaw(token));
     }
+
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
+    @GetMapping("/employees/getDaysOff/all")
+    public GroupDaysOffDetails getGroupDaysOffLeft(
+            @RequestHeader("Authorization") String token
+    ) throws IllegalAccessException {
+        return this.repository.getGroupDaysOffLeft(jwtUtil.extractUsernameFromRaw(token));
+    }
+
 }
