@@ -7,14 +7,19 @@ import FormInputErrorMessage from "../utils/FormInputErrorMessage";
 import React from "react";
 import { useHistory } from "react-router";
 import { API_URL } from "../../api/Api";
-
+import { getCurrentUser } from "../../services/AuthService";
 
 export default function DelegationCreateForm() {
   const {
     register,
     formState: { errors },
-    handleSubmit, getValues
+    handleSubmit,
+    getValues,
   } = useForm();
+
+  const token = JSON.parse(getCurrentUser()).jwt;
+  const id = JSON.parse(getCurrentUser()).id;
+  const auth = "Bearer " + token;
 
   const [error, setError] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
@@ -26,53 +31,57 @@ export default function DelegationCreateForm() {
   };
 
   const handleFormSubmit = async (formData) => {
+    setError(false);
+    setShowAlert(false);
+
+    const data = {
+      id: id,
+      ...formData,
+    };
+
     const response = await fetch(API_URL + "documents/create/delegation", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        //todo add authentication token
+        Authorization: auth,
       },
-      body: JSON.stringify(formData),
+      body: JSON.stringify(data),
     });
+
     if (!response.ok) {
       setError(true);
       setShowAlert(true);
     } else {
-      history.push("/leaves");
+      history.push("/delegations");
     }
 
-    console.log(formData);
+    console.log(data);
   };
 
   return (
     <div className="d-flex flex-column align-items-center justify-content-center mt-5">
       <h1>Wypełnij wniosek o delegację</h1>
       <div className="mt-5">
-        {error && showAlert &&
-          <Alert variant="danger" onClose={() => setShowAlert(false)} dismissible>
+        {error && showAlert && (
+          <Alert
+            variant="danger"
+            onClose={() => setShowAlert(false)}
+            dismissible
+          >
             Wystąpił błąd.
           </Alert>
-        }
+        )}
         <Form className="LeavesForm" onSubmit={handleSubmit(handleFormSubmit)}>
-          <Form.Group>
-            <Form.Label htmlFor="employeeID">Tymczasowe ID pracownika</Form.Label>
-            <Form.Control
-              type="employeeID"
-              name="employeeID"
-              placeholder="Podaj ID pracownika"
-              {...register("employeeID", { required: true })}
-            />
-            {errors.employeeID && (
-              <FormInputErrorMessage errorMessage="ID jest wymagane" />
-            )}
-          </Form.Group>
           <Form.Group>
             <Form.Label htmlFor="Date">Początek delegacji</Form.Label>
             <Form.Control
               type="date"
               name="dateFrom"
               id="dateFrom"
-              {...register("dateFrom", { required: true, validate: () => getValues("dateFrom") <= getValues("dateTo") })}
+              {...register("dateFrom", {
+                required: true,
+                validate: () => getValues("dateFrom") <= getValues("dateTo"),
+              })}
             />
             {errors.dateTo && errors.dateTo.type === "required" && (
               <FormInputErrorMessage errorMessage="Data jest wymagana" />
@@ -87,7 +96,10 @@ export default function DelegationCreateForm() {
               type="date"
               name="dateTo"
               id="dateTo"
-              {...register("dateTo", { required: true, validate: () => getValues("dateFrom") <= getValues("dateTo") })}
+              {...register("dateTo", {
+                required: true,
+                validate: () => getValues("dateFrom") <= getValues("dateTo"),
+              })}
             />
             {errors.dateTo && errors.dateTo.type === "required" && (
               <FormInputErrorMessage errorMessage="Data jest wymagana" />
@@ -119,12 +131,7 @@ export default function DelegationCreateForm() {
             Anuluj
           </Button>
         </Form>
-
       </div>
     </div>
-
   );
-
-
-
 }

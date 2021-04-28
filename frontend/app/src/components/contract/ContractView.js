@@ -1,3 +1,7 @@
 export default function ContractView() {
-  return <h1>Umowa</h1>;
+  return (
+    <div className="container">
+      <h1 className="my-3">Umowa</h1>
+    </div>
+  );
 }

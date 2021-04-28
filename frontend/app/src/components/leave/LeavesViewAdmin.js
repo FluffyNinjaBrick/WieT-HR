@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
-import { Button, Table } from "react-bootstrap";
-import SingleEmployeeRecord from "./SingleEmployeeRecord";
+import CalendarView from "../calendar/CalendarView";
 import { Link } from "react-router-dom";
 import { fetchEmployees } from "../../services/EmployeeService";
+import { Button, Table } from "react-bootstrap";
+import SingleEmployeeLeavesView from "./SingleEmployeeLeavesView";
 
-export default function EmployeeListViewAdmin() {
+
+
+export default function LeavesViewAdmin() {
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -16,16 +19,13 @@ export default function EmployeeListViewAdmin() {
       .then(setLoading(false));
   }, []);
 
-  const editEmployee = () => {};
-
   return (
-    <div className="container">
-      <h1 className="my-3">Pracownicy</h1>
-      <Link to="/employees/create">
-        <Button className="mb-3" variant="primary">
-          Dodaj pracownika
-        </Button>
-      </Link>
+    <div className="container justify-content-sm-center col-sm-8">
+      <div>
+        <h1 className="my-3">Pracownicy / urlopy</h1>
+      </div>
+      <CalendarView />
+      <br></br>
       <Table bordered hover size="sm">
         <thead>
           <tr>
@@ -35,8 +35,7 @@ export default function EmployeeListViewAdmin() {
             <th>Email</th>
             <th>Adres</th>
             <th>Numer telefonu</th>
-            <th>Status</th>
-            <th>Edycja</th>
+            <th>Pozostałe dni wolne</th>
           </tr>
         </thead>
 
@@ -46,7 +45,7 @@ export default function EmployeeListViewAdmin() {
           <tbody>
             {employees.length &&
               employees.map((employee) => (
-                <SingleEmployeeRecord key={employee.id} employee={employee} />
+                <SingleEmployeeLeavesView key={employee.id} employee={employee} />
               ))}
           </tbody>
         )}
