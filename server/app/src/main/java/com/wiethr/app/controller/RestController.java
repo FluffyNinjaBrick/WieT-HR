@@ -10,7 +10,6 @@ import com.wiethr.app.security.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
@@ -54,7 +53,7 @@ public class RestController {
     }
 
     // ---------- CONTRACT ----------
-    @PreAuthorize("hasAnyRole('ROLE_MANAGER','ROLE_ADMIN')")
+
     @PostMapping(value = "/documents/create/contract")
     public void createContract(@RequestBody AddContractHelper helper, @RequestHeader("Authorization") String token) throws IllegalAccessException {
 
@@ -85,7 +84,6 @@ public class RestController {
 
     // ---------- DAYS OFF REQUEST ----------
 
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_MANAGER', 'ROLE_ADMIN')")
     @PostMapping(value = "/documents/create/daysoff")
     public void createDaysOffRequest(
             @RequestBody AddDaysOffRequestHelper helper,
@@ -109,7 +107,6 @@ public class RestController {
         this.repository.createDaysOffRequest(request, jwtUtil.extractUsernameFromRaw(token));
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_MANAGER', 'ROLE_ADMIN')")
     @PostMapping(value = "/documents/update/daysoff/{documentID}")
     public void updateDaysOffRequest(
             @PathVariable long documentID,
@@ -119,7 +116,6 @@ public class RestController {
         this.repository.updateDaysOffRequest(documentID, addDaysOffRequestHelper, jwtUtil.extractUsernameFromRaw(token));
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER','ROLE_EMPLOYEE')")
     @DeleteMapping(value = "/documents/delete/daysoff/{documentID}")
     public void removeDaysOffRequest(
             @PathVariable long documentID,
@@ -128,7 +124,6 @@ public class RestController {
         this.repository.removeDaysOffRequest(documentID, jwtUtil.extractUsernameFromRaw(token));
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping(value = "/documents/daysoff")
     public List<DaysOffRequest> getAllDaysOffRequests(@RequestHeader("Authorization") String token){
         return this.repository.getAllDaysOffRequests();
@@ -146,7 +141,7 @@ public class RestController {
 
     // ---------- DELEGATION REQUEST ----------
     // TODO - the person making the request should be the one the request is hooked up to
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER','ROLE_EMPLOYEE')")
+
     @PostMapping(value = "/documents/create/delegation")
     public void createDelegationRequest(
             @RequestBody AddDelegationRequestHelper helper,
@@ -170,7 +165,6 @@ public class RestController {
         this.repository.createDelegationRequest(request);
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER','ROLE_EMPLOYEE')")
     @PostMapping(value = "/documents/update/delegation/{documentID}")
     public void updateDelegationRequest(
             @PathVariable long documentID,
@@ -180,7 +174,6 @@ public class RestController {
         this.repository.updateDelegationRequest(documentID, delegationRequestHelper, jwtUtil.extractUsernameFromRaw(token));
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER','ROLE_EMPLOYEE')")
     @DeleteMapping(value = "/documents/delete/delegation/{documentID}")
     public void removeDelegationRequest(
             @PathVariable long documentID,
@@ -189,7 +182,6 @@ public class RestController {
         this.repository.removeDelegationRequest(documentID, jwtUtil.extractUsernameFromRaw(token));
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping(value = "/documents/delegation")
     public List<DelegationRequest> getAllDelegationRequests(){
         return this.repository.getAllDelegationRequests();
@@ -207,13 +199,11 @@ public class RestController {
 
     // ---------- EMPLOYEE ----------
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping(value = "/employees")
     public List<Employee> getAllEmployees() {
         return this.repository.getAllEmployees();
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping(value = "/employees/{id}")
     public Employee getEmployeeById(
             @PathVariable long id,
@@ -222,19 +212,16 @@ public class RestController {
         return this.repository.getEmployee(id, jwtUtil.extractUsernameFromRaw(token));
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/employees/create")
     public void createEmployee(@RequestBody AddEmployeeHelper helper) {
         this.repository.createEmployee(helper);
         }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/employees/{id}")
     public void removeEmployee(@PathVariable long id) {
         this.repository.removeEmployee(id);
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/employees/{employeeId}/edit/data")
     @ResponseBody
     public Employee updateEmployeeData(
@@ -253,7 +240,6 @@ public class RestController {
         return repository.updateEmployee(currentEmployee, jwtUtil.extractUsernameFromRaw(token));
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
     @PostMapping("/employees/{employeeId}/edit/permissions")
     @ResponseBody
     public Employee updateEmployeePermissions(
@@ -270,7 +256,6 @@ public class RestController {
         return repository.updateEmployee(employee, jwtUtil.extractUsernameFromRaw(token));
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
     @PostMapping("/employees/{employeeId}/edit/subordinates")
     @ResponseBody
     public Employee updateSubordinatesOfEmployee(
@@ -291,7 +276,6 @@ public class RestController {
         return repository.updateEmployee(employee, jwtUtil.extractUsernameFromRaw(token));
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
     @GetMapping("/employees/getAbsent/{from}/{to}")
     public List<AbsentEmployees> getAbsentEmployees(
             @PathVariable String from,
@@ -302,7 +286,6 @@ public class RestController {
         return this.repository.getAbsentEmployees(LocalDate.parse(from, formatter), LocalDate.parse(to, formatter), jwtUtil.extractUsernameFromRaw(token));
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
     @GetMapping("/employees/{id}/documents/delegation/{from}/{to}")
     public List<DelegationRequest> getEmployeeDelegationRequests(
             @PathVariable long id,
@@ -314,7 +297,6 @@ public class RestController {
         return this.repository.getEmployeeDelegationRequests(id, LocalDate.parse(from, formatter), LocalDate.parse(to, formatter), jwtUtil.extractUsernameFromRaw(token));
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
     @GetMapping("/employees/{id}/documents/daysoff/{from}/{to}")
     public List<DaysOffRequest> getEmployeeDaysOffRequests(
             @PathVariable long id,
@@ -326,7 +308,6 @@ public class RestController {
         return this.repository.getEmployeeDaysOffRequests(id, LocalDate.parse(from, formatter), LocalDate.parse(to, formatter), jwtUtil.extractUsernameFromRaw(token));
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
     @GetMapping("/employees/getDaysOff/{employeeId}")
     public EmployeeDaysOffDetails getEmployeeDaysOffLeft(
             @PathVariable long employeeId,
@@ -335,7 +316,6 @@ public class RestController {
         return this.repository.getEmployeeDaysOffLeft(employeeId, jwtUtil.extractUsernameFromRaw(token));
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
     @GetMapping("/employees/getDaysOff/all")
     public GroupDaysOffDetails getGroupDaysOffLeft(
             @RequestHeader("Authorization") String token

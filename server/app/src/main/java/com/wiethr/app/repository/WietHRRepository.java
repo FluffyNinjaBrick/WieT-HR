@@ -87,37 +87,34 @@ public class WietHRRepository implements IWietHRRepository {
             AddDaysOffRequestHelper addDaysOffRequestHelper,
             String email
     ) throws IllegalAccessException {
-        Optional<DaysOffRequest> daysOffRequest = this.daysOffRequestRepository.findById(documentID);
+        DaysOffRequest daysOffRequest = this.daysOffRequestRepository.findById(documentID).orElseThrow();
         Employee employee = this.getEmployee(addDaysOffRequestHelper.getEmployeeID());
 
-        this.roleValidator.validate(this.getEmployeeByEmail(email), daysOffRequest.get().getEmployee().getId());
+        this.roleValidator.validate(this.getEmployeeByEmail(email), daysOffRequest.getEmployee().getId());
 
-        DaysOffRequest currentDaysOffRequest = daysOffRequest.get();
         // daysOffRequest
-        currentDaysOffRequest.setLeaveType(addDaysOffRequestHelper.getLeaveType());
+        daysOffRequest.setLeaveType(addDaysOffRequestHelper.getLeaveType());
         // document
-        currentDaysOffRequest.setDateFrom(addDaysOffRequestHelper.getDateFrom());
-        currentDaysOffRequest.setDateTo(addDaysOffRequestHelper.getDateTo());
-        currentDaysOffRequest.setDateIssued(LocalDate.now());
-        currentDaysOffRequest.setSigned(false);
-        currentDaysOffRequest.setEmployee(employee);
-        currentDaysOffRequest.setNameAtSigning(employee.getFirstName() + " " + employee.getLastName());
+        daysOffRequest.setDateFrom(addDaysOffRequestHelper.getDateFrom());
+        daysOffRequest.setDateTo(addDaysOffRequestHelper.getDateTo());
+        daysOffRequest.setDateIssued(LocalDate.now());
+        daysOffRequest.setSigned(false);
+        daysOffRequest.setEmployee(employee);
+        daysOffRequest.setNameAtSigning(employee.getFirstName() + " " + employee.getLastName());
 
-        this.daysOffRequestRepository.save(currentDaysOffRequest);
+        this.daysOffRequestRepository.save(daysOffRequest);
     }
 
     @Override
     public void removeDaysOffRequest(long documentID, String email) throws IllegalAccessException {
-        Optional<DaysOffRequest> daysOffRequest = this.daysOffRequestRepository.findById(documentID);
-        if(daysOffRequest.isEmpty()) return;
+        DaysOffRequest daysOffRequest = this.daysOffRequestRepository.findById(documentID).orElseThrow();
 
-        this.roleValidator.validate(this.getEmployeeByEmail(email), daysOffRequest.get().getEmployee().getId());
+        this.roleValidator.validate(this.getEmployeeByEmail(email), daysOffRequest.getEmployee().getId());
 
-        DaysOffRequest currentDaysOffRequest = daysOffRequest.get();
-        if (currentDaysOffRequest.isSigned()) {
+        if (daysOffRequest.isSigned()) {
             throw new IllegalArgumentException("ERROR: Cannot remove signed DaysOffRequest document");
         } else {
-            this.daysOffRequestRepository.delete(currentDaysOffRequest);
+            this.daysOffRequestRepository.delete(daysOffRequest);
         }
     }
 
@@ -146,40 +143,34 @@ public class WietHRRepository implements IWietHRRepository {
             AddDelegationRequestHelper delegationRequestHelper,
             String email
     ) throws IllegalAccessException {
-        Optional<DelegationRequest> delegationRequest = this.delegationRequestRepository.findById(documentID);
-        Optional<Employee> employee = this.employeeRepository.findById(delegationRequestHelper.getEmployeeID());
+        DelegationRequest delegationRequest = this.delegationRequestRepository.findById(documentID).orElseThrow();
+        Employee employeeToSet = this.employeeRepository.findById(delegationRequestHelper.getEmployeeID()).orElseThrow();
 
-        this.roleValidator.validate(this.getEmployeeByEmail(email), delegationRequest.get().getEmployee().getId());
+        this.roleValidator.validate(this.getEmployeeByEmail(email), delegationRequest.getEmployee().getId());
 
-        if(delegationRequest.isPresent() && employee.isPresent()) {
-            Employee employeeToSet = employee.get();
-            DelegationRequest currentDelegationRequest = delegationRequest.get();
-            // delegationRequest
-            currentDelegationRequest.setDestination(delegationRequestHelper.getDestination());
-            // document
-            currentDelegationRequest.setDateFrom(delegationRequestHelper.getDateFrom());
-            currentDelegationRequest.setDateTo(delegationRequestHelper.getDateTo());
-            currentDelegationRequest.setDateIssued(LocalDate.now());
-            currentDelegationRequest.setSigned(false);
-            currentDelegationRequest.setEmployee(employeeToSet);
-            currentDelegationRequest.setNameAtSigning(employeeToSet.getFirstName() + " " + employeeToSet.getLastName());
+        // delegationRequest
+        delegationRequest.setDestination(delegationRequestHelper.getDestination());
+        // document
+        delegationRequest.setDateFrom(delegationRequestHelper.getDateFrom());
+        delegationRequest.setDateTo(delegationRequestHelper.getDateTo());
+        delegationRequest.setDateIssued(LocalDate.now());
+        delegationRequest.setSigned(false);
+        delegationRequest.setEmployee(employeeToSet);
+        delegationRequest.setNameAtSigning(employeeToSet.getFirstName() + " " + employeeToSet.getLastName());
 
-            this.delegationRequestRepository.save(currentDelegationRequest);
-        }
+        this.delegationRequestRepository.save(delegationRequest);
     }
 
     @Override
     public void removeDelegationRequest(long documentID, String email) throws IllegalAccessException {
-        Optional<DelegationRequest> delegationRequest = this.delegationRequestRepository.findById(documentID);
-        if(delegationRequest.isEmpty()) return;
+        DelegationRequest delegationRequest = this.delegationRequestRepository.findById(documentID).orElseThrow();
 
-        this.roleValidator.validate(this.getEmployeeByEmail(email), delegationRequest.get().getEmployee().getId());
+        this.roleValidator.validate(this.getEmployeeByEmail(email), delegationRequest.getEmployee().getId());
 
-        DelegationRequest currentDelegationRequest = delegationRequest.get();
-        if(currentDelegationRequest.isSigned()){
+        if(delegationRequest.isSigned()){
             throw new IllegalArgumentException("ERROR: Cannot remove signed DaysOffRequest document");
         } else{
-            this.delegationRequestRepository.delete(currentDelegationRequest);
+            this.delegationRequestRepository.delete(delegationRequest);
         }
     }
 
