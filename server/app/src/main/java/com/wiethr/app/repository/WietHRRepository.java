@@ -300,10 +300,7 @@ public class WietHRRepository implements IWietHRRepository {
         }
 
         ArrayList<DelegationRequest> requests = new ArrayList<>(this.delegationRequestRepository.findAll());
-        return requests.stream().filter(
-                req -> req.getEmployee().getId() == id && !req.getDateTo().isBefore(from) && !req.getDateFrom().isAfter(to))
-                .sorted(Comparator.comparing(DelegationRequest::getDateFrom).reversed())
-                .collect(Collectors.toList());
+        return (List<DelegationRequest>) Utilities.getDocumentsBetweenDates(requests, id, from, to);
     }
 
     @Override
@@ -321,10 +318,7 @@ public class WietHRRepository implements IWietHRRepository {
         }
 
         ArrayList<DaysOffRequest> requests = new ArrayList<>(this.daysOffRequestRepository.findAll());
-        return requests.stream().filter(
-                req -> req.getEmployee().getId() == id && !req.getDateTo().isBefore(from) && !req.getDateFrom().isAfter(to))
-                .sorted(Comparator.comparing(DaysOffRequest::getDateFrom).reversed())
-                .collect(Collectors.toList());
+        return (List<DaysOffRequest>) Utilities.getDocumentsBetweenDates(requests, id, from, to);
     }
 
     @Override
