@@ -100,7 +100,7 @@ public class WietHRRepository implements IWietHRRepository {
         daysOffRequest.setDateIssued(LocalDate.now());
         daysOffRequest.setSigned(false);
         daysOffRequest.setEmployee(employee);
-        daysOffRequest.setNameAtSigning(employee.getFirstName() + " " + employee.getLastName());
+        daysOffRequest.setNameAtSigning(employee.getFullName());
 
         this.daysOffRequestRepository.save(daysOffRequest);
     }
@@ -156,7 +156,7 @@ public class WietHRRepository implements IWietHRRepository {
         delegationRequest.setDateIssued(LocalDate.now());
         delegationRequest.setSigned(false);
         delegationRequest.setEmployee(employeeToSet);
-        delegationRequest.setNameAtSigning(employeeToSet.getFirstName() + " " + employeeToSet.getLastName());
+        delegationRequest.setNameAtSigning(employeeToSet.getFullName());
 
         this.delegationRequestRepository.save(delegationRequest);
     }
@@ -339,7 +339,7 @@ public class WietHRRepository implements IWietHRRepository {
             daysUsed = Utilities.getTotalWorkingDays(request.getDateFrom(), request.getDateTo());
         }
 
-        return new EmployeeDaysOffDetails(id, employee.getFirstName() + " " + employee.getLastName(), daysUsed, daysLeft);
+        return new EmployeeDaysOffDetails(id, employee.getFullName(), daysUsed, daysLeft);
     }
 
     @Override

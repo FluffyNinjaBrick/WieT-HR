@@ -63,7 +63,7 @@ public class RestController {
 
         // inherited from document
         contract.setEmployee(employee);
-        contract.setNameAtSigning(employee.getFirstName() + " " + employee.getLastName());
+        contract.setNameAtSigning(employee.getFullName());
         contract.setDateIssued(LocalDate.now());
         contract.setSigned(false);
         contract.setDateFrom(helper.getDateFrom());
@@ -95,7 +95,7 @@ public class RestController {
 
         // inherited from document
         request.setEmployee(employee);
-        request.setNameAtSigning(employee.getFirstName() + " " + employee.getLastName());
+        request.setNameAtSigning(employee.getFullName());
         request.setDateIssued(LocalDate.now());
         request.setSigned(false);
         request.setDateFrom(helper.getDateFrom());
@@ -153,7 +153,7 @@ public class RestController {
 
         // inherited from document
         request.setEmployee(employee);
-        request.setNameAtSigning(employee.getFirstName() + " " + employee.getLastName());
+        request.setNameAtSigning(employee.getFullName());
         request.setDateIssued(LocalDate.now());
         request.setSigned(false);
         request.setDateFrom(helper.getDateFrom());
