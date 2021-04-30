@@ -4,9 +4,8 @@ import {
   Switch,
   Route,
   Redirect,
-  Link,
 } from "react-router-dom";
-import React, { useContext, createContext, useState } from "react";
+import React from "react";
 import Navigation from "./components/navigation/Navigation";
 import LeavesViewAdmin from "./components/leave/LeavesViewAdmin";
 import LeavesView from "./components/leave/LeavesView";
@@ -20,7 +19,7 @@ import LoginView from "./components/auth/LoginView";
 import EmployeeCreateView from "./components/employee/EmployeeCreateView";
 import LeaveCreateForm from "./components/leave/LeaveCreateForm";
 import DelegationCreateForm from "./components/delegation/DelegationCreateForm";
-import DelegationsAdminView from "./components/delegation/DelegationsAdminView"
+import DelegationsAdminView from "./components/delegation/DelegationsAdminView";
 import { ProvideAuth } from "./components/auth/useAuth";
 import PrivateRoute from "./components/utils/PrivateRoute";
 import "font-awesome/css/font-awesome.min.css";

@@ -1,11 +1,8 @@
 import { useEffect, useState } from "react";
 import CalendarView from "../calendar/CalendarView";
-import { Link } from "react-router-dom";
 import { fetchEmployees } from "../../services/EmployeeService";
-import { Button, Table } from "react-bootstrap";
+import { Table } from "react-bootstrap";
 import SingleEmployeeLeavesView from "./SingleEmployeeLeavesView";
-
-
 
 export default function LeavesViewAdmin() {
   const [employees, setEmployees] = useState([]);
@@ -29,7 +26,6 @@ export default function LeavesViewAdmin() {
       <Table bordered hover size="sm">
         <thead>
           <tr>
-            <th>Id</th>
             <th>Imię</th>
             <th>Nazwisko</th>
             <th>Email</th>
@@ -45,7 +41,10 @@ export default function LeavesViewAdmin() {
           <tbody>
             {employees.length &&
               employees.map((employee) => (
-                <SingleEmployeeLeavesView key={employee.id} employee={employee} />
+                <SingleEmployeeLeavesView
+                  key={employee.id}
+                  employee={employee}
+                />
               ))}
           </tbody>
         )}

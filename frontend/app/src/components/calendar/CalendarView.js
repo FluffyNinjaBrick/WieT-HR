@@ -8,7 +8,6 @@ import { Loading } from "../loader/LoadingView";
 //TODO mozliwosc wyboru roku
 export default function CalendarView() {
   const token = JSON.parse(getCurrentUser()).jwt;
-  const id = JSON.parse(getCurrentUser()).id;
   const auth = "Bearer " + token;
 
   const [absentEmployeesData, setAbsentEmployeesData] = useState([]);
@@ -109,7 +108,7 @@ export default function CalendarView() {
   //data with necessary column definitions for creating the chart
   var dataWithTypes = data.concat(chartData);
 
-  if (absentEmployeesData.length == 0) {
+  if (absentEmployeesData.length === 0) {
     return <Loading />;
   } else {
     return (

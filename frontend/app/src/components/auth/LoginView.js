@@ -2,8 +2,7 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { useForm } from "react-hook-form";
 import FormInputErrorMessage from "../utils/FormInputErrorMessage";
-import { API_URL } from "../../api/Api";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { Redirect, useHistory } from "react-router";
 import { Alert } from "react-bootstrap";
 import { useAuth } from "../auth/useAuth";
@@ -76,7 +75,7 @@ export default function LoginView() {
         </Form.Group>
 
         <Button variant="primary" type="submit" className="w-100 mt-3">
-          Log in
+          Zaloguj
         </Button>
       </Form>
     </div>

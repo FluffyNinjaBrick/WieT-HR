@@ -59,9 +59,12 @@ export default function DelegationCreateForm() {
   };
 
   return (
-    <div className="d-flex flex-column align-items-center justify-content-center mt-5">
-      <h1>Wypełnij wniosek o delegację</h1>
-      <div className="mt-5">
+    <div className="mt-5">
+      <div className="container text-center">
+        <h1>Wypełnij wniosek o delegację</h1>
+      </div>
+
+      <div className="container col-lg-4 col-md-6 col-sm-8 mt-5">
         {error && showAlert && (
           <Alert
             variant="danger"
@@ -71,7 +74,7 @@ export default function DelegationCreateForm() {
             Wystąpił błąd.
           </Alert>
         )}
-        <Form className="LeavesForm" onSubmit={handleSubmit(handleFormSubmit)}>
+        <Form onSubmit={handleSubmit(handleFormSubmit)}>
           <Form.Group>
             <Form.Label htmlFor="Date">Początek delegacji</Form.Label>
             <Form.Control

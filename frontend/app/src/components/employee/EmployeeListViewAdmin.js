@@ -3,6 +3,7 @@ import { Button, Table } from "react-bootstrap";
 import SingleEmployeeRecord from "./SingleEmployeeRecord";
 import { Link } from "react-router-dom";
 import { fetchEmployees } from "../../services/EmployeeService";
+import { Loading } from "../loader/LoadingView";
 
 export default function EmployeeListViewAdmin() {
   const [employees, setEmployees] = useState([]);
@@ -16,8 +17,6 @@ export default function EmployeeListViewAdmin() {
       .then(setLoading(false));
   }, []);
 
-  const editEmployee = () => {};
-
   return (
     <div className="container">
       <h1 className="my-3">Pracownicy</h1>
@@ -26,31 +25,32 @@ export default function EmployeeListViewAdmin() {
           Dodaj pracownika
         </Button>
       </Link>
-      <Table bordered hover size="sm">
-        <thead>
-          <tr>
-            <th>Id</th>
-            <th>Imię</th>
-            <th>Nazwisko</th>
-            <th>Email</th>
-            <th>Adres</th>
-            <th>Numer telefonu</th>
-            <th>Status</th>
-            <th>Edycja</th>
-          </tr>
-        </thead>
-
+      <div>
         {loading ? (
-          <tbody></tbody>
+          <Loading />
         ) : (
-          <tbody>
-            {employees.length &&
-              employees.map((employee) => (
-                <SingleEmployeeRecord key={employee.id} employee={employee} />
-              ))}
-          </tbody>
+          <Table bordered hover size="sm">
+            <thead>
+              <tr>
+                <th>Imię</th>
+                <th>Nazwisko</th>
+                <th>Email</th>
+                <th>Adres</th>
+                <th>Numer telefonu</th>
+                <th>Status</th>
+                <th>Edycja</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {employees.length &&
+                employees.map((employee) => (
+                  <SingleEmployeeRecord key={employee.id} employee={employee} />
+                ))}
+            </tbody>
+          </Table>
         )}
-      </Table>
+      </div>
     </div>
   );
 }

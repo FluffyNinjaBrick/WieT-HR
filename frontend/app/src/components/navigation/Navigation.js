@@ -1,4 +1,4 @@
-import { Navbar, Nav, NavItem, NavDropdown, MenuItem } from "react-bootstrap";
+import { Navbar, Nav, NavDropdown } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useAuth } from "../auth/useAuth";
 import "bootstrap/dist/css/bootstrap.min.css";

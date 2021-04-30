@@ -50,7 +50,7 @@ export default function EmployeeEditForm() {
       }
       if (employeeToEdit) {
         filteredEmployees = filteredEmployees.filter(
-          (e) => e.id != employeeToEdit.id
+          (e) => e.id !== employeeToEdit.id
         );
       }
 
