@@ -22,7 +22,7 @@ public class Employee {
     //@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "empGen")
     private long id;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinTable(
             name="Permission_Owners",
             joinColumns = {@JoinColumn(name="permHolder")},

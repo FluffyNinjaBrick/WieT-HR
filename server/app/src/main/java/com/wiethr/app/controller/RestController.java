@@ -209,6 +209,7 @@ public class RestController {
             @PathVariable long id,
             @RequestHeader("Authorization") String token
     ) throws IllegalAccessException {
+        //TODO return EmployeeHelper
         return this.repository.getEmployee(id, jwtUtil.extractUsernameFromRaw(token));
     }
 
@@ -229,7 +230,7 @@ public class RestController {
             @RequestBody Employee updatedEmployee,
             @RequestHeader("Authorization") String token
     ) throws IllegalAccessException {
-        //TODO send EmployeeHelper in json (or new structure because we don't save permissions in this method)
+        //TODO send return EmployeeHelper in json (or new structure because we don't save permissions in this method)
         Employee currentEmployee = repository.getEmployee(employeeId);
         currentEmployee.setFirstName(updatedEmployee.getFirstName());
         currentEmployee.setLastName(updatedEmployee.getLastName());
@@ -247,7 +248,7 @@ public class RestController {
             @RequestBody Permissions updatedPermissions,
             @RequestHeader("Authorization") String token
     ) throws IllegalAccessException {
-        //TODO send PermissionHelper in json
+        //TODO send and return PermissionHelper in json
         Employee employee = repository.getEmployee(employeeId);
         employee.getPermissions().setManagedUsers(updatedPermissions.getManagedUsers());
         employee.getPermissions().setModifyBonusBudget(updatedPermissions.isModifyBonusBudget());
@@ -263,7 +264,7 @@ public class RestController {
             @RequestBody long[] subordinates,
             @RequestHeader("Authorization") String token
     ) throws IllegalAccessException {
-        //TODO fix adding subordinates - saving them to the managed users table
+        //TODO return EmployeeHelper
         Employee employee = repository.getEmployee(employeeId);
         List<Employee> managedUsers = new ArrayList<>();
 
