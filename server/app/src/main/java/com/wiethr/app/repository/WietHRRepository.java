@@ -5,18 +5,12 @@ import com.wiethr.app.model.enums.UserRole;
 import com.wiethr.app.model.helpers.*;
 import com.wiethr.app.repository.jpaRepos.*;
 import com.wiethr.app.security.RoleValidator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import javax.swing.text.html.Option;
-import java.time.Duration;
-import java.time.Period;
-import java.time.temporal.TemporalUnit;
 import java.util.*;
 import java.time.LocalDate;
-import java.util.stream.Collectors;
+
 
 @Repository
 public class WietHRRepository implements IWietHRRepository {

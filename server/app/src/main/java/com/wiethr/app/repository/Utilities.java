@@ -1,5 +1,4 @@
 package com.wiethr.app.repository;
-import com.wiethr.app.model.DaysOffRequest;
 import com.wiethr.app.model.Document;
 
 import java.time.LocalDate;

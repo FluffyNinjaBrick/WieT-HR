@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.io.ByteArrayOutputStream;
 import java.time.LocalDate;
-import java.time.Period;
+import java.time.temporal.ChronoUnit;
 
 import static com.wiethr.app.model.enums.LeaveType.*;   // this import is actually necessary, don't remove it
 
@@ -95,7 +95,7 @@ public class GeneratePDF {
         Paragraph acceptance;
         if (request.isSigned()) acceptance = new Paragraph(
                 "Wyrazam zgode na urlop we wskazanym terminie, "
-                + request.getSignedBy().getFirstName() + " " + request.getSignedBy().getLastName(),
+                + request.getSignedBy().getFullName(),
                 regular
         );
         else acceptance = new Paragraph(
@@ -131,7 +131,9 @@ public class GeneratePDF {
 
         String leaveTime, leaveSpan;
         if (request.getDateTo() != null) {
-            leaveTime = " w liczbie " + Period.between(request.getDateFrom(), request.getDateTo()).getDays() + " dni";
+            leaveTime = " w liczbie " + ChronoUnit.DAYS.between(request.getDateFrom(), request.getDateTo()) +
+                        " dni, w tym " + Utilities.getTotalWorkingDays(request.getDateFrom(), request.getDateTo()) +
+                        " dni roboczych,";
             leaveSpan = " od dnia " + request.getDateFrom() + " do dnia " + request.getDateTo() + ".";
         }
         else {
@@ -179,7 +181,7 @@ public class GeneratePDF {
         Paragraph acceptance;
         if (request.isSigned()) acceptance = new Paragraph(
                 "Wyrazam zgode na wyjazd na delegacje we wskazanym terminie, "
-                        + request.getSignedBy().getFirstName() + " " + request.getSignedBy().getLastName(),
+                        + request.getSignedBy().getFullName(),
                 regular
         );
         else acceptance = new Paragraph(
@@ -199,7 +201,9 @@ public class GeneratePDF {
     private static Paragraph createDelegationRequestText(Font regular, DelegationRequest request) {
 
         // delegations always have a "to" date, so we can ignore the warning
-        String leaveTime = " na okres " + Period.between(request.getDateFrom(), request.getDateTo()).getDays() + " dni";
+        String leaveTime = " na okres " + ChronoUnit.DAYS.between(request.getDateFrom(), request.getDateTo()) +
+                           " dni, w tym " + Utilities.getTotalWorkingDays(request.getDateFrom(), request.getDateTo()) +
+                           " dni roboczych,";
         String leaveSpan = " od dnia " + request.getDateFrom() + " do dnia " + request.getDateTo() + ".";
 
         return new Paragraph(
