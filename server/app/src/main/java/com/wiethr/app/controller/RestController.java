@@ -10,6 +10,7 @@ import com.wiethr.app.security.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
@@ -240,16 +241,19 @@ public class RestController {
         return this.repository.getEmployee(id);
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
     @PostMapping("/employees/create")
     public void createEmployee(@RequestBody AddEmployeeHelper helper) {
         this.repository.createEmployee(helper);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/employees/{id}")
     public void removeEmployee(@PathVariable long id) {
         this.repository.removeEmployee(id);
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
     @PostMapping("/employees/{employeeId}/edit/data")
     @ResponseBody
     public Employee updateEmployeeData(
@@ -272,6 +276,7 @@ public class RestController {
         return repository.updateEmployee(currentEmployee);
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
     @PostMapping("/employees/{employeeId}/edit/permissions")
     @ResponseBody
     public Employee updateEmployeePermissions(
@@ -292,6 +297,7 @@ public class RestController {
         return repository.updateEmployee(employee);
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
     @PostMapping("/employees/{employeeId}/edit/subordinates")
     @ResponseBody
     public Employee updateSubordinatesOfEmployee(
@@ -316,16 +322,20 @@ public class RestController {
         return repository.updateEmployee(employee);
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
     @GetMapping("/employees/getAbsent/{from}/{to}")
     public List<AbsentEmployees> getAbsentEmployees(
             @PathVariable String from,
             @PathVariable String to,
             @RequestHeader("Authorization") String token
     ) throws IllegalAccessException {
+
+        this.roleValidator.validateAbsent(jwtUtil.extractUsernameFromRaw(token));
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        return this.repository.getAbsentEmployees(LocalDate.parse(from, formatter), LocalDate.parse(to, formatter), jwtUtil.extractUsernameFromRaw(token));
+        return this.repository.getAbsentEmployees(LocalDate.parse(from, formatter), LocalDate.parse(to, formatter));
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
     @GetMapping("/employees/{id}/documents/delegation/{from}/{to}")
     public List<DelegationRequest> getEmployeeDelegationRequests(
             @PathVariable long id,
@@ -333,10 +343,12 @@ public class RestController {
             @PathVariable String to,
             @RequestHeader("Authorization") String token
     ) throws IllegalAccessException {
+        this.roleValidator.validate(jwtUtil.extractUsernameFromRaw(token), id);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        return this.repository.getEmployeeDelegationRequests(id, LocalDate.parse(from, formatter), LocalDate.parse(to, formatter), jwtUtil.extractUsernameFromRaw(token));
+        return this.repository.getEmployeeDelegationRequests(id, LocalDate.parse(from, formatter), LocalDate.parse(to, formatter));
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
     @GetMapping("/employees/{id}/documents/daysoff/{from}/{to}")
     public List<DaysOffRequest> getEmployeeDaysOffRequests(
             @PathVariable long id,
@@ -344,18 +356,22 @@ public class RestController {
             @PathVariable String to,
             @RequestHeader("Authorization") String token
     ) throws IllegalAccessException {
+        this.roleValidator.validate(jwtUtil.extractUsernameFromRaw(token), id);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        return this.repository.getEmployeeDaysOffRequests(id, LocalDate.parse(from, formatter), LocalDate.parse(to, formatter), jwtUtil.extractUsernameFromRaw(token));
+        return this.repository.getEmployeeDaysOffRequests(id, LocalDate.parse(from, formatter), LocalDate.parse(to, formatter));
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
     @GetMapping("/employees/getDaysOff/{employeeId}")
     public EmployeeDaysOffDetails getEmployeeDaysOffLeft(
             @PathVariable long employeeId,
             @RequestHeader("Authorization") String token
     ) throws IllegalAccessException {
-        return this.repository.getEmployeeDaysOffLeft(employeeId, jwtUtil.extractUsernameFromRaw(token));
+        this.roleValidator.validate(jwtUtil.extractUsernameFromRaw(token), employeeId);
+        return this.repository.getEmployeeDaysOffLeft(employeeId);
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
     @GetMapping("/employees/getDaysOff/all")
     public GroupDaysOffDetails getGroupDaysOffLeft(
             @RequestHeader("Authorization") String token

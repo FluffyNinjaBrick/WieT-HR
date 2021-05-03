@@ -48,13 +48,13 @@ public interface IWietHRRepository {
     Employee updateEmployee(Employee employee);
     void createEmployee(AddEmployeeHelper helper);
     void removeEmployee(long id);
-    List<AbsentEmployees> getAbsentEmployees(LocalDate from, LocalDate to, String email) throws IllegalAccessException;
+    List<AbsentEmployees> getAbsentEmployees(LocalDate from, LocalDate to);
 
-    List<DelegationRequest> getEmployeeDelegationRequests(long id, LocalDate from, LocalDate to, String email) throws IllegalAccessException;
-    List<DaysOffRequest> getEmployeeDaysOffRequests(long id, LocalDate from, LocalDate to, String email) throws IllegalAccessException;
+    List<DelegationRequest> getEmployeeDelegationRequests(long id, LocalDate from, LocalDate to);
+    List<DaysOffRequest> getEmployeeDaysOffRequests(long id, LocalDate from, LocalDate to);
 
-    EmployeeDaysOffDetails getEmployeeDaysOffLeft(long id, String email) throws IllegalAccessException;
-    GroupDaysOffDetails getGroupDaysOffLeft(String email) throws IllegalAccessException;
+    EmployeeDaysOffDetails getEmployeeDaysOffLeft(long id);
+    GroupDaysOffDetails getGroupDaysOffLeft(String email);
 
 
     // ---------- PERMISSIONS ----------

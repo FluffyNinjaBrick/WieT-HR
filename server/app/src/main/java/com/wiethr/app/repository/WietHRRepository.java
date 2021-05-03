@@ -22,7 +22,6 @@ public class WietHRRepository implements IWietHRRepository {
     private final EmployeeRepository employeeRepository;
     private final PermissionsRepository permissionsRepository;
     private final DaysOffRequestRepository daysOffRequestRepository;
-    private final RoleValidator roleValidator;
 
     @Autowired
     public WietHRRepository(
@@ -31,8 +30,7 @@ public class WietHRRepository implements IWietHRRepository {
             ContractRepository contractRepository,
             DelegationRequestRepository delegationRequestRepository, DaysOffRequestRepository daysOffRequestRepository,
             EmployeeRepository employeeRepository,
-            PermissionsRepository permissionsRepository,
-            RoleValidator roleValidator) {
+            PermissionsRepository permissionsRepository) {
         this.appreciationBonusRepository = appreciationBonusRepository;
         this.bonusBudgetRepository = bonusBudgetRepository;
         this.contractRepository = contractRepository;
@@ -40,7 +38,6 @@ public class WietHRRepository implements IWietHRRepository {
         this.employeeRepository = employeeRepository;
         this.permissionsRepository = permissionsRepository;
         this.daysOffRequestRepository = daysOffRequestRepository;
-        this.roleValidator = roleValidator;
     }
 
     // ---------- CONTRACT ----------
@@ -175,8 +172,7 @@ public class WietHRRepository implements IWietHRRepository {
     }
 
     @Override
-    public Employee updateEmployee(Employee changedEmployee, String email) throws IllegalAccessException {
-        this.roleValidator.validate(this.getEmployeeByEmail(email), changedEmployee.getId());
+    public Employee updateEmployee(Employee changedEmployee) {
         //this.permissionsRepository.save(changedEmployee.getPermissions());
         return this.employeeRepository.save(changedEmployee);
     }
@@ -219,13 +215,7 @@ public class WietHRRepository implements IWietHRRepository {
     }
 
     @Override
-    public List<AbsentEmployees> getAbsentEmployees(
-            LocalDate from,
-            LocalDate to,
-            String email
-    ) throws IllegalAccessException {
-
-        this.roleValidator.validateAbsent(this.getEmployeeByEmail(email));
+    public List<AbsentEmployees> getAbsentEmployees(LocalDate from, LocalDate to) {
 
         ArrayList<AbsentEmployees> absences = new ArrayList<>();
 
@@ -252,14 +242,7 @@ public class WietHRRepository implements IWietHRRepository {
     }
 
     @Override
-    public List<DelegationRequest> getEmployeeDelegationRequests(
-            long id,
-            LocalDate from,
-            LocalDate to,
-            String email
-    ) throws IllegalAccessException{
-
-        this.roleValidator.validate(this.getEmployeeByEmail(email), id);
+    public List<DelegationRequest> getEmployeeDelegationRequests(long id, LocalDate from, LocalDate to) {
 
         if(to.isBefore(from)){
             throw new IllegalArgumentException("Error: getEmployeeDelegationRequests function wrong dates: from, to");
@@ -270,14 +253,7 @@ public class WietHRRepository implements IWietHRRepository {
     }
 
     @Override
-    public List<DaysOffRequest> getEmployeeDaysOffRequests(
-            long id,
-            LocalDate from,
-            LocalDate to,
-            String email
-    ) throws IllegalAccessException{
-
-        this.roleValidator.validate(this.getEmployeeByEmail(email), id);
+    public List<DaysOffRequest> getEmployeeDaysOffRequests(long id, LocalDate from, LocalDate to) {
 
         if(to.isBefore(from)){
             throw new IllegalArgumentException("Error: getEmployeeDaysOffRequests function wrong dates: from, to");
@@ -288,9 +264,7 @@ public class WietHRRepository implements IWietHRRepository {
     }
 
     @Override
-    public EmployeeDaysOffDetails getEmployeeDaysOffLeft(long id, String email) throws IllegalAccessException {
-
-        this.roleValidator.validate(this.getEmployeeByEmail(email), id);
+    public EmployeeDaysOffDetails getEmployeeDaysOffLeft(long id) {
 
         // get all requests from this year
         List<DaysOffRequest> daysOffRequestList = daysOffRequestRepository
@@ -322,7 +296,7 @@ public class WietHRRepository implements IWietHRRepository {
         else subordinates = asking.getPermissions().managedUsersObject();
 
         for (Employee e: subordinates) {
-            EmployeeDaysOffDetails details = this.getEmployeeDaysOffLeft(e.getId(), email);  // this is horrible
+            EmployeeDaysOffDetails details = this.getEmployeeDaysOffLeft(e.getId());
             totalDaysOffUsed += details.getDaysOffUsed();
             totalDaysOffLeft += details.getDaysOffLeft();
             employeeDaysOffDetails.add(details);

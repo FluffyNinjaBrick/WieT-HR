@@ -39,7 +39,8 @@ public class RoleValidator {
         throw new IllegalAccessException("Error: you do not have permission to access this resource");
     }
 
-    public boolean validateAbsent(Employee requesting) {
+    public boolean validateAbsent(String requestingEmail) {
+        Employee requesting = this.repository.getEmployeeByEmail(requestingEmail);
         return requesting.getUserRole() == UserRole.MANAGER || requesting.getUserRole() == UserRole.ADMIN;
     }
 
