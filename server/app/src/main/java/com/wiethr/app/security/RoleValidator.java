@@ -17,7 +17,7 @@ public class RoleValidator {
         }
         // case 2 - manager
         else if (requesting.getUserRole() == UserRole.MANAGER) {
-            for (Employee subordinate: requesting.getPermissions().getManagedUsers())
+            for (Employee subordinate: requesting.getPermissions().managedUsersObject())
                 if (subordinate.getId() == subordinateId) return true;
             throw new IllegalAccessException("Error: you do not have permission to access this resource");
         }

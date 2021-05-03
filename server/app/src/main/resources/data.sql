@@ -32,7 +32,6 @@ INSERT INTO document(id, date_from, date_issued, date_signed, date_to, name_at_s
 INSERT INTO contract(id, annual_leave_days, duty_allowance, salary, type, working_hours) VALUES (0, 25,200,2500,'EMPLOYMENT', 160);
 INSERT INTO document_signed_by(document,signer_id) VALUES (0, 1);
 
-
 INSERT INTO document(id, date_from, date_issued, date_signed, date_to, name_at_signing, signed,  employee_id) VALUES (10, '2021-01-01', '2020-12-01', '2020-12-15', '2023-12-30', 'Anna Pastel', true, 3);
 INSERT INTO contract(id, annual_leave_days, duty_allowance, salary, type, working_hours) VALUES (10, 25, 200, 2500, 'EMPLOYMENT', 160);
 INSERT INTO document_signed_by(document,signer_id) VALUES (10, 1);

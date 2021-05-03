@@ -41,7 +41,7 @@ public class Utilities {
     public static List<? extends Document> getDocumentsBetweenDates(ArrayList<? extends Document> requests, long id, LocalDate from, LocalDate to){
         return requests.stream().filter(
                 req -> {
-                    if (req.getEmployee().getId() != id) return false;
+                    if (req.getEmployee() != id) return false;
                     if (req.getDateTo() != null){
                         return !req.getDateTo().isBefore(from) && !req.getDateFrom().isAfter(to);
                     } else return !req.getDateFrom().isAfter(to);

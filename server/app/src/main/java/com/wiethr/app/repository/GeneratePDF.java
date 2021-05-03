@@ -95,7 +95,7 @@ public class GeneratePDF {
         Paragraph acceptance;
         if (request.isSigned()) acceptance = new Paragraph(
                 "Wyrazam zgode na urlop we wskazanym terminie, "
-                + request.getSignedBy().getFullName(),
+                + request.signedByObject().getFullName(),
                 regular
         );
         else acceptance = new Paragraph(
@@ -181,7 +181,7 @@ public class GeneratePDF {
         Paragraph acceptance;
         if (request.isSigned()) acceptance = new Paragraph(
                 "Wyrazam zgode na wyjazd na delegacje we wskazanym terminie, "
-                        + request.getSignedBy().getFullName(),
+                        + request.signedByObject().getFullName(),
                 regular
         );
         else acceptance = new Paragraph(
