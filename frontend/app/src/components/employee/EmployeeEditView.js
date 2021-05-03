@@ -26,15 +26,17 @@ export default function EmployeeEditView() {
 
   return (
     <div className="container">
-      <h1 className="mt-5">Edytuj pracownika</h1>
-      <Button
-        onClick={() => deleteEmployee()}
-        variant="danger"
-        className="mt-2"
-      >
-        Usuń pracownika
-      </Button>
-      <hr />
+      <div className="container col-lg-8 col-md-10 col-sm-12 my-5">
+        <h1 className="mt-5">Edytuj pracownika</h1>
+        <Button
+          onClick={() => deleteEmployee()}
+          variant="danger"
+          className="mt-2"
+        >
+          Usuń pracownika
+        </Button>
+        <hr />
+      </div>
       <EmployeeEditForm employeeId={id} />
     </div>
   );

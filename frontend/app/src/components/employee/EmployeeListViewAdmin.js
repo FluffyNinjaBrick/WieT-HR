@@ -15,15 +15,14 @@ import BootstrapTable from "react-bootstrap-table-next";
 
 export default function EmployeeListViewAdmin() {
   const [employees, setEmployees] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const history = useHistory();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     setLoading(true);
 
     fetchEmployees()
       .then((data) => setEmployees(data))
-      .then(setLoading(false));
+      .then(() => setLoading(false));
   }, []);
 
   const columns = [
@@ -78,47 +77,55 @@ export default function EmployeeListViewAdmin() {
     },
   ];
 
+  if (loading) {
+    return <Loading />;
+  }
+
   return (
     <div className="container">
-      <h1 className="my-4">Pracownicy</h1>
+      <h1 className="my-3">Pracownicy</h1>
+
       <Link to="/employees/create">
         <Button className="mb-3" variant="primary">
           Dodaj pracownika
         </Button>
       </Link>
+      <h4 className="my-3">Wszyscy pracownicy</h4>
       <div>
         {loading ? (
           <Loading />
         ) : employees.length ? (
-          <BootstrapTable
-            keyField="id"
-            data={employees.map((employee) => {
-              let x = { ...employee };
-              x.editButton = (
-                <Link
-                  to={{
-                    pathname: "/employees/edit/" + employee.id,
-                    state: {
-                      employee: employee,
-                    },
-                  }}
-                  style={{ textDecoration: "none" }}
-                >
-                  Edytuj
-                  {/* <Button style={{ width: "100%", borderRadius: "0" }}>Edytuj</Button> */}
-                </Link>
-              );
-              x.statusTranslated =
-                employee.status === "WORKING" ? "Pracuje" : "Nie pracuje";
-              x.name = employee.firstName + " " + employee.lastName;
-              return x;
-            })}
-            columns={columns}
-            filter={filterFactory()}
-            filterPosition="top"
-            striped
-            hover
-          />
+          <div className="mb-5">
+            <BootstrapTable
+              keyField="id"
+              data={employees.map((employee) => {
+                let x = { ...employee };
+                x.editButton = (
+                  <Link
+                    to={{
+                      pathname: "/employees/edit/" + employee.id,
+                      state: {
+                        employee: employee,
+                      },
+                    }}
+                    style={{ textDecoration: "none" }}
+                  >
+                    Edytuj
+                    {/* <Button style={{ width: "100%", borderRadius: "0" }}>Edytuj</Button> */}
+                  </Link>
+                );
+                x.statusTranslated =
+                  employee.status === "WORKING" ? "Pracuje" : "Nie pracuje";
+                x.name = employee.firstName + " " + employee.lastName;
+                return x;
+              })}
+              columns={columns}
+              filter={filterFactory()}
+              filterPosition="top"
+              striped
+              hover
+            />
+          </div>
         ) : (
           <div className="mt-3">
             <h6>Nie znaleziono żadnych pracowników.</h6>

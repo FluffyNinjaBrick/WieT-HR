@@ -18,6 +18,8 @@ export default function SubordinateEmployeeList({
 
   return !employees.length && managed ? (
     <div>Nie wybrano żadnych podwładnych.</div>
+  ) : !employees.length && !managed ? (
+    <div>Nie znaleziono pracowników.</div>
   ) : (
     <div>{listOfEmployees}</div>
   );

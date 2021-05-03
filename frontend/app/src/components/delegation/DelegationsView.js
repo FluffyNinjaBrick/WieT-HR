@@ -17,7 +17,7 @@ export default function DelegationsView() {
       .then(() => setLoading(false));
   }, []);
 
-  if(loading) {
+  if (loading) {
     return <Loading />;
   }
 
@@ -34,7 +34,7 @@ export default function DelegationsView() {
         {loading ? (
           <Loading />
         ) : (
-          <div>
+          <div className="mb-5">
             {delegations.length && !loading ? (
               <Table bordered hover size="sm" className="my-3">
                 <thead>

@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { API_URL } from "../../api/Api";
 import { Redirect, useHistory, useLocation } from "react-router";
 import { getCurrentUser } from "../../services/AuthService";
+import { Loading } from "../loader/LoadingView";
 
 export default function EmployeeEditForm() {
   const {
@@ -21,6 +22,7 @@ export default function EmployeeEditForm() {
   const [employees, setEmployees] = useState([]);
   const employeeToEdit = (location.state && location.state.employee) || {};
   const [submitSuccessful, setSubmitSuccessful] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     const user = JSON.parse(getCurrentUser());
@@ -70,7 +72,7 @@ export default function EmployeeEditForm() {
     setManagedEmployees(managedEmployees.filter((e) => e.id !== employee.id));
   };
 
-  const createEmployee = (formData) => {
+  const createEmployee = async (formData) => {
     var generator = require("generate-password");
 
     var password = generator.generate({
@@ -94,26 +96,35 @@ export default function EmployeeEditForm() {
     const token = user ? user.jwt : "";
     const auth = "Bearer " + token;
 
-    fetch(API_URL + "employees/create", {
+    setSubmitting(true);
+
+    await fetch(API_URL + "employees/create", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: auth,
       },
       body: JSON.stringify(data),
-    }).then(setSubmitSuccessful(true));
+    }).then(() => {
+      setSubmitSuccessful(true);
+      setSubmitting(false);
+    });
   };
 
   const handleCancel = () => {
     history.push("/employees");
   };
 
+  if (submitting) {
+    return <Loading />;
+  }
+
   if (submitSuccessful) {
     return <Redirect to="/employees" />;
   }
 
   return (
-    <div className="my-5">
+    <div className="container col-lg-8 col-md-10 col-sm-12 my-5">
       <h3>Dane personalne</h3>
       <Form onSubmit={handleSubmit(createEmployee)}>
         <Form.Group>
@@ -201,7 +212,7 @@ export default function EmployeeEditForm() {
         </Form.Group>
 
         <h3 className="mt-5 mb-3">Podwładni (opcjonalne)</h3>
-        <div className="container border row m-0 py-4 px-3">
+        <div className="container border row m-0 py-3 px-0">
           <div className="col-md-6 text-center">
             <h4 className="mb-4">Wybrani</h4>
             <SubordinateEmployeeList

@@ -13,6 +13,7 @@ import DelegationsView from "./components/delegation/DelegationsView";
 import Profile from "./components/profile/Profile";
 import ContractView from "./components/contract/ContractView";
 import BonusesView from "./components/bonus/BonusesView";
+import BonusesViewAdmin from "./components/bonus/BonusesViewAdmin";
 import EmployeeListViewAdmin from "./components/employee/EmployeeListViewAdmin";
 import EmployeeEditView from "./components/employee/EmployeeEditView";
 import LoginView from "./components/auth/LoginView";
@@ -61,6 +62,9 @@ function App() {
             </PrivateRoute>
             <PrivateRoute path="/employees/leaves" role="ADMIN">
               <LeavesViewAdmin />
+            </PrivateRoute>
+            <PrivateRoute path="/employees/bonuses" role="ADMIN">
+              <BonusesViewAdmin />
             </PrivateRoute>
             <PrivateRoute path="/leaves/add" role="any">
               <LeaveCreateForm />

@@ -11,7 +11,7 @@ import { fetchAllDelegations } from "../../services/DocumentsService";
 
 export default function DelegationsAdminView() {
   const [allDelegations, setAllDelegations] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     setLoading(true);
@@ -19,7 +19,7 @@ export default function DelegationsAdminView() {
       .then((data) => {
         setAllDelegations(data.filter((x) => x.signed));
       })
-      .then(setLoading(false));
+      .then(() => setLoading(false));
   }, []);
 
   const columns = [
@@ -75,56 +75,49 @@ export default function DelegationsAdminView() {
     },
   ];
 
-  // if (allDelegations.length === 0) {
-  //   return (
-  //     <div
-  //       className="mx-3 my-3 justify-content-sm-center"
-  //       style={{ top: "50%", left: "50%", position: "fixed" }}
-  //     >
-  //       <Loading />
-  //     </div>
-  //   );
+  if (loading) {
+    return <Loading />;
+  }
+
   return (
     <div className="container justify-content-sm-center">
-      <h1 className="my-4">Pracownicy / Delegacje</h1>
+      <h1 className="my-3">Pracownicy / delegacje</h1>
+      <h4 className="my-4">Archiwalne wnioski o delegację</h4>
       {loading ? (
         <Loading />
       ) : (
         <div>
           {allDelegations.length ? (
-            <BootstrapTable
-              keyField="id"
-              data={allDelegations.map((delegation) => {
-                let x = {
-                  name:
-                    delegation.employee.firstName +
-                    " " +
-                    delegation.employee.lastName,
-                  dateFrom: delegation.dateFrom,
-                  dateTo: delegation.dateTo,
-                  destination: delegation.destination,
-                  status: delegation.signed ? "Zaakceptowany" : "Oczekujący",
-                };
-                return x;
-              })}
-              columns={columns}
-              filter={filterFactory()}
-              filterPosition="top"
-              striped
-              hover
-            />
+            <div className="my-3">
+              <BootstrapTable
+                keyField="id"
+                data={allDelegations.map((delegation) => {
+                  let x = {
+                    name:
+                      delegation.employee.firstName +
+                      " " +
+                      delegation.employee.lastName,
+                    dateFrom: delegation.dateFrom,
+                    dateTo: delegation.dateTo,
+                    destination: delegation.destination,
+                    status: delegation.signed ? "Zaakceptowany" : "Oczekujący",
+                  };
+                  return x;
+                })}
+                columns={columns}
+                filter={filterFactory()}
+                filterPosition="top"
+                striped
+                hover
+              />
+            </div>
           ) : (
-            <div className="mt-3">
-              <h6>Nie znaleziono żadnych delegacji.</h6>
+            <div className="my-3">
+              <h6>Nie znaleziono żadnych wniosków o delegację.</h6>
             </div>
           )}
         </div>
       )}
-
-      {/* <Button variant="info" size="md" className="mb-5" disabled={isLoading || areAllLoaded} 
-                    onClick={!isLoading ? loadMoreCharacters : null} block> 
-                        {areAllLoaded ?  "All characters loaded!" :  !isLoading? "Load more characters..." : "Loading ..."}
-                </Button> */}
     </div>
   );
 }

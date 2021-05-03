@@ -14,7 +14,7 @@ import { fetchAllDaysOff, LeaveTypes } from "../../services/DocumentsService";
 
 export default function LeavesViewAdmin() {
   const [allDaysOff, setAllDaysOff] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     setLoading(true);
@@ -22,7 +22,7 @@ export default function LeavesViewAdmin() {
       .then((data) => {
         setAllDaysOff(data.filter((x) => x.signed));
       })
-      .then(setLoading(false));
+      .then(() => setLoading(false));
   }, []);
 
   const columns = [
@@ -96,10 +96,15 @@ export default function LeavesViewAdmin() {
     }
   }
 
+  if (loading) {
+    return <Loading />;
+  }
+
   return (
     <div className="container justify-content-sm-center">
       <div>
-        <h1 className="my-4">Pracownicy / urlopy</h1>
+        <h1 className="my-3">Pracownicy / urlopy</h1>
+        <h4 className="my-4">Archiwalne wnioski urlopowe</h4>
       </div>
       <div>
         {loading ? (

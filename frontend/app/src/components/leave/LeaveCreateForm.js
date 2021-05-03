@@ -8,6 +8,7 @@ import React from "react";
 import { useHistory } from "react-router";
 import { API_URL } from "../../api/Api";
 import { getCurrentUser } from "../../services/AuthService";
+import { Loading } from "../loader/LoadingView";
 
 export default function LeaveCreateForm() {
   const {
@@ -19,6 +20,7 @@ export default function LeaveCreateForm() {
 
   const [error, setError] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const token = JSON.parse(getCurrentUser()).jwt;
   const id = JSON.parse(getCurrentUser()).id;
@@ -39,6 +41,8 @@ export default function LeaveCreateForm() {
       ...formData,
     };
 
+    setSubmitting(true);
+
     const response = await fetch(API_URL + "documents/create/daysoff", {
       method: "POST",
       headers: {
@@ -47,6 +51,8 @@ export default function LeaveCreateForm() {
       },
       body: JSON.stringify(data),
     });
+
+    setSubmitting(false);
 
     if (!response.ok) {
       setError(true);
@@ -57,6 +63,10 @@ export default function LeaveCreateForm() {
 
     console.log(data);
   };
+
+  if (submitting) {
+    return <Loading />;
+  }
 
   return (
     <div className="mt-5">

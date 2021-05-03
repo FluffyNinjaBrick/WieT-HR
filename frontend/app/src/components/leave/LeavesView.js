@@ -38,18 +38,15 @@ export default function LeavesView() {
       if (data) {
         setDaysOffLeft(data.daysOffLeft);
         setDaysOffTotal(data.daysOffLeft + data.daysOffUsed);
+      } else {
+        setDaysOffLeft(0);
+        setDaysOffTotal(0);
       }
     });
 
     fetchUserDaysOff()
       .then((data) => {
         setDaysOffRequests(data);
-        // if (data) {
-        //   setDaysOffLeft(
-        //     data[0].employee.thisYearDaysOff + data[0].employee.lastYearDaysOff
-        //   );
-        //   setDaysOffTotal(30);
-        // }
       })
       .then(() => setLoading(false));
   }, []);
@@ -95,7 +92,7 @@ export default function LeavesView() {
         {loading ? (
           <Loading />
         ) : (
-          <div>
+          <div className="mb-5">
             {daysOffRequests.length && !loading ? (
               <Table bordered hover size="sm" className="my-3">
                 <thead>

@@ -10,241 +10,221 @@ import filterFactory, {
   Comparator,
 } from "react-bootstrap-table2-filter";
 import { Loading } from "../loader/LoadingView";
-import { fetchAllDelegations, fetchAllDaysOff, LeaveTypes } from "../../services/DocumentsService";
+import {
+  fetchAllDelegations,
+  fetchAllDaysOff,
+  LeaveTypes,
+} from "../../services/DocumentsService";
 
 export default function RequestsView() {
-    const [allDelegations, setAllDelegations] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [allDaysOff, setAllDaysOff] = useState([]);
+  const [allDelegations, setAllDelegations] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [allDaysOff, setAllDaysOff] = useState([]);
 
-    useEffect(() => {
-      setLoading(true);
-      fetchAllDaysOff().then((daysOffData) => {
-        setAllDaysOff(daysOffData.filter(x => !x.signed));
+  useEffect(() => {
+    setLoading(true);
+    fetchAllDaysOff().then((daysOffData) => {
+      setAllDaysOff(daysOffData.filter((x) => !x.signed));
+    });
+    fetchAllDelegations()
+      .then((data) => {
+        setAllDelegations(data.filter((x) => !x.signed));
       })
-      fetchAllDelegations()
-        .then((data) => {
-          setAllDelegations(data.filter(x => !x.signed));
-        })
-        .then(() => setLoading(false));
-    }, []);
-  
-    const delegationColumns = [
-        {
-          dataField: "name",
-          text: "Imię i nazwisko",
-          filter: textFilter({
-            placeholder: "Podaj imie i nazwisko"
-          }),
-          headerStyle: { textAlign: "center" },
-        },
-        {
-          dataField: "dateFrom",
-          text: "Data od",
-          filter: dateFilter({
-            withoutEmptyComparatorOption: true,
-            comparators: [Comparator.GE],
-            comparatorStyle: { display: "none" },
-            dateStyle: { position: "relative" },
-          }),
-          headerStyle: { textAlign: "center" },
-        },
-        {
-          dataField: "dateTo",
-          text: "Data do",
-          filter: dateFilter({
-            withoutEmptyComparatorOption: true,
-            comparators: [Comparator.LE],
-            comparatorStyle: { display: "none" },
-            dateStyle: { position: "relative" },
-          }),
-          headerStyle: { textAlign: "center" },
-        },
-        {
-          dataField: "destination",
-          text: "Miejsce",
-          filter: textFilter({
-            placeholder: "Podaj miejsce delegacji"
-          }),
-          headerStyle: { textAlign: "center" },
-        },
-        {
-          dataField: "status",
-          text: "Status",
-          filter: selectFilter({
-            options: {
-              Zaakceptowany: "Zaakceptowany",
-              Oczekujący: "Oczekujący",
-            },
-            placeholder: "Wszystkie",
-          }),
-          headerStyle: { textAlign: "center" },
-        },
-      ];
+      .then(() => setLoading(false));
+  }, []);
 
-      const daysOffColumns = [
-        {
-          dataField: "name",
-          text: "Imię i nazwisko",
-          filter: textFilter({
-            placeholder: "Podaj imie i nazwisko"
-          }),
-          headerStyle: { textAlign: "center" },
+  const delegationColumns = [
+    {
+      dataField: "name",
+      text: "Imię i nazwisko",
+      filter: textFilter({
+        placeholder: "Podaj imie i nazwisko",
+      }),
+      headerStyle: { textAlign: "center" },
+    },
+    {
+      dataField: "dateFrom",
+      text: "Data od",
+      filter: dateFilter({
+        withoutEmptyComparatorOption: true,
+        comparators: [Comparator.GE],
+        comparatorStyle: { display: "none" },
+        dateStyle: { position: "relative" },
+      }),
+      headerStyle: { textAlign: "center" },
+    },
+    {
+      dataField: "dateTo",
+      text: "Data do",
+      filter: dateFilter({
+        withoutEmptyComparatorOption: true,
+        comparators: [Comparator.LE],
+        comparatorStyle: { display: "none" },
+        dateStyle: { position: "relative" },
+      }),
+      headerStyle: { textAlign: "center" },
+    },
+    {
+      dataField: "destination",
+      text: "Miejsce",
+      filter: textFilter({
+        placeholder: "Podaj miejsce delegacji",
+      }),
+      headerStyle: { textAlign: "center" },
+    },
+    {
+      dataField: "status",
+      text: "Status",
+      filter: selectFilter({
+        options: {
+          Zaakceptowany: "Zaakceptowany",
+          Oczekujący: "Oczekujący",
         },
-        {
-          dataField: "dateFrom",
-          text: "Data od",
-          filter: dateFilter({
-            withoutEmptyComparatorOption: true,
-            comparators: [Comparator.GE],
-            comparatorStyle: { display: "none" },
-            dateStyle: { position: "relative" },
-          }),
-          headerStyle: { textAlign: "center" },
-        },
-        {
-          dataField: "dateTo",
-          text: "Data do",
-          filter: dateFilter({
-            withoutEmptyComparatorOption: true,
-            comparators: [Comparator.LE],
-            comparatorStyle: { display: "none" },
-            dateStyle: { position: "relative" },
-          }),
-          headerStyle: { textAlign: "center" },
-        },
-        {
-            dataField: "leaveType",
-            text: "Typ urlopu",
-            filter: selectFilter({
-              options: {
-                Macierzyński: "Macierzyński",
-                Chorobowy: "Chorobowy",
-                Rekreacyjny: "Rekreacyjny"
-              },
-              placeholder: "Wszystkie",
-            }),
-            headerStyle: { textAlign: "center" },
-          },
-        {
-          dataField: "status",
-          text: "Status",
-          filter: selectFilter({
-            options: {
-              Zaakceptowany: "Zaakceptowany",
-              Oczekujący: "Oczekujący",
-            },
-            placeholder: "Wszystkie",
-          }),
-          headerStyle: { textAlign: "center" },
-        },
-      ];
+        placeholder: "Wszystkie",
+      }),
+      headerStyle: { textAlign: "center" },
+    },
+  ];
 
-    if(loading) {
-      return <Loading/>;
-    }
+  const daysOffColumns = [
+    {
+      dataField: "name",
+      text: "Imię i nazwisko",
+      filter: textFilter({
+        placeholder: "Podaj imie i nazwisko",
+      }),
+      headerStyle: { textAlign: "center" },
+    },
+    {
+      dataField: "dateFrom",
+      text: "Data od",
+      filter: dateFilter({
+        withoutEmptyComparatorOption: true,
+        comparators: [Comparator.GE],
+        comparatorStyle: { display: "none" },
+        dateStyle: { position: "relative" },
+      }),
+      headerStyle: { textAlign: "center" },
+    },
+    {
+      dataField: "dateTo",
+      text: "Data do",
+      filter: dateFilter({
+        withoutEmptyComparatorOption: true,
+        comparators: [Comparator.LE],
+        comparatorStyle: { display: "none" },
+        dateStyle: { position: "relative" },
+      }),
+      headerStyle: { textAlign: "center" },
+    },
+    {
+      dataField: "leaveType",
+      text: "Typ urlopu",
+      filter: selectFilter({
+        options: {
+          Macierzyński: "Macierzyński",
+          Chorobowy: "Chorobowy",
+          Rekreacyjny: "Rekreacyjny",
+        },
+        placeholder: "Wszystkie",
+      }),
+      headerStyle: { textAlign: "center" },
+    },
+    {
+      dataField: "status",
+      text: "Status",
+      filter: selectFilter({
+        options: {
+          Zaakceptowany: "Zaakceptowany",
+          Oczekujący: "Oczekujący",
+        },
+        placeholder: "Wszystkie",
+      }),
+      headerStyle: { textAlign: "center" },
+    },
+  ];
 
-    return(
+  if (loading) {
+    return <Loading />;
+  }
+
+  return (
     <div>
-        <div className="container">
-        <h1 className="my-4">Pracownicy / wnioski</h1>
-      <CalendarView />
-      <br></br>
-      
-      {loading ? (
-        <Loading />
-      ) : (
-        <div>
-        <h5 className="my-4">Wnioski o delegacje</h5>
-          {allDelegations.length ? (
-            <BootstrapTable
-              keyField="id"
-              data={allDelegations.map((delegation) => {
-                let x = {
-                  name:
-                    delegation.employee.firstName +
-                    " " +
-                    delegation.employee.lastName,
-                  dateFrom: delegation.dateFrom,
-                  dateTo: delegation.dateTo,
-                  destination: delegation.destination,
-                  status: delegation.signed ? "Zaakceptowany" : "Oczekujący",
-                };
-                return x; 
-              })}
-              columns={delegationColumns}
-              filter={filterFactory()}
-              filterPosition="top"
-              striped
-              hover
-            />
-          ) : (
-            <div className="mt-3">
-              <h6>Nie znaleziono żadnych wniosków o delegację.</h6>
-            </div>
-          )}
-          <h5 className="my-4">Wnioski o urlop</h5>
+      <div className="container">
+        <h1 className="my-3">Pracownicy / wnioski</h1>
+        <CalendarView />
+        <br></br>
+        {loading ? (
+          <Loading />
+        ) : (
+          <div>
+            <h4 className="my-4">Oczekujące wnioski o urlop</h4>
             {allDaysOff.length && !loading ? (
-              <div>
-                
+              <div className="mb-5">
                 <BootstrapTable
-                keyField="id"
-                data={allDaysOff.map((daysOff) => {
+                  keyField="id"
+                  data={allDaysOff.map((daysOff) => {
                     let x = {
-                    name:
-                    daysOff.employee.firstName +
+                      name:
+                        daysOff.employee.firstName +
                         " " +
                         daysOff.employee.lastName,
-                    dateFrom: daysOff.dateFrom,
-                    dateTo: daysOff.dateTo,
-                    leaveType: LeaveTypes[daysOff.leaveType],
-                    status: daysOff.signed ? "Zaakceptowany" : "Oczekujący",
+                      dateFrom: daysOff.dateFrom,
+                      dateTo: daysOff.dateTo,
+                      leaveType: LeaveTypes[daysOff.leaveType],
+                      status: daysOff.signed ? "Zaakceptowany" : "Oczekujący",
                     };
-                    return x; 
-                })}
-                columns={daysOffColumns}
-                filter={filterFactory()}
-                filterPosition="top"
-                striped
-                hover
+                    return x;
+                  })}
+                  columns={daysOffColumns}
+                  filter={filterFactory()}
+                  filterPosition="top"
+                  striped
+                  hover
                 />
               </div>
             ) : (
-                
-                <div className="mt-3">
-                  <h6>Nie znaleziono żadnych wniosków o urlop.</h6>
-                </div>
+              <div className="mt-3 mb-5">
+                <h6>Nie znaleziono żadnych oczekujących wniosków o urlop.</h6>
+              </div>
             )}
-        </div>
-
-      )}
-      {/* <Table bordered hover size="sm">
-        <thead>
-          <tr>
-            <th>Imię</th>
-            <th>Nazwisko</th>
-            <th>Email</th>
-            <th>Adres</th>
-            <th>Numer telefonu</th>
-            <th>Pozostałe dni wolne</th>
-          </tr>
-        </thead>
-
-        {loading ? (
-          <tbody></tbody>
-        ) : (
-          <tbody>
-            {employees.length &&
-              employees.map((employee) => (
-                <SingleEmployeeLeavesView
-                  key={employee.id}
-                  employee={employee}
+            <h4 className="my-4 mt-5">Oczekujące wnioski o delegację</h4>
+            {allDelegations.length ? (
+              <div className="mb-5">
+                <BootstrapTable
+                  keyField="id"
+                  data={allDelegations.map((delegation) => {
+                    let x = {
+                      name:
+                        delegation.employee.firstName +
+                        " " +
+                        delegation.employee.lastName,
+                      dateFrom: delegation.dateFrom,
+                      dateTo: delegation.dateTo,
+                      destination: delegation.destination,
+                      status: delegation.signed
+                        ? "Zaakceptowany"
+                        : "Oczekujący",
+                    };
+                    return x;
+                  })}
+                  columns={delegationColumns}
+                  filter={filterFactory()}
+                  filterPosition="top"
+                  striped
+                  hover
                 />
-              ))}
-          </tbody>
+              </div>
+            ) : (
+              <div className="mt-3 mb-5">
+                <h6>
+                  Nie znaleziono żadnych oczekujących wniosków o delegację.
+                </h6>
+              </div>
+            )}
+          </div>
         )}
-      </Table> */}
       </div>
     </div>
-  )
+  );
 }
