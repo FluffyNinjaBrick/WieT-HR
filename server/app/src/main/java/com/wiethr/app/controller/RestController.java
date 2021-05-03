@@ -250,7 +250,7 @@ public class RestController {
     ) throws IllegalAccessException {
         //TODO send and return PermissionHelper in json
         Employee employee = repository.getEmployee(employeeId);
-        employee.getPermissions().setManagedUsers(updatedPermissions.getManagedUsers());
+        employee.getPermissions().setManagedUsers(updatedPermissions.managedUsersObject());
         employee.getPermissions().setModifyBonusBudget(updatedPermissions.isModifyBonusBudget());
         employee.setPermissions(updatedPermissions);
 

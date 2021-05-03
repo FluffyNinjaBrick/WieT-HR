@@ -7,9 +7,11 @@ import org.springframework.lang.Nullable;
 import javax.persistence.*;
 import java.time.LocalDate;
 
-@MappedSuperclass
+//@MappedSuperclass
 @EqualsAndHashCode
 @Data
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Document {
 
     @Id
@@ -47,6 +49,27 @@ public abstract class Document {
     public void sign(Employee employee) {
         signedBy = employee;
         signed = true;
+    }
+
+    /**
+     * NOTE: this method actually returns the employee's ID
+     * @return the ID of the employee, to whom the document pertains
+     */
+    public long getEmployee() {
+        return this.employee.getId();
+    }
+
+    public Employee employeeObject() {
+        return this.employee;
+    }
+
+    public Long getSignedBy() {
+        if (!signed) return null;
+        else return this.signedBy.getId();
+    }
+
+    public Employee signedByObject() {
+        return this.signedBy;
     }
 
 }

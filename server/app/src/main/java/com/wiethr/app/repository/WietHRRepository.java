@@ -46,7 +46,7 @@ public class WietHRRepository implements IWietHRRepository {
     // ---------- CONTRACT ----------
     @Override
     public void createContract(Contract contract, String email) throws IllegalAccessException {
-        this.roleValidator.validate(this.getEmployeeByEmail(email), contract.getEmployee().getId());
+        this.roleValidator.validate(this.getEmployeeByEmail(email), contract.getEmployee());
         this.contractRepository.save(contract);
     }
 
@@ -54,7 +54,7 @@ public class WietHRRepository implements IWietHRRepository {
         ArrayList<Contract> contracts = new ArrayList<>();
 
         for (Contract c: this.contractRepository.findAll())
-            if (c.getEmployee().getId() == id && c.isSigned())
+            if (c.getEmployee() == id && c.isSigned())
                 contracts.add(c);
 
         return contracts;
@@ -64,14 +64,14 @@ public class WietHRRepository implements IWietHRRepository {
     // ---------- DAYS OFF REQUEST ----------
     @Override
     public void createDaysOffRequest(DaysOffRequest daysOffRequest, String email) throws IllegalAccessException {
-        this.roleValidator.validate(this.getEmployeeByEmail(email), daysOffRequest.getEmployee().getId());
+        this.roleValidator.validate(this.getEmployeeByEmail(email), daysOffRequest.getEmployee());
         this.daysOffRequestRepository.save(daysOffRequest);
     }
 
     @Override
     public DaysOffRequest getDaysOffRequestByID(long documentID, String email) throws IllegalAccessException {
         DaysOffRequest request = this.daysOffRequestRepository.findById(documentID).orElseThrow();
-        this.roleValidator.validate(this.getEmployeeByEmail(email), request.getEmployee().getId());
+        this.roleValidator.validate(this.getEmployeeByEmail(email), request.getEmployee());
         return request;
     }
 
@@ -84,7 +84,7 @@ public class WietHRRepository implements IWietHRRepository {
         DaysOffRequest daysOffRequest = this.daysOffRequestRepository.findById(documentID).orElseThrow();
         Employee employee = this.getEmployee(addDaysOffRequestHelper.getEmployeeID());
 
-        this.roleValidator.validate(this.getEmployeeByEmail(email), daysOffRequest.getEmployee().getId());
+        this.roleValidator.validate(this.getEmployeeByEmail(email), daysOffRequest.getEmployee());
 
         // daysOffRequest
         daysOffRequest.setLeaveType(addDaysOffRequestHelper.getLeaveType());
@@ -103,7 +103,7 @@ public class WietHRRepository implements IWietHRRepository {
     public void removeDaysOffRequest(long documentID, String email) throws IllegalAccessException {
         DaysOffRequest daysOffRequest = this.daysOffRequestRepository.findById(documentID).orElseThrow();
 
-        this.roleValidator.validate(this.getEmployeeByEmail(email), daysOffRequest.getEmployee().getId());
+        this.roleValidator.validate(this.getEmployeeByEmail(email), daysOffRequest.getEmployee());
 
         if (daysOffRequest.isSigned()) {
             throw new IllegalArgumentException("ERROR: Cannot remove signed DaysOffRequest document");
@@ -127,7 +127,7 @@ public class WietHRRepository implements IWietHRRepository {
     @Override
     public DelegationRequest getDelegationRequestByID(long documentID, String email) throws IllegalAccessException {
         DelegationRequest request = this.delegationRequestRepository.findById(documentID).orElseThrow();
-        this.roleValidator.validate(this.getEmployeeByEmail(email), request.getEmployee().getId());
+        this.roleValidator.validate(this.getEmployeeByEmail(email), request.getEmployee());
         return request;
     }
 
@@ -140,7 +140,7 @@ public class WietHRRepository implements IWietHRRepository {
         DelegationRequest delegationRequest = this.delegationRequestRepository.findById(documentID).orElseThrow();
         Employee employeeToSet = this.employeeRepository.findById(delegationRequestHelper.getEmployeeID()).orElseThrow();
 
-        this.roleValidator.validate(this.getEmployeeByEmail(email), delegationRequest.getEmployee().getId());
+        this.roleValidator.validate(this.getEmployeeByEmail(email), delegationRequest.getEmployee());
 
         // delegationRequest
         delegationRequest.setDestination(delegationRequestHelper.getDestination());
@@ -159,7 +159,7 @@ public class WietHRRepository implements IWietHRRepository {
     public void removeDelegationRequest(long documentID, String email) throws IllegalAccessException {
         DelegationRequest delegationRequest = this.delegationRequestRepository.findById(documentID).orElseThrow();
 
-        this.roleValidator.validate(this.getEmployeeByEmail(email), delegationRequest.getEmployee().getId());
+        this.roleValidator.validate(this.getEmployeeByEmail(email), delegationRequest.getEmployee());
 
         if(delegationRequest.isSigned()){
             throw new IllegalArgumentException("ERROR: Cannot remove signed DaysOffRequest document");
@@ -347,7 +347,7 @@ public class WietHRRepository implements IWietHRRepository {
         Employee asking = this.getEmployeeByEmail(email);
         List<Employee> subordinates;
         if (asking.getUserRole().equals(UserRole.ADMIN)) subordinates = this.employeeRepository.findAll();
-        else subordinates = asking.getPermissions().getManagedUsers();
+        else subordinates = asking.getPermissions().managedUsersObject();
 
         for (Employee e: subordinates) {
             EmployeeDaysOffDetails details = this.getEmployeeDaysOffLeft(e.getId(), email);  // this is horrible

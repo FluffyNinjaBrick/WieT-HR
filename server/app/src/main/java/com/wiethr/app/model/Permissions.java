@@ -1,17 +1,20 @@
 package com.wiethr.app.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Entity
 @NoArgsConstructor
 @Data
 //@SequenceGenerator(name = "permGen", initialValue = 3)
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Permissions {
 
     @Id
@@ -39,6 +42,14 @@ public class Permissions {
 
     public void addManagedUser(Employee user) {
         this.managedUsers.add(user);
+    }
+
+    public List<Long> getManagedUsers() {
+        return this.managedUsers.stream().map(Employee::getId).collect(Collectors.toList());
+    }
+
+    public List<Employee> managedUsersObject() {
+        return this.managedUsers;
     }
 
 }

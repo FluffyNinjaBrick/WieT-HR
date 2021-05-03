@@ -37,4 +37,12 @@ public class AppreciationBonus {
         this.bonusBudget = bonusBudget;
     }
 
+//    public long getEmployee() {
+//        return this.employee.getId();
+//    }
+//
+//    public Employee employeeObject() {
+//        return this.employee;
+//    }
+
 }
