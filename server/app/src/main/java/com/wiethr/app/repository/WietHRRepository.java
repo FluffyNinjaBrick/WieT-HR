@@ -6,6 +6,7 @@ import com.wiethr.app.model.helpers.*;
 import com.wiethr.app.repository.jpaRepos.*;
 import com.wiethr.app.security.RoleValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
@@ -360,4 +361,12 @@ public class WietHRRepository implements IWietHRRepository {
 
     }
 
+    @Override
+    public Permissions createPermissionsFromHelper(PermissionHelper helper) {
+        Permissions permissions = new Permissions(helper.isAddUsers(), helper.isModifyBonusBudget());
+        for (Employee employee : this.employeeRepository.findAllById(helper.getManagedUsers())) {
+            permissions.addManagedUser(employee);
+        }
+        return permissions;
+    }
 }

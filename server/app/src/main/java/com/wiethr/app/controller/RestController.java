@@ -227,7 +227,7 @@ public class RestController {
     @ResponseBody
     public Employee updateEmployeeData(
             @PathVariable long employeeId,
-            @RequestBody Employee updatedEmployee,
+            @RequestBody UpdateEmployeeHelper updatedEmployee,
             @RequestHeader("Authorization") String token
     ) throws IllegalAccessException {
         //TODO send return EmployeeHelper in json (or new structure because we don't save permissions in this method)
@@ -245,15 +245,14 @@ public class RestController {
     @ResponseBody
     public Employee updateEmployeePermissions(
             @PathVariable long employeeId,
-            @RequestBody Permissions updatedPermissions,
+            @RequestBody PermissionHelper updatedPermissions,
             @RequestHeader("Authorization") String token
     ) throws IllegalAccessException {
         //TODO send and return PermissionHelper in json
         Employee employee = repository.getEmployee(employeeId);
-        employee.getPermissions().setManagedUsers(updatedPermissions.getManagedUsers());
-        employee.getPermissions().setModifyBonusBudget(updatedPermissions.isModifyBonusBudget());
-        employee.setPermissions(updatedPermissions);
-
+        Permissions permissions = repository.createPermissionsFromHelper(updatedPermissions);
+        permissions.setId(employee.getPermissions().getId());
+        employee.setPermissions(permissions);
         return repository.updateEmployee(employee, jwtUtil.extractUsernameFromRaw(token));
     }
 
