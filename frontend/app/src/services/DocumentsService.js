@@ -8,6 +8,28 @@ export const LeaveTypes = {
   RECREATIONAL: "Rekreacyjny",
 };
 
+export const fetchUserDaysOffSummary = async () => {
+  const user = JSON.parse(getCurrentUser());
+  const token = user ? user.jwt : "";
+  const auth = "Bearer " + token;
+  const id = user.id;
+
+  const myHeaders = {
+    "Content-Type": "application/json",
+    Authorization: auth,
+  };
+
+  const URL = `employees/getDaysOff/${id}`;
+
+  const response = await fetch(API_URL + URL, {
+    method: "GET",
+    headers: myHeaders,
+  });
+
+  const daysOff = await response.json();
+  return daysOff;
+};
+
 export const fetchUserDaysOff = async () => {
   const user = JSON.parse(getCurrentUser());
   const token = user ? user.jwt : "";
@@ -28,6 +50,28 @@ export const fetchUserDaysOff = async () => {
 
   const daysOff = await response.json();
   return daysOff;
+};
+
+export const fetchAllDaysOffRequests = async () => {
+  const user = JSON.parse(getCurrentUser());
+  const token = user ? user.jwt : "";
+  const auth = "Bearer " + token;
+  const id = user.id;
+
+  const myHeaders = {
+    "Content-Type": "application/json",
+    Authorization: auth,
+  };
+
+  const URL = "/documents/delegation";
+
+  const response = await fetch(API_URL + URL, {
+    method: "GET",
+    headers: myHeaders,
+  });
+
+  const allDelegationRequests = await response.json();
+  return allDelegationRequests;
 };
 
 export const fetchAllDaysOff = async () => {

@@ -17,7 +17,7 @@ export default function DelegationsAdminView() {
     setLoading(true);
     fetchAllDelegations()
       .then((data) => {
-        setAllDelegations(data);
+        setAllDelegations(data.filter((x) => x.signed));
       })
       .then(setLoading(false));
   }, []);
@@ -26,7 +26,9 @@ export default function DelegationsAdminView() {
     {
       dataField: "name",
       text: "Imię i nazwisko",
-      filter: textFilter(),
+      filter: textFilter({
+        placeholder: "Podaj imie i nazwisko",
+      }),
       headerStyle: { textAlign: "center" },
     },
     {
@@ -52,15 +54,10 @@ export default function DelegationsAdminView() {
       headerStyle: { textAlign: "center" },
     },
     {
-      dataField: "leaveType",
-      text: "Typ urlopu",
-      filter: selectFilter({
-        options: {
-          SICK: "Chorobowy",
-          MATERNITY: "Macierzyński",
-          RECREATIONAL: "Rekreacyjny",
-        },
-        placeholder: "Wszystkie",
+      dataField: "destination",
+      text: "Miejsce",
+      filter: textFilter({
+        placeholder: "Podaj miejsce delegacji",
       }),
       headerStyle: { textAlign: "center" },
     },
@@ -88,15 +85,15 @@ export default function DelegationsAdminView() {
   //     </div>
   //   );
   return (
-    <div className="container justify-content-sm-center col-sm-8">
-      <h1>Pracownicy / Delegacje</h1>
+    <div className="container justify-content-sm-center">
+      <h1 className="my-4">Pracownicy / Delegacje</h1>
       {loading ? (
         <Loading />
       ) : (
         <div>
           {allDelegations.length ? (
             <BootstrapTable
-              keyField="name"
+              keyField="id"
               data={allDelegations.map((delegation) => {
                 let x = {
                   name:
@@ -105,7 +102,7 @@ export default function DelegationsAdminView() {
                     delegation.employee.lastName,
                   dateFrom: delegation.dateFrom,
                   dateTo: delegation.dateTo,
-                  leaveType: "prosze to naprawic",
+                  destination: delegation.destination,
                   status: delegation.signed ? "Zaakceptowany" : "Oczekujący",
                 };
                 return x;

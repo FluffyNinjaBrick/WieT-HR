@@ -13,7 +13,7 @@ export default function SingleDelegationDocument({ delegation }) {
       <td>{delegation.dateTo}</td>
       <td>{delegation.destination}</td>
       <td>{delegation.signed ? "Zaakceptowany" : "Oczekujący"}</td>
-      <td style={{ padding: "0" }}>
+      <td className="p-0">
         <Button
           style={{ width: "100%", borderRadius: "0" }}
           onClick={() => downloadPdf(delegation)}

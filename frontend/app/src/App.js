@@ -20,6 +20,7 @@ import EmployeeCreateView from "./components/employee/EmployeeCreateView";
 import LeaveCreateForm from "./components/leave/LeaveCreateForm";
 import DelegationCreateForm from "./components/delegation/DelegationCreateForm";
 import DelegationsAdminView from "./components/delegation/DelegationsAdminView";
+import RequestsView from "./components/requests/RequestsView";
 import { ProvideAuth } from "./components/auth/useAuth";
 import PrivateRoute from "./components/utils/PrivateRoute";
 import "font-awesome/css/font-awesome.min.css";
@@ -46,6 +47,9 @@ function App() {
             <PrivateRoute exact path="/employees" role="ADMIN">
               <EmployeeListViewAdmin />
             </PrivateRoute>
+            <PrivateRoute exact path="/employees/requests" role="ADMIN">
+              <RequestsView />
+            </PrivateRoute>
             <PrivateRoute path="/employees/edit/:id" role="ADMIN">
               <EmployeeEditView />
             </PrivateRoute>
@@ -55,8 +59,6 @@ function App() {
             <PrivateRoute path="/employees/delegations" role="ADMIN">
               <DelegationsAdminView />
             </PrivateRoute>
-            {/* tutaj trzeba bedzie zrobic routy dla urlopu pracownika i urlopow wszystkich 
-          pracownikow, jak sie maprawa do ich wyswietlania, dropdown pracownicy -> urlopy */}
             <PrivateRoute path="/employees/leaves" role="ADMIN">
               <LeavesViewAdmin />
             </PrivateRoute>

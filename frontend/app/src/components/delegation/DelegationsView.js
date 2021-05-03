@@ -7,15 +7,19 @@ import { Loading } from "../loader/LoadingView";
 
 export default function DelegationsView() {
   const [delegations, setDelegations] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     setLoading(true);
 
     fetchUserDelegationRequests()
       .then((data) => setDelegations(data))
-      .then(setLoading(false));
+      .then(() => setLoading(false));
   }, []);
+
+  if(loading) {
+    return <Loading />;
+  }
 
   return (
     <div className="container">
@@ -31,7 +35,7 @@ export default function DelegationsView() {
           <Loading />
         ) : (
           <div>
-            {delegations.length ? (
+            {delegations.length && !loading ? (
               <Table bordered hover size="sm" className="my-3">
                 <thead>
                   <tr>

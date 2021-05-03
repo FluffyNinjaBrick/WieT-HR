@@ -1,6 +1,10 @@
 import { API_URL } from "../api/Api";
 import { getCurrentUser } from "./AuthService";
 
+export const EmployeeStatus = {
+  WORKING: "Pracuje",
+};
+
 export const fetchEmployees = async () => {
   const user = JSON.parse(getCurrentUser());
   const token = user ? user.jwt : "";

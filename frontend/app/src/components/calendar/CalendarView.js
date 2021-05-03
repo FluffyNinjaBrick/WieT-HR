@@ -3,7 +3,7 @@ import { API_URL } from "../../api/Api";
 import { Chart } from "react-google-charts";
 import { Table } from "react-bootstrap";
 import { getCurrentUser } from "../../services/AuthService";
-import { Loading } from "../loader/LoadingView";
+import { LoadingComponent } from "../loader/LoadingView";
 
 //TODO mozliwosc wyboru roku
 export default function CalendarView() {
@@ -54,7 +54,7 @@ export default function CalendarView() {
     if (employeeList.length === 0) {
       return (
         <div className="col-sm-9 ml-5">
-          <h2>Dnia {date} wszyscy pracownicy są dostępni</h2>
+          <h5>Dnia {date} wszyscy pracownicy są dostępni</h5>
         </div>
       );
     } else {
@@ -109,7 +109,8 @@ export default function CalendarView() {
   var dataWithTypes = data.concat(chartData);
 
   if (absentEmployeesData.length === 0) {
-    return <Loading />;
+    // return <Loading />;
+    return <LoadingComponent />;
   } else {
     return (
       <div className="ml-3">

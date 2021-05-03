@@ -1,6 +1,9 @@
 import { Link } from "react-router-dom";
 import { Button, ProgressBar, Table } from "react-bootstrap";
-import { fetchUserDaysOff } from "../../services/DocumentsService";
+import {
+  fetchUserDaysOff,
+  fetchUserDaysOffSummary,
+} from "../../services/DocumentsService";
 import { useEffect, useState } from "react";
 import SingleLeaveDocument from "./SingleLeaveDocument";
 import { Loading } from "../loader/LoadingView";
@@ -11,7 +14,7 @@ export default function LeavesView() {
   const [daysOffRequests, setDaysOffRequests] = useState([]);
   const [daysOffTotal, setDaysOffTotal] = useState(0);
   const [daysOffLeft, setDaysOffLeft] = useState(0);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   switch (parseInt((daysOffLeft * 4) / daysOffTotal)) {
     case 0:
@@ -31,18 +34,29 @@ export default function LeavesView() {
   useEffect(() => {
     setLoading(true);
 
+    fetchUserDaysOffSummary().then((data) => {
+      if (data) {
+        setDaysOffLeft(data.daysOffLeft);
+        setDaysOffTotal(data.daysOffLeft + data.daysOffUsed);
+      }
+    });
+
     fetchUserDaysOff()
       .then((data) => {
         setDaysOffRequests(data);
-        if (data) {
-          setDaysOffLeft(
-            data[0].employee.thisYearDaysOff + data[0].employee.lastYearDaysOff
-          );
-          setDaysOffTotal(30);
-        }
+        // if (data) {
+        //   setDaysOffLeft(
+        //     data[0].employee.thisYearDaysOff + data[0].employee.lastYearDaysOff
+        //   );
+        //   setDaysOffTotal(30);
+        // }
       })
-      .then(setLoading(false));
+      .then(() => setLoading(false));
   }, []);
+
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <div className="container justify-content-sm-center">
@@ -54,19 +68,26 @@ export default function LeavesView() {
           <Button variant="primary">Złóż wniosek o urlop</Button>
         </Link>
       </div>
-      <h6>
-        Masz aktualnie dostępne {daysOffLeft} dni wolnych. W tym roku
-        wykorzystałeś/aś ich już {daysOffTotal - daysOffLeft}.
-      </h6>
-      <div className="my-3">
-        <ProgressBar
-          className="my-1"
-          now={(daysOffLeft * 100) / daysOffTotal}
-          label={daysOffLeft + "/" + daysOffTotal}
-          variant={colorVariant}
-          style={{ height: "30px" }}
-        />
+      <div>
+        <h3 className="mt-5">Twoje dni wolne</h3>
       </div>
+      {loading ? (
+        <Loading />
+      ) : (
+        <div className="my-3">
+          <h6>
+            Masz aktualnie dostępne {daysOffLeft} dni wolnych. W tym roku
+            wykorzystałeś/aś ich już {daysOffTotal - daysOffLeft}.
+          </h6>
+          <ProgressBar
+            className="my-1"
+            now={(daysOffLeft * 100) / daysOffTotal}
+            label={daysOffLeft + "/" + daysOffTotal}
+            variant={colorVariant}
+            style={{ height: "30px" }}
+          />
+        </div>
+      )}
       <div>
         <h3 className="mt-5">Twoje wnioski urlopowe</h3>
       </div>
@@ -75,7 +96,7 @@ export default function LeavesView() {
           <Loading />
         ) : (
           <div>
-            {daysOffRequests.length ? (
+            {daysOffRequests.length && !loading ? (
               <Table bordered hover size="sm" className="my-3">
                 <thead>
                   <tr>
