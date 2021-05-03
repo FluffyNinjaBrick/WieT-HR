@@ -45,8 +45,7 @@ public class WietHRRepository implements IWietHRRepository {
 
     // ---------- CONTRACT ----------
     @Override
-    public void createContract(Contract contract, String email) throws IllegalAccessException {
-        this.roleValidator.validate(this.getEmployeeByEmail(email), contract.getEmployee());
+    public void createContract(Contract contract) {
         this.contractRepository.save(contract);
     }
 
@@ -63,28 +62,22 @@ public class WietHRRepository implements IWietHRRepository {
 
     // ---------- DAYS OFF REQUEST ----------
     @Override
-    public void createDaysOffRequest(DaysOffRequest daysOffRequest, String email) throws IllegalAccessException {
-        this.roleValidator.validate(this.getEmployeeByEmail(email), daysOffRequest.getEmployee());
+    public void createDaysOffRequest(DaysOffRequest daysOffRequest) {
         this.daysOffRequestRepository.save(daysOffRequest);
     }
 
     @Override
-    public DaysOffRequest getDaysOffRequestByID(long documentID, String email) throws IllegalAccessException {
-        DaysOffRequest request = this.daysOffRequestRepository.findById(documentID).orElseThrow();
-        this.roleValidator.validate(this.getEmployeeByEmail(email), request.getEmployee());
-        return request;
+    public DaysOffRequest getDaysOffRequestByID(long documentID) {
+        return this.daysOffRequestRepository.findById(documentID).orElseThrow();
     }
 
     @Override
     public void updateDaysOffRequest(
             long documentID,
-            AddDaysOffRequestHelper addDaysOffRequestHelper,
-            String email
-    ) throws IllegalAccessException {
+            AddDaysOffRequestHelper addDaysOffRequestHelper
+    ) {
         DaysOffRequest daysOffRequest = this.daysOffRequestRepository.findById(documentID).orElseThrow();
         Employee employee = this.getEmployee(addDaysOffRequestHelper.getEmployeeID());
-
-        this.roleValidator.validate(this.getEmployeeByEmail(email), daysOffRequest.getEmployee());
 
         // daysOffRequest
         daysOffRequest.setLeaveType(addDaysOffRequestHelper.getLeaveType());
@@ -100,10 +93,8 @@ public class WietHRRepository implements IWietHRRepository {
     }
 
     @Override
-    public void removeDaysOffRequest(long documentID, String email) throws IllegalAccessException {
+    public void removeDaysOffRequest(long documentID) {
         DaysOffRequest daysOffRequest = this.daysOffRequestRepository.findById(documentID).orElseThrow();
-
-        this.roleValidator.validate(this.getEmployeeByEmail(email), daysOffRequest.getEmployee());
 
         if (daysOffRequest.isSigned()) {
             throw new IllegalArgumentException("ERROR: Cannot remove signed DaysOffRequest document");
@@ -125,22 +116,17 @@ public class WietHRRepository implements IWietHRRepository {
     }
 
     @Override
-    public DelegationRequest getDelegationRequestByID(long documentID, String email) throws IllegalAccessException {
-        DelegationRequest request = this.delegationRequestRepository.findById(documentID).orElseThrow();
-        this.roleValidator.validate(this.getEmployeeByEmail(email), request.getEmployee());
-        return request;
+    public DelegationRequest getDelegationRequestByID(long documentID) {
+        return this.delegationRequestRepository.findById(documentID).orElseThrow();
     }
 
     @Override
     public void updateDelegationRequest(
             long documentID,
-            AddDelegationRequestHelper delegationRequestHelper,
-            String email
-    ) throws IllegalAccessException {
+            AddDelegationRequestHelper delegationRequestHelper
+    ) {
         DelegationRequest delegationRequest = this.delegationRequestRepository.findById(documentID).orElseThrow();
         Employee employeeToSet = this.employeeRepository.findById(delegationRequestHelper.getEmployeeID()).orElseThrow();
-
-        this.roleValidator.validate(this.getEmployeeByEmail(email), delegationRequest.getEmployee());
 
         // delegationRequest
         delegationRequest.setDestination(delegationRequestHelper.getDestination());
@@ -156,10 +142,8 @@ public class WietHRRepository implements IWietHRRepository {
     }
 
     @Override
-    public void removeDelegationRequest(long documentID, String email) throws IllegalAccessException {
+    public void removeDelegationRequest(long documentID) {
         DelegationRequest delegationRequest = this.delegationRequestRepository.findById(documentID).orElseThrow();
-
-        this.roleValidator.validate(this.getEmployeeByEmail(email), delegationRequest.getEmployee());
 
         if(delegationRequest.isSigned()){
             throw new IllegalArgumentException("ERROR: Cannot remove signed DaysOffRequest document");
@@ -181,23 +165,11 @@ public class WietHRRepository implements IWietHRRepository {
     }
 
     @Override
-    public Employee getEmployee(long id, String email) throws IllegalAccessException {
-        this.roleValidator.validate(this.getEmployeeByEmail(email), id);
-        return this.employeeRepository.findById(id).orElseThrow();
-    }
-
     public Employee getEmployee(long id) {
         return this.employeeRepository.findById(id).orElseThrow();
     }
 
     @Override
-    public Employee getEmployeeByEmail(String email, String requestingEmail) throws IllegalAccessException {
-        Employee queried = this.employeeRepository.findByEmail(email).orElseThrow();
-        Employee requesting = this.employeeRepository.findByEmail(requestingEmail).orElseThrow();
-        this.roleValidator.validate(requesting, queried.getId());
-        return queried;
-    }
-
     public Employee getEmployeeByEmail(String email) {
         return this.employeeRepository.findByEmail(email).orElseThrow();
     }
@@ -337,7 +309,7 @@ public class WietHRRepository implements IWietHRRepository {
     }
 
     @Override
-    public GroupDaysOffDetails getGroupDaysOffLeft(String email) throws IllegalAccessException {
+    public GroupDaysOffDetails getGroupDaysOffLeft(String email) {
 
         List<EmployeeDaysOffDetails> employeeDaysOffDetails = new ArrayList<>();
         int totalDaysOffUsed = 0;

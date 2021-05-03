@@ -9,7 +9,18 @@ import org.springframework.stereotype.Component;
 @Component
 public class RoleValidator {
 
-    public boolean validate(Employee requesting, long subordinateId) throws IllegalAccessException {
+    private final WietHRRepository repository;
+
+    @Autowired
+    public RoleValidator(WietHRRepository repository) {
+        this.repository = repository;
+    }
+
+
+    public boolean validate(String requestingEmail, long subordinateId) throws IllegalAccessException {
+
+        Employee requesting = this.repository.getEmployeeByEmail(requestingEmail);
+
         // case 1 - employee
         if (requesting.getUserRole() == UserRole.EMPLOYEE) {
             if (requesting.getId() == subordinateId) return true;

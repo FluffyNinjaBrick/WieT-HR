@@ -22,30 +22,30 @@ public interface IWietHRRepository {
 
 
     // ---------- CONTRACT ----------
-    void createContract(Contract contract, String email) throws IllegalAccessException;
+    void createContract(Contract contract);
 
 
 
     // ---------- DAYS OFF REQUEST ----------
-    void createDaysOffRequest(DaysOffRequest daysOffRequest, String email) throws IllegalAccessException;
-    DaysOffRequest getDaysOffRequestByID(long documentID, String email) throws IllegalAccessException;
-    void updateDaysOffRequest(long documentID, AddDaysOffRequestHelper addDaysOffRequestHelper, String email) throws IllegalAccessException;
-    void removeDaysOffRequest(long documentID, String email) throws IllegalAccessException;
+    void createDaysOffRequest(DaysOffRequest daysOffRequest);
+    DaysOffRequest getDaysOffRequestByID(long documentID);
+    void updateDaysOffRequest(long documentID, AddDaysOffRequestHelper addDaysOffRequestHelper);
+    void removeDaysOffRequest(long documentID);
     List<DaysOffRequest> getAllDaysOffRequests();
 
 
     // ---------- DELEGATION REQUEST ----------
     void createDelegationRequest(DelegationRequest delegationRequest);
-    DelegationRequest getDelegationRequestByID(long documentID, String email) throws IllegalAccessException;
-    void updateDelegationRequest(long documentID, AddDelegationRequestHelper delegationRequestHelper, String email) throws IllegalAccessException;
-    void removeDelegationRequest(long documentID, String email) throws IllegalAccessException;
+    DelegationRequest getDelegationRequestByID(long documentID);
+    void updateDelegationRequest(long documentID, AddDelegationRequestHelper delegationRequestHelper);
+    void removeDelegationRequest(long documentID);
     List<DelegationRequest> getAllDelegationRequests();
 
     // ---------- EMPLOYEE ----------
     List<Employee> getAllEmployees();
-    Employee getEmployee(long id, String email) throws IllegalAccessException;
-    Employee getEmployeeByEmail(String email, String requestingEmail) throws IllegalAccessException;
-    Employee updateEmployee(Employee employee, String email) throws IllegalAccessException;
+    Employee getEmployee(long id);
+    Employee getEmployeeByEmail(String email);
+    Employee updateEmployee(Employee employee);
     void createEmployee(AddEmployeeHelper helper);
     void removeEmployee(long id);
     List<AbsentEmployees> getAbsentEmployees(LocalDate from, LocalDate to, String email) throws IllegalAccessException;
