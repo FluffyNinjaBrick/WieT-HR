@@ -227,6 +227,13 @@ public class WietHRRepository implements IWietHRRepository {
     }
 
     @Override
+    public void updateEmployeePermissions(long employeeId, PermissionHelper helper) {
+        Permissions permissions = this.getEmployee(employeeId).getPermissions();
+        permissions.update(helper, this);
+        this.permissionsRepository.save(permissions);
+    }
+
+    @Override
     public void createEmployee(AddEmployeeHelper helper) {
 
         // create and save permissions

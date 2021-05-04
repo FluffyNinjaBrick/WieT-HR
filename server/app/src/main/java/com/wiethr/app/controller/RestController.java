@@ -228,22 +228,14 @@ public class RestController {
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
     @PostMapping("/employees/{employeeId}/edit/permissions")
     @ResponseBody
-    public Employee updateEmployeePermissions(
+    public void updateEmployeePermissions(
             @PathVariable long employeeId,
-            @RequestBody Permissions updatedPermissions,
+            @RequestBody PermissionHelper helper,
             @RequestHeader("Authorization") String token
     ) throws IllegalAccessException {
-
         String email = jwtUtil.extractUsernameFromRaw(token);
         this.roleValidator.validate(email, employeeId);
-
-        //TODO send and return PermissionHelper in json
-        Employee employee = repository.getEmployee(employeeId);
-        employee.getPermissions().setManagedUsers(updatedPermissions.managedUsersObject());
-        employee.getPermissions().setModifyBonusBudget(updatedPermissions.isModifyBonusBudget());
-        employee.setPermissions(updatedPermissions);
-
-        return repository.updateEmployee(employee);
+        this.repository.updateEmployeePermissions(employeeId, helper);
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")

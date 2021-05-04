@@ -1,6 +1,8 @@
 package com.wiethr.app.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.wiethr.app.model.helpers.PermissionHelper;
+import com.wiethr.app.repository.WietHRRepository;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -38,6 +40,15 @@ public class Permissions {
         this.addUsers = addUsers;
         this.modifyBonusBudget = modifyBonusBudget;
         this.managedUsers = new ArrayList<>();
+    }
+
+    public Permissions(PermissionHelper helper, WietHRRepository repository) {
+        this.addUsers = helper.isAddUsers();
+        this.modifyBonusBudget = helper.isModifyBonusBudget();
+
+        List<Employee> managedUsers = new ArrayList<>();
+        for (Long id: helper.getManagedUsers()) managedUsers.add(repository.getEmployee(id));
+        this.managedUsers = managedUsers;
     }
 
     public void addManagedUser(Employee user) {
