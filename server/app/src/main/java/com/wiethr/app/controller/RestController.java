@@ -207,7 +207,7 @@ public class RestController {
     @ResponseBody
     public Employee updateEmployeeData(
             @PathVariable long employeeId,
-            @RequestBody Employee updatedEmployee,
+            @RequestBody UpdateEmployeeHelper updatedEmployee,
             @RequestHeader("Authorization") String token
     ) throws IllegalAccessException {
 

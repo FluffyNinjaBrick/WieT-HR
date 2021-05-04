@@ -1,9 +1,6 @@
 package com.wiethr.app.repository;
 
-import com.wiethr.app.model.Contract;
-import com.wiethr.app.model.DaysOffRequest;
-import com.wiethr.app.model.DelegationRequest;
-import com.wiethr.app.model.Employee;
+import com.wiethr.app.model.*;
 import com.wiethr.app.model.helpers.*;
 
 import javax.swing.text.html.Option;
@@ -59,6 +56,6 @@ public interface IWietHRRepository {
 
 
     // ---------- PERMISSIONS ----------
-
+    Permissions createPermissionsFromHelper(PermissionHelper helper);
 
 }

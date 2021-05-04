@@ -22,8 +22,17 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
 
-    private MyUserDetailService myUserDetailService;
-    private JwtRequestFilter jwtRequestFilter;
+    private final MyUserDetailService myUserDetailService;
+    private final JwtRequestFilter jwtRequestFilter;
+    private final String[] AUTH_WHITELIST = {
+            "/api/authenticate",
+            "/v2/api-docs",
+            "/swagger-resources/**",
+            "/swagger-ui.html",
+            "/swagger-ui.html#/*",
+            "/webjars/**",
+            /*Probably not needed*/ "/swagger.json"
+    };
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -34,7 +43,7 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         //TODO check
         http.cors().and().csrf().disable()
-                .authorizeRequests().antMatchers("/api/authenticate").permitAll()
+                .authorizeRequests().antMatchers(AUTH_WHITELIST).permitAll()
                 .anyRequest().authenticated()
                 .and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
