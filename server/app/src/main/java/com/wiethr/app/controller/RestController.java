@@ -131,22 +131,7 @@ public class RestController {
             @RequestBody AddDelegationRequestHelper helper,
             @RequestHeader("Authorization") String token
     ) {
-        DelegationRequest request = new DelegationRequest();
-
-        Employee employee = this.repository.getEmployee(helper.getEmployeeID());
-
-        // inherited from document
-        request.setEmployee(employee);
-        request.setNameAtSigning(employee.getFullName());
-        request.setDateIssued(LocalDate.now());
-        request.setSigned(false);
-        request.setDateFrom(helper.getDateFrom());
-        request.setDateTo(helper.getDateTo());
-
-        // own
-        request.setDestination(helper.getDestination());
-
-        this.repository.createDelegationRequest(request);
+        this.repository.createDelegationRequest(helper);
     }
 
     @PostMapping(value = "/documents/update/delegation/{documentID}")
@@ -269,11 +254,11 @@ public class RestController {
             @RequestBody long[] subordinates,
             @RequestHeader("Authorization") String token
     ) throws IllegalAccessException {
-
+        //TODO return EmployeeHelper?
         String email = jwtUtil.extractUsernameFromRaw(token);
         this.roleValidator.validate(email, employeeId);
 
-        //TODO return EmployeeHelper
+
         Employee employee = repository.getEmployee(employeeId);
         List<Employee> managedUsers = new ArrayList<>();
 

@@ -143,8 +143,22 @@ public class WietHRRepository implements IWietHRRepository {
 
     // ---------- DELEGATION REQUEST ----------
     @Override
-    public void createDelegationRequest(DelegationRequest delegationRequest) {
-        this.delegationRequestRepository.save(delegationRequest);
+    public void createDelegationRequest(AddDelegationRequestHelper helper) {
+        DelegationRequest request = new DelegationRequest();
+
+        Employee employee = this.getEmployee(helper.getEmployeeID());
+
+        // inherited from document
+        request.setEmployee(employee);
+        request.setNameAtSigning(employee.getFullName());
+        request.setDateIssued(LocalDate.now());
+        request.setSigned(false);
+        request.setDateFrom(helper.getDateFrom());
+        request.setDateTo(helper.getDateTo());
+
+        // own
+        request.setDestination(helper.getDestination());
+        this.delegationRequestRepository.save(request);
     }
 
     @Override

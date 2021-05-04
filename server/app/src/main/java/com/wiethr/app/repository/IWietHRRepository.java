@@ -35,7 +35,7 @@ public interface IWietHRRepository {
 
 
     // ---------- DELEGATION REQUEST ----------
-    void createDelegationRequest(DelegationRequest delegationRequest);
+    void createDelegationRequest(AddDelegationRequestHelper helper);
     DelegationRequest getDelegationRequestByID(long documentID);
     void updateDelegationRequest(long documentID, AddDelegationRequestHelper delegationRequestHelper);
     void removeDelegationRequest(long documentID);
