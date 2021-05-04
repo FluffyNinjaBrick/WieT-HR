@@ -82,5 +82,5 @@ INSERT INTO document (id, date_from, date_issued, date_signed, date_to, name_at_
 INSERT INTO DELEGATION_REQUEST (id, destination) VALUES (9, 'Szczecin');
 
 alter sequence employee_id_seq restart with 4;
-alter sequence permissions_id_seq restart with 3;
+alter sequence permissions_id_seq restart with 4;
 alter sequence doc_gen restart with 62;

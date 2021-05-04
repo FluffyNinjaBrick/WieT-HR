@@ -222,7 +222,7 @@ public class WietHRRepository implements IWietHRRepository {
 
     @Override
     public Employee updateEmployee(Employee changedEmployee) {
-        //this.permissionsRepository.save(changedEmployee.getPermissions());
+//        this.permissionsRepository.save(changedEmployee.getPermissions());
         return this.employeeRepository.save(changedEmployee);
     }
 
@@ -242,7 +242,7 @@ public class WietHRRepository implements IWietHRRepository {
         for (Employee user: this.employeeRepository.findAllById(permHelper.getManagedUsers()))
             permissions.addManagedUser(user);
 
-        //this.permissionsRepository.save(permissions);
+//        this.permissionsRepository.save(permissions);
 
         // create and save employee
         Employee employee = new Employee();
