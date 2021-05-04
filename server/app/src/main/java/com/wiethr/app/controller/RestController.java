@@ -203,64 +203,27 @@ public class RestController {
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
-    @PostMapping("/employees/{employeeId}/edit/data")
+    @PostMapping("/employees/edit/data")
     @ResponseBody
-    public Employee updateEmployeeData(
-            @PathVariable long employeeId,
-            @RequestBody UpdateEmployeeHelper updatedEmployee,
+    public void updateEmployeeData(
+            @RequestBody UpdateEmployeeHelper helper,
             @RequestHeader("Authorization") String token
     ) throws IllegalAccessException {
-
         String email = jwtUtil.extractUsernameFromRaw(token);
-        this.roleValidator.validate(email, employeeId);
-
-        //TODO send return EmployeeHelper in json (or new structure because we don't save permissions in this method)
-        Employee currentEmployee = repository.getEmployee(employeeId);
-        currentEmployee.setFirstName(updatedEmployee.getFirstName());
-        currentEmployee.setLastName(updatedEmployee.getLastName());
-        currentEmployee.setEmail(updatedEmployee.getEmail());
-        currentEmployee.setPhone(updatedEmployee.getPhone());
-        currentEmployee.setAddress(updatedEmployee.getAddress());
-
-        return repository.updateEmployee(currentEmployee);
+        this.roleValidator.validate(email, helper.getId());
+        repository.updateEmployee(helper);
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
-    @PostMapping("/employees/{employeeId}/edit/permissions")
+    @PostMapping("/employees/edit/permissions")
     @ResponseBody
     public void updateEmployeePermissions(
-            @PathVariable long employeeId,
             @RequestBody PermissionHelper helper,
             @RequestHeader("Authorization") String token
     ) throws IllegalAccessException {
         String email = jwtUtil.extractUsernameFromRaw(token);
-        this.roleValidator.validate(email, employeeId);
-        this.repository.updateEmployeePermissions(employeeId, helper);
-    }
-
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
-    @PostMapping("/employees/{employeeId}/edit/subordinates")
-    @ResponseBody
-    public Employee updateSubordinatesOfEmployee(
-            @PathVariable long employeeId,
-            @RequestBody long[] subordinates,
-            @RequestHeader("Authorization") String token
-    ) throws IllegalAccessException {
-        //TODO return EmployeeHelper?
-        String email = jwtUtil.extractUsernameFromRaw(token);
-        this.roleValidator.validate(email, employeeId);
-
-
-        Employee employee = repository.getEmployee(employeeId);
-        List<Employee> managedUsers = new ArrayList<>();
-
-        for (long l : subordinates) {
-            Employee subordinate = repository.getEmployee(l);
-            managedUsers.add(subordinate);
-        }
-
-        employee.getPermissions().setManagedUsers(managedUsers);
-        return repository.updateEmployee(employee);
+        this.roleValidator.validate(email, helper.getEmployeeId());
+        this.repository.updateEmployeePermissions(helper);
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")

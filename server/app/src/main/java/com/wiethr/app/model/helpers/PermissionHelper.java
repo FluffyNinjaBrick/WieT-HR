@@ -12,11 +12,15 @@ import java.util.List;
 @NoArgsConstructor
 public class PermissionHelper {
 
+    private long employeeId;
     private List<Long> managedUsers;
     private boolean addUsers;
     private boolean modifyBonusBudget;
 
     PermissionHelper(Permissions permissions) {
+
+        // this is the ID of the permission set, but it's identical to the owner's ID
+        this.employeeId = permissions.getId();
         this.addUsers = permissions.isAddUsers();
         this.modifyBonusBudget = permissions.isModifyBonusBudget();
 

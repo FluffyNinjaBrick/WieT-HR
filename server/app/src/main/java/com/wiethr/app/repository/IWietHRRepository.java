@@ -42,8 +42,8 @@ public interface IWietHRRepository {
     List<Employee> getAllEmployees();
     Employee getEmployee(long id);
     Employee getEmployeeByEmail(String email);
-    Employee updateEmployee(Employee employee);
-    void updateEmployeePermissions(long employeeId, PermissionHelper helper);
+    void updateEmployee(UpdateEmployeeHelper helper);
+    void updateEmployeePermissions(PermissionHelper helper);
     void createEmployee(AddEmployeeHelper helper);
     void removeEmployee(long id);
     List<AbsentEmployees> getAbsentEmployees(LocalDate from, LocalDate to);
