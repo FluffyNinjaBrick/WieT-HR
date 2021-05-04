@@ -63,4 +63,13 @@ public class Permissions {
         return this.managedUsers;
     }
 
+    public void update(PermissionHelper helper, WietHRRepository repository){
+        this.addUsers = helper.isAddUsers();
+        this.modifyBonusBudget = helper.isModifyBonusBudget();
+
+        List<Employee> managedUsers = new ArrayList<>();
+        for (Long id: helper.getManagedUsers()) managedUsers.add(repository.getEmployee(id));
+        this.managedUsers = managedUsers;
+    }
+
 }
