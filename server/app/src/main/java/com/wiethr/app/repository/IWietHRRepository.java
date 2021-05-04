@@ -22,12 +22,12 @@ public interface IWietHRRepository {
 
 
     // ---------- CONTRACT ----------
-    void createContract(Contract contract);
+    void createContract(AddContractHelper helper);
 
 
 
     // ---------- DAYS OFF REQUEST ----------
-    void createDaysOffRequest(DaysOffRequest daysOffRequest);
+    void createDaysOffRequest(AddDaysOffRequestHelper helper);
     DaysOffRequest getDaysOffRequestByID(long documentID);
     void updateDaysOffRequest(long documentID, AddDaysOffRequestHelper addDaysOffRequestHelper);
     void removeDaysOffRequest(long documentID);

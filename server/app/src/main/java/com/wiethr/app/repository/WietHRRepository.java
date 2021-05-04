@@ -42,7 +42,27 @@ public class WietHRRepository implements IWietHRRepository {
 
     // ---------- CONTRACT ----------
     @Override
-    public void createContract(Contract contract) {
+    public void createContract(AddContractHelper helper) {
+
+        Contract contract = new Contract();
+        Employee employee = this.getEmployee(helper.getEmployeeID());
+
+        // inherited from document
+        contract.setEmployee(employee);
+        contract.setNameAtSigning(employee.getFullName());
+        contract.setDateIssued(LocalDate.now());
+        contract.setSigned(false);
+        contract.setDateFrom(helper.getDateFrom());
+        contract.setDateTo(helper.getDateTo());
+
+        // own fields
+        contract.setSalary(helper.getSalary());
+        contract.setDutyAllowance(helper.getDutyAllowance());
+        contract.setWorkingHours(helper.getWorkingHours());
+        contract.setAnnualLeaveDays(helper.getAnnualLeaveDays());
+        contract.setType(helper.getType());
+        contract.setAnnexes(new ArrayList<>());
+
         this.contractRepository.save(contract);
     }
 
@@ -59,8 +79,23 @@ public class WietHRRepository implements IWietHRRepository {
 
     // ---------- DAYS OFF REQUEST ----------
     @Override
-    public void createDaysOffRequest(DaysOffRequest daysOffRequest) {
-        this.daysOffRequestRepository.save(daysOffRequest);
+    public void createDaysOffRequest(AddDaysOffRequestHelper helper) {
+
+        DaysOffRequest request = new DaysOffRequest();
+        Employee employee = this.getEmployee(helper.getEmployeeID());
+
+        // inherited from document
+        request.setEmployee(employee);
+        request.setNameAtSigning(employee.getFullName());
+        request.setDateIssued(LocalDate.now());
+        request.setSigned(false);
+        request.setDateFrom(helper.getDateFrom());
+        request.setDateTo(helper.getDateTo());
+
+        // own
+        request.setLeaveType(helper.getLeaveType());
+
+        this.daysOffRequestRepository.save(request);
     }
 
     @Override

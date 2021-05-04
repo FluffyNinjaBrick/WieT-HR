@@ -67,30 +67,9 @@ public class RestController {
             @RequestBody AddContractHelper helper,
             @RequestHeader("Authorization") String token
     ) throws IllegalAccessException {
-
-        Contract contract = new Contract();
-
-        Employee employee = this.repository.getEmployee(helper.getEmployeeID());
-
-        // inherited from document
-        contract.setEmployee(employee);
-        contract.setNameAtSigning(employee.getFullName());
-        contract.setDateIssued(LocalDate.now());
-        contract.setSigned(false);
-        contract.setDateFrom(helper.getDateFrom());
-        contract.setDateTo(helper.getDateTo());
-
-        // own fields
-        contract.setSalary(helper.getSalary());
-        contract.setDutyAllowance(helper.getDutyAllowance());
-        contract.setWorkingHours(helper.getWorkingHours());
-        contract.setAnnualLeaveDays(helper.getAnnualLeaveDays());
-        contract.setType(helper.getType());
-        contract.setAnnexes(new ArrayList<>());
-
         String email = jwtUtil.extractUsernameFromRaw(token);
-        this.roleValidator.validate(email, contract.getEmployee());
-        this.repository.createContract(contract);
+        this.roleValidator.validate(email, helper.getEmployeeID());
+        this.repository.createContract(helper);
     }
 
 
@@ -100,24 +79,9 @@ public class RestController {
             @RequestBody AddDaysOffRequestHelper helper,
             @RequestHeader("Authorization") String token) throws IllegalAccessException
     {
-        DaysOffRequest request = new DaysOffRequest();
-
-        Employee employee = this.repository.getEmployee(helper.getEmployeeID());
-
-        // inherited from document
-        request.setEmployee(employee);
-        request.setNameAtSigning(employee.getFullName());
-        request.setDateIssued(LocalDate.now());
-        request.setSigned(false);
-        request.setDateFrom(helper.getDateFrom());
-        request.setDateTo(helper.getDateTo());
-
-        // own
-        request.setLeaveType(helper.getLeaveType());
-
         String email = jwtUtil.extractUsernameFromRaw(token);
-        roleValidator.validate(email, request.getEmployee());
-        this.repository.createDaysOffRequest(request);
+        roleValidator.validate(email, helper.getEmployeeID());
+        this.repository.createDaysOffRequest(helper);
     }
 
     @PostMapping(value = "/documents/update/daysoff/{documentID}")
@@ -329,7 +293,6 @@ public class RestController {
             @PathVariable String to,
             @RequestHeader("Authorization") String token
     ) throws IllegalAccessException {
-
         this.roleValidator.validateAbsent(jwtUtil.extractUsernameFromRaw(token));
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         return this.repository.getAbsentEmployees(LocalDate.parse(from, formatter), LocalDate.parse(to, formatter));
