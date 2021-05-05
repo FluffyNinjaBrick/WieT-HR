@@ -3,12 +3,11 @@ import { API_URL } from "../../api/Api";
 import { Chart } from "react-google-charts";
 import { Table } from "react-bootstrap";
 import { getCurrentUser } from "../../services/AuthService";
-import { Loading } from "../loader/LoadingView";
+import { LoadingComponent } from "../loader/LoadingView";
 
 //TODO mozliwosc wyboru roku
 export default function CalendarView() {
   const token = JSON.parse(getCurrentUser()).jwt;
-  const id = JSON.parse(getCurrentUser()).id;
   const auth = "Bearer " + token;
 
   const [absentEmployeesData, setAbsentEmployeesData] = useState([]);
@@ -54,33 +53,35 @@ export default function CalendarView() {
     var id = -1;
     if (employeeList.length === 0) {
       return (
-        <div className="col-sm-9 ml-5">
-          <h2>Dnia {date} wszyscy pracownicy są dostępni</h2>
+        <div>
+          <h4>W dniu {date} wszyscy pracownicy są dostępni</h4>
         </div>
       );
     } else {
       return (
-        <div className="col-sm-9 ml-5 mt-2">
-          <h2>Osoby niedostępne dnia {date}</h2>
-          <Table bordered hover striped size="md">
-            <thead>
-              <tr>
-                <th>Imię</th>
-                <th>Nazwisko</th>
-              </tr>
-            </thead>
-            <tbody>
-              {employeeList.map((employee) => {
-                id++;
-                return (
-                  <tr key={id}>
-                    <td>{employee.split(" ")[0]}</td>
-                    <td>{employee.split(" ")[1]}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </Table>
+        <div className="mt-2">
+          <h4>Pracownicy niedostępni w dniu {date}</h4>
+          <div className="col-md-4 p-0">
+            <Table bordered hover striped size="md">
+              <thead>
+                <tr>
+                  <th>Imię</th>
+                  <th>Nazwisko</th>
+                </tr>
+              </thead>
+              <tbody>
+                {employeeList.map((employee) => {
+                  id++;
+                  return (
+                    <tr key={id}>
+                      <td>{employee.split(" ")[0]}</td>
+                      <td>{employee.split(" ")[1]}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </Table>
+          </div>
         </div>
       );
     }
@@ -109,11 +110,12 @@ export default function CalendarView() {
   //data with necessary column definitions for creating the chart
   var dataWithTypes = data.concat(chartData);
 
-  if (absentEmployeesData.length == 0) {
-    return <Loading />;
+  if (absentEmployeesData.length === 0) {
+    // return <Loading />;
+    return <LoadingComponent />;
   } else {
     return (
-      <div className="ml-3">
+      <div className="mt-5">
         <Chart
           // style={{ cursor: "pointer" }}
           width={1000}
@@ -122,7 +124,7 @@ export default function CalendarView() {
           loader={<div>Loading Chart</div>}
           data={dataWithTypes}
           options={{
-            title: "Ilość pracowników poza siedzibą w danym dniu",
+            title: "Liczba pracowników niedostępnych w danym dniu",
             noDataPattern: {
               backgroundColor: "#add8e6",
               color: "#FFFFFF",

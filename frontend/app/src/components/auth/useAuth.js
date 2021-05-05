@@ -40,11 +40,7 @@ function useProvideAuth() {
 
   useEffect(() => {
     let u = getCurrentUser();
-    if (u) {
-      setUser(u);
-    } else {
-      setUser(false);
-    }
+    setUser(JSON.parse(u));
   }, []);
 
   const getCurrentUser = () => {

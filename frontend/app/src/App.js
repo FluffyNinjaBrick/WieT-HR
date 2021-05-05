@@ -4,9 +4,8 @@ import {
   Switch,
   Route,
   Redirect,
-  Link,
 } from "react-router-dom";
-import React, { useContext, createContext, useState } from "react";
+import React from "react";
 import Navigation from "./components/navigation/Navigation";
 import LeavesViewAdmin from "./components/leave/LeavesViewAdmin";
 import LeavesView from "./components/leave/LeavesView";
@@ -14,13 +13,15 @@ import DelegationsView from "./components/delegation/DelegationsView";
 import Profile from "./components/profile/Profile";
 import ContractView from "./components/contract/ContractView";
 import BonusesView from "./components/bonus/BonusesView";
+import BonusesViewAdmin from "./components/bonus/BonusesViewAdmin";
 import EmployeeListViewAdmin from "./components/employee/EmployeeListViewAdmin";
 import EmployeeEditView from "./components/employee/EmployeeEditView";
 import LoginView from "./components/auth/LoginView";
 import EmployeeCreateView from "./components/employee/EmployeeCreateView";
 import LeaveCreateForm from "./components/leave/LeaveCreateForm";
 import DelegationCreateForm from "./components/delegation/DelegationCreateForm";
-import DelegationsAdminView from "./components/delegation/DelegationsAdminView"
+import DelegationsAdminView from "./components/delegation/DelegationsAdminView";
+import RequestsView from "./components/requests/RequestsView";
 import { ProvideAuth } from "./components/auth/useAuth";
 import PrivateRoute from "./components/utils/PrivateRoute";
 import "font-awesome/css/font-awesome.min.css";
@@ -47,6 +48,9 @@ function App() {
             <PrivateRoute exact path="/employees" role="ADMIN">
               <EmployeeListViewAdmin />
             </PrivateRoute>
+            <PrivateRoute exact path="/employees/requests" role="ADMIN">
+              <RequestsView />
+            </PrivateRoute>
             <PrivateRoute path="/employees/edit/:id" role="ADMIN">
               <EmployeeEditView />
             </PrivateRoute>
@@ -56,10 +60,11 @@ function App() {
             <PrivateRoute path="/employees/delegations" role="ADMIN">
               <DelegationsAdminView />
             </PrivateRoute>
-            {/* tutaj trzeba bedzie zrobic routy dla urlopu pracownika i urlopow wszystkich 
-          pracownikow, jak sie maprawa do ich wyswietlania, dropdown pracownicy -> urlopy */}
             <PrivateRoute path="/employees/leaves" role="ADMIN">
               <LeavesViewAdmin />
+            </PrivateRoute>
+            <PrivateRoute path="/employees/bonuses" role="ADMIN">
+              <BonusesViewAdmin />
             </PrivateRoute>
             <PrivateRoute path="/leaves/add" role="any">
               <LeaveCreateForm />

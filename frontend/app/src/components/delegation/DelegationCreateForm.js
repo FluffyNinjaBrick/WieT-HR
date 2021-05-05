@@ -8,6 +8,7 @@ import React from "react";
 import { useHistory } from "react-router";
 import { API_URL } from "../../api/Api";
 import { getCurrentUser } from "../../services/AuthService";
+import { Loading } from "../loader/LoadingView";
 
 export default function DelegationCreateForm() {
   const {
@@ -23,6 +24,7 @@ export default function DelegationCreateForm() {
 
   const [error, setError] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const history = useHistory();
 
@@ -39,6 +41,8 @@ export default function DelegationCreateForm() {
       ...formData,
     };
 
+    setSubmitting(true);
+
     const response = await fetch(API_URL + "documents/create/delegation", {
       method: "POST",
       headers: {
@@ -47,6 +51,8 @@ export default function DelegationCreateForm() {
       },
       body: JSON.stringify(data),
     });
+
+    setSubmitting(false);
 
     if (!response.ok) {
       setError(true);
@@ -58,10 +64,17 @@ export default function DelegationCreateForm() {
     console.log(data);
   };
 
+  if (submitting) {
+    return <Loading />;
+  }
+
   return (
-    <div className="d-flex flex-column align-items-center justify-content-center mt-5">
-      <h1>Wypełnij wniosek o delegację</h1>
-      <div className="mt-5">
+    <div className="mt-5">
+      <div className="container text-center">
+        <h1>Wypełnij wniosek o delegację</h1>
+      </div>
+
+      <div className="container col-lg-4 col-md-6 col-sm-8 mt-5">
         {error && showAlert && (
           <Alert
             variant="danger"
@@ -71,7 +84,7 @@ export default function DelegationCreateForm() {
             Wystąpił błąd.
           </Alert>
         )}
-        <Form className="LeavesForm" onSubmit={handleSubmit(handleFormSubmit)}>
+        <Form onSubmit={handleSubmit(handleFormSubmit)}>
           <Form.Group>
             <Form.Label htmlFor="Date">Początek delegacji</Form.Label>
             <Form.Control
