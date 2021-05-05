@@ -116,10 +116,7 @@ export default function LeavesViewAdmin() {
                 keyField="id"
                 data={allDaysOff.map((daysOff) => {
                   let x = {
-                    name:
-                      daysOff.employee.firstName +
-                      " " +
-                      daysOff.employee.lastName,
+                    name: daysOff.nameAtSigning,
                     dateFrom: daysOff.dateFrom,
                     dateTo: daysOff.dateTo,
                     leaveType: LeaveTypes[daysOff.leaveType],

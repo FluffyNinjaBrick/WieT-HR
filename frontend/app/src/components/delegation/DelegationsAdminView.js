@@ -93,10 +93,7 @@ export default function DelegationsAdminView() {
                 keyField="id"
                 data={allDelegations.map((delegation) => {
                   let x = {
-                    name:
-                      delegation.employee.firstName +
-                      " " +
-                      delegation.employee.lastName,
+                    name: delegation.nameAtSigning,
                     dateFrom: delegation.dateFrom,
                     dateTo: delegation.dateTo,
                     destination: delegation.destination,

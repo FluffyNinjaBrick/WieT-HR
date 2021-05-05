@@ -28,6 +28,7 @@ export default function RequestsView() {
     });
     fetchAllDelegations()
       .then((data) => {
+        console.log(data);
         setAllDelegations(data.filter((x) => !x.signed));
       })
       .then(() => setLoading(false));
@@ -165,10 +166,7 @@ export default function RequestsView() {
                   keyField="id"
                   data={allDaysOff.map((daysOff) => {
                     let x = {
-                      name:
-                        daysOff.employee.firstName +
-                        " " +
-                        daysOff.employee.lastName,
+                      name: daysOff.nameAtSigning, 
                       dateFrom: daysOff.dateFrom,
                       dateTo: daysOff.dateTo,
                       leaveType: LeaveTypes[daysOff.leaveType],
@@ -195,10 +193,7 @@ export default function RequestsView() {
                   keyField="id"
                   data={allDelegations.map((delegation) => {
                     let x = {
-                      name:
-                        delegation.employee.firstName +
-                        " " +
-                        delegation.employee.lastName,
+                      name: delegation.nameAtSigning,
                       dateFrom: delegation.dateFrom,
                       dateTo: delegation.dateTo,
                       destination: delegation.destination,
