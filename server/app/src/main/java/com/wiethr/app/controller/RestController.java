@@ -195,6 +195,7 @@ public class RestController {
         return this.repository.getEmployee(id);
     }
 
+    //zmieniony endpoint
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
     @PostMapping("/employees")
     public void createEmployee(@RequestBody AddEmployeeHelper helper) {
@@ -221,6 +222,7 @@ public class RestController {
         repository.updateEmployee(helper);
     }
 
+    // post na put, zmieniony endpoint
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
     @PutMapping("/employees/permissions")
     @ResponseBody
@@ -247,7 +249,7 @@ public class RestController {
 
     // id do body, zmieniony endpoint
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
-    @GetMapping("/employees/{id}/documents/delegation/{from}/{to}")
+    @GetMapping("/employees/delegations/{from}/{to}")
     public List<DelegationRequest> getEmployeeDelegationRequests(
             @RequestBody long id,
             @PathVariable String from,
@@ -263,7 +265,7 @@ public class RestController {
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
     @GetMapping("/employees/daysoff/{from}/{to}")
     public List<DaysOffRequest> getEmployeeDaysOffRequests(
-            @PathVariable long id,
+            @RequestBody long id,
             @PathVariable String from,
             @PathVariable String to,
             @RequestHeader("Authorization") String token
