@@ -10,8 +10,9 @@ import java.time.LocalDate;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class AddDaysOffRequestHelper {
+public class DaysOffRequestHelper {
 
+    private long documentId;
     private long employeeID;
     private LocalDate dateFrom, dateTo;
     private LeaveType leaveType;

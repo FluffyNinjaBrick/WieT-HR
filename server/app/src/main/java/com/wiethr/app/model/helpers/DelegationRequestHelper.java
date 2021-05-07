@@ -10,8 +10,9 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class AddDelegationRequestHelper {
+public class DelegationRequestHelper {
 
+    private long documentId;
     private long employeeID;
     private LocalDate dateFrom, dateTo;
     private String destination;

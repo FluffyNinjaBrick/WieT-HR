@@ -3,10 +3,8 @@ package com.wiethr.app.repository;
 import com.wiethr.app.model.*;
 import com.wiethr.app.model.helpers.*;
 
-import javax.swing.text.html.Option;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 public interface IWietHRRepository {
 
@@ -24,17 +22,17 @@ public interface IWietHRRepository {
 
 
     // ---------- DAYS OFF REQUEST ----------
-    void createDaysOffRequest(AddDaysOffRequestHelper helper);
+    void createDaysOffRequest(DaysOffRequestHelper helper);
     DaysOffRequest getDaysOffRequestByID(long documentID);
-    void updateDaysOffRequest(long documentID, AddDaysOffRequestHelper addDaysOffRequestHelper);
+    void updateDaysOffRequest(DaysOffRequestHelper daysOffRequestHelper);
     void removeDaysOffRequest(long documentID);
     List<DaysOffRequest> getAllDaysOffRequests();
 
 
     // ---------- DELEGATION REQUEST ----------
-    void createDelegationRequest(AddDelegationRequestHelper helper);
+    void createDelegationRequest(DelegationRequestHelper helper);
     DelegationRequest getDelegationRequestByID(long documentID);
-    void updateDelegationRequest(long documentID, AddDelegationRequestHelper delegationRequestHelper);
+    void updateDelegationRequest(DelegationRequestHelper delegationRequestHelper);
     void removeDelegationRequest(long documentID);
     List<DelegationRequest> getAllDelegationRequests();
 
@@ -54,6 +52,7 @@ public interface IWietHRRepository {
     EmployeeDaysOffDetails getEmployeeDaysOffLeft(long id);
     GroupDaysOffDetails getGroupDaysOffLeft(String email);
 
+    List<AppreciationBonus> getEmployeeBonuses(long id);
 
     // ---------- PERMISSIONS ----------
     Permissions createPermissionsFromHelper(PermissionHelper helper);

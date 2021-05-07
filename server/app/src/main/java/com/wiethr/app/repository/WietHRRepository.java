@@ -4,9 +4,7 @@ import com.wiethr.app.model.*;
 import com.wiethr.app.model.enums.UserRole;
 import com.wiethr.app.model.helpers.*;
 import com.wiethr.app.repository.jpaRepos.*;
-import com.wiethr.app.security.RoleValidator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
@@ -80,7 +78,7 @@ public class WietHRRepository implements IWietHRRepository {
 
     // ---------- DAYS OFF REQUEST ----------
     @Override
-    public void createDaysOffRequest(AddDaysOffRequestHelper helper) {
+    public void createDaysOffRequest(DaysOffRequestHelper helper) {
 
         DaysOffRequest request = new DaysOffRequest();
         Employee employee = this.getEmployee(helper.getEmployeeID());
@@ -105,18 +103,15 @@ public class WietHRRepository implements IWietHRRepository {
     }
 
     @Override
-    public void updateDaysOffRequest(
-            long documentID,
-            AddDaysOffRequestHelper addDaysOffRequestHelper
-    ) {
-        DaysOffRequest daysOffRequest = this.daysOffRequestRepository.findById(documentID).orElseThrow();
-        Employee employee = this.getEmployee(addDaysOffRequestHelper.getEmployeeID());
+    public void updateDaysOffRequest(DaysOffRequestHelper daysOffRequestHelper) {
+        DaysOffRequest daysOffRequest = this.daysOffRequestRepository.findById(daysOffRequestHelper.getDocumentId()).orElseThrow();
+        Employee employee = this.getEmployee(daysOffRequestHelper.getEmployeeID());
 
         // daysOffRequest
-        daysOffRequest.setLeaveType(addDaysOffRequestHelper.getLeaveType());
+        daysOffRequest.setLeaveType(daysOffRequestHelper.getLeaveType());
         // document
-        daysOffRequest.setDateFrom(addDaysOffRequestHelper.getDateFrom());
-        daysOffRequest.setDateTo(addDaysOffRequestHelper.getDateTo());
+        daysOffRequest.setDateFrom(daysOffRequestHelper.getDateFrom());
+        daysOffRequest.setDateTo(daysOffRequestHelper.getDateTo());
         daysOffRequest.setDateIssued(LocalDate.now());
         daysOffRequest.setSigned(false);
         daysOffRequest.setEmployee(employee);
@@ -144,7 +139,7 @@ public class WietHRRepository implements IWietHRRepository {
 
     // ---------- DELEGATION REQUEST ----------
     @Override
-    public void createDelegationRequest(AddDelegationRequestHelper helper) {
+    public void createDelegationRequest(DelegationRequestHelper helper) {
         DelegationRequest request = new DelegationRequest();
 
         Employee employee = this.getEmployee(helper.getEmployeeID());
@@ -168,11 +163,9 @@ public class WietHRRepository implements IWietHRRepository {
     }
 
     @Override
-    public void updateDelegationRequest(
-            long documentID,
-            AddDelegationRequestHelper delegationRequestHelper
-    ) {
-        DelegationRequest delegationRequest = this.delegationRequestRepository.findById(documentID).orElseThrow();
+    public void updateDelegationRequest(DelegationRequestHelper delegationRequestHelper) {
+
+        DelegationRequest delegationRequest = this.delegationRequestRepository.findById(delegationRequestHelper.getDocumentId()).orElseThrow();
         Employee employeeToSet = this.employeeRepository.findById(delegationRequestHelper.getEmployeeID()).orElseThrow();
 
         // delegationRequest
@@ -369,6 +362,14 @@ public class WietHRRepository implements IWietHRRepository {
 
         return new GroupDaysOffDetails(employeeDaysOffDetails, totalDaysOffUsed, totalDaysOffLeft);
 
+    }
+
+    @Override
+    public List<AppreciationBonus> getEmployeeBonuses(long id) {
+        return this.employeeRepository
+                .findById(id)
+                .orElseThrow()
+                .getAppreciationBonusList();
     }
 
     @Override

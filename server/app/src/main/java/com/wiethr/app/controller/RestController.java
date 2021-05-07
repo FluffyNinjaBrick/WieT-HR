@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 
 @org.springframework.web.bind.annotation.RestController
@@ -62,7 +61,7 @@ public class RestController {
 
     // ---------- CONTRACT ----------
     @PreAuthorize("hasAnyRole('ROLE_MANAGER','ROLE_ADMIN')")
-    @PostMapping(value = "/documents/create/contract")
+    @PostMapping(value = "/documents/contract")
     public void createContract(
             @RequestBody AddContractHelper helper,
             @RequestHeader("Authorization") String token
@@ -74,9 +73,9 @@ public class RestController {
 
 
     // ---------- DAYS OFF REQUEST ----------
-    @PostMapping(value = "/documents/create/daysoff")
+    @PostMapping(value = "/documents/daysoff")
     public void createDaysOffRequest(
-            @RequestBody AddDaysOffRequestHelper helper,
+            @RequestBody DaysOffRequestHelper helper,
             @RequestHeader("Authorization") String token) throws IllegalAccessException
     {
         String email = jwtUtil.extractUsernameFromRaw(token);
@@ -84,20 +83,21 @@ public class RestController {
         this.repository.createDaysOffRequest(helper);
     }
 
-    @PostMapping(value = "/documents/update/daysoff/{documentID}")
+    // zmienna z path w DaysOffRequestHelper i post na put
+    @PutMapping(value = "/documents/daysoff")
     public void updateDaysOffRequest(
-            @PathVariable long documentID,
-            @RequestBody AddDaysOffRequestHelper addDaysOffRequestHelper,
+            @RequestBody DaysOffRequestHelper daysOffRequestHelper,
             @RequestHeader("Authorization") String token
     ) throws IllegalAccessException {
         String email = jwtUtil.extractUsernameFromRaw(token);
-        this.roleValidator.validate(email, addDaysOffRequestHelper.getEmployeeID());
-        this.repository.updateDaysOffRequest(documentID, addDaysOffRequestHelper);
+        this.roleValidator.validate(email, daysOffRequestHelper.getEmployeeID());
+        this.repository.updateDaysOffRequest(daysOffRequestHelper);
     }
 
-    @DeleteMapping(value = "/documents/delete/daysoff/{documentID}")
+    // id do body
+    @DeleteMapping(value = "/documents/daysoff")
     public void removeDaysOffRequest(
-            @PathVariable long documentID,
+            @RequestBody long documentID,
             @RequestHeader("Authorization") String token
     ) throws IllegalAccessException {
         String email = jwtUtil.extractUsernameFromRaw(token);
@@ -111,9 +111,10 @@ public class RestController {
         return this.repository.getAllDaysOffRequests();
     }
 
-    @GetMapping(value = "/documents/daysoff/pdf/{id}")
+    // id do body
+    @GetMapping(value = "/documents/daysoff/pdf")
     public ResponseEntity<byte[]> getDaysOffRequestPDF(
-            @PathVariable long id,
+            @RequestBody long id,
             @RequestHeader("Authorization") String token
     ) throws DocumentException, IllegalAccessException {
         DaysOffRequest request = this.repository.getDaysOffRequestByID(id);
@@ -126,15 +127,17 @@ public class RestController {
     // ---------- DELEGATION REQUEST ----------
     // TODO - the person making the request should be the one the request is hooked up to
 
-    @PostMapping(value = "/documents/create/delegation")
+    //zmieniony endpoint
+    @PostMapping(value = "/documents/delegation")
     public void createDelegationRequest(
-            @RequestBody AddDelegationRequestHelper helper,
+            @RequestBody DelegationRequestHelper helper,
             @RequestHeader("Authorization") String token
     ) {
         this.repository.createDelegationRequest(helper);
     }
 
-    @PostMapping(value = "/documents/update/delegation/{documentID}")
+    // post na put, usuniecie update ze sciezki, documentId w helperze
+    @PutMapping(value = "/documents/delegation")
     public void updateDelegationRequest(
             @PathVariable long documentID,
             @RequestBody AddDelegationRequestHelper delegationRequestHelper,
@@ -142,10 +145,11 @@ public class RestController {
     ) throws IllegalAccessException {
         String email = jwtUtil.extractUsernameFromRaw(token);
         this.roleValidator.validate(email, delegationRequestHelper.getEmployeeID());
-        this.repository.updateDelegationRequest(documentID, delegationRequestHelper);
+        this.repository.updateDelegationRequest(delegationRequestHelper);
     }
 
-    @DeleteMapping(value = "/documents/delete/delegation/{documentID}")
+    // id do request body, metoda zmieniona na delete
+    @DeleteMapping(value = "/documents/delegation")
     public void removeDelegationRequest(
             @PathVariable long documentID,
             @RequestHeader("Authorization") String token
@@ -182,7 +186,7 @@ public class RestController {
 
     @GetMapping(value = "/employees/{id}")
     public Employee getEmployeeById(
-            @PathVariable long id,
+            @RequestBody long id,
             @RequestHeader("Authorization") String token
     ) throws IllegalAccessException {
         String email = jwtUtil.extractUsernameFromRaw(token);
@@ -196,14 +200,16 @@ public class RestController {
         this.repository.createEmployee(helper);
     }
 
+    // id do body, zmieniony endpoint
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @DeleteMapping("/employees/{id}")
-    public void removeEmployee(@PathVariable long id) {
+    @DeleteMapping("/employees")
+    public void removeEmployee(@RequestBody long id) {
         this.repository.removeEmployee(id);
     }
 
+    // post na put, zmieniony endpoint
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
-    @PostMapping("/employees/edit/data")
+    @PutMapping("/employees/data")
     @ResponseBody
     public void updateEmployeeData(
             @RequestBody UpdateEmployeeHelper helper,
@@ -215,7 +221,7 @@ public class RestController {
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
-    @PostMapping("/employees/edit/permissions")
+    @PutMapping("/employees/permissions")
     @ResponseBody
     public void updateEmployeePermissions(
             @RequestBody PermissionHelper helper,
@@ -238,10 +244,11 @@ public class RestController {
         return this.repository.getAbsentEmployees(LocalDate.parse(from, formatter), LocalDate.parse(to, formatter));
     }
 
+    // id do body, zmieniony endpoint
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
     @GetMapping("/employees/{id}/documents/delegation/{from}/{to}")
     public List<DelegationRequest> getEmployeeDelegationRequests(
-            @PathVariable long id,
+            @RequestBody long id,
             @PathVariable String from,
             @PathVariable String to,
             @RequestHeader("Authorization") String token
@@ -251,6 +258,7 @@ public class RestController {
         return this.repository.getEmployeeDelegationRequests(id, LocalDate.parse(from, formatter), LocalDate.parse(to, formatter));
     }
 
+    // id do body, zmieniony endpoint
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
     @GetMapping("/employees/{id}/documents/daysoff/{from}/{to}")
     public List<DaysOffRequest> getEmployeeDaysOffRequests(
@@ -265,9 +273,9 @@ public class RestController {
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
-    @GetMapping("/employees/getDaysOff/{employeeId}")
+    @GetMapping("/employees/daysoff")
     public EmployeeDaysOffDetails getEmployeeDaysOffLeft(
-            @PathVariable long employeeId,
+            @RequestBody long employeeId,
             @RequestHeader("Authorization") String token
     ) throws IllegalAccessException {
         this.roleValidator.validate(jwtUtil.extractUsernameFromRaw(token), employeeId);
@@ -282,4 +290,13 @@ public class RestController {
         return this.repository.getGroupDaysOffLeft(jwtUtil.extractUsernameFromRaw(token));
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')")
+    @GetMapping("/employees/bonuses")
+    public List<AppreciationBonus> getBonuses(
+            @RequestHeader("Authorization") String token,
+            @RequestBody long employeeID
+    ) throws IllegalAccessException {
+        this.roleValidator.validate(jwtUtil.extractUsernameFromRaw(token), employeeID);
+        return this.repository.getEmployeeBonuses(employeeID);
+    }
 }
