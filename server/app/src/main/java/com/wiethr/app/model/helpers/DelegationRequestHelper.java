@@ -13,7 +13,6 @@ import java.util.Date;
 public class DelegationRequestHelper {
 
     private long documentId;
-    private long employeeID;
     private LocalDate dateFrom, dateTo;
     private String destination;
 

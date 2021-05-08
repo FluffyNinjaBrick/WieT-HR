@@ -138,10 +138,10 @@ public class WietHRRepository implements IWietHRRepository {
 
     // ---------- DELEGATION REQUEST ----------
     @Override
-    public void createDelegationRequest(DelegationRequestHelper helper) {
+    public void createDelegationRequest(DelegationRequestHelper helper, String email) {
         DelegationRequest request = new DelegationRequest();
 
-        Employee employee = this.getEmployee(helper.getEmployeeID());
+        Employee employee = this.getEmployeeByEmail(email);
 
         // inherited from document
         request.setEmployee(employee);
@@ -162,20 +162,19 @@ public class WietHRRepository implements IWietHRRepository {
     }
 
     @Override
-    public void updateDelegationRequest(DelegationRequestHelper delegationRequestHelper) {
+    public void updateDelegationRequest(DelegationRequestHelper helper, Employee requestOwner) {
 
-        DelegationRequest delegationRequest = this.delegationRequestRepository.findById(delegationRequestHelper.getDocumentId()).orElseThrow();
-        Employee employeeToSet = this.employeeRepository.findById(delegationRequestHelper.getEmployeeID()).orElseThrow();
+        DelegationRequest delegationRequest = this.delegationRequestRepository.findById(helper.getDocumentId()).orElseThrow();
 
         // delegationRequest
-        delegationRequest.setDestination(delegationRequestHelper.getDestination());
+        delegationRequest.setDestination(helper.getDestination());
         // document
-        delegationRequest.setDateFrom(delegationRequestHelper.getDateFrom());
-        delegationRequest.setDateTo(delegationRequestHelper.getDateTo());
+        delegationRequest.setDateFrom(helper.getDateFrom());
+        delegationRequest.setDateTo(helper.getDateTo());
         delegationRequest.setDateIssued(LocalDate.now());
         delegationRequest.setSigned(false);
-        delegationRequest.setEmployee(employeeToSet);
-        delegationRequest.setNameAtSigning(employeeToSet.getFullName());
+        delegationRequest.setEmployee(requestOwner);
+        delegationRequest.setNameAtSigning(requestOwner.getFullName());
 
         this.delegationRequestRepository.save(delegationRequest);
     }

@@ -24,15 +24,15 @@ public interface IWietHRRepository {
     // ---------- DAYS OFF REQUEST ----------
     void createDaysOffRequest(DaysOffRequestHelper helper, String email);
     DaysOffRequest getDaysOffRequestByID(long documentID);
-    void updateDaysOffRequest(DaysOffRequestHelper daysOffRequestHelper, Employee requestOwner);
+    void updateDaysOffRequest(DaysOffRequestHelper helper, Employee requestOwner);
     void removeDaysOffRequest(long documentID);
     List<DaysOffRequest> getAllDaysOffRequests();
 
 
     // ---------- DELEGATION REQUEST ----------
-    void createDelegationRequest(DelegationRequestHelper helper);
+    void createDelegationRequest(DelegationRequestHelper helper, String email);
     DelegationRequest getDelegationRequestByID(long documentID);
-    void updateDelegationRequest(DelegationRequestHelper delegationRequestHelper);
+    void updateDelegationRequest(DelegationRequestHelper helper, Employee requestOwner);
     void removeDelegationRequest(long documentID);
     List<DelegationRequest> getAllDelegationRequests();
 

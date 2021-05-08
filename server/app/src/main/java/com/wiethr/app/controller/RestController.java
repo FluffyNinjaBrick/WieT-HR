@@ -125,7 +125,6 @@ public class RestController {
 
 
     // ---------- DELEGATION REQUEST ----------
-    // TODO - the person making the request should be the one the request is hooked up to
 
     //zmieniony endpoint
     @PostMapping(value = "/documents/delegation")
@@ -133,18 +132,20 @@ public class RestController {
             @RequestBody DelegationRequestHelper helper,
             @RequestHeader("Authorization") String token
     ) {
-        this.repository.createDelegationRequest(helper);
+        String email = jwtUtil.extractUsernameFromRaw(token);
+        this.repository.createDelegationRequest(helper, email);
     }
 
     // post na put, usuniecie update ze sciezki, documentId w helperze
     @PutMapping(value = "/documents/delegation")
     public void updateDelegationRequest(
-            @RequestBody DelegationRequestHelper delegationRequestHelper,
+            @RequestBody DelegationRequestHelper helper,
             @RequestHeader("Authorization") String token
     ) throws IllegalAccessException {
         String email = jwtUtil.extractUsernameFromRaw(token);
-        this.roleValidator.validate(email, delegationRequestHelper.getEmployeeID());
-        this.repository.updateDelegationRequest(delegationRequestHelper);
+        DelegationRequest request = this.repository.getDelegationRequestByID(helper.getDocumentId());
+        this.roleValidator.validate(email, request.getEmployee());
+        this.repository.updateDelegationRequest(helper, request.employeeObject());
     }
 
     // id do request body, metoda zmieniona na delete
