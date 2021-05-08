@@ -78,10 +78,10 @@ public class WietHRRepository implements IWietHRRepository {
 
     // ---------- DAYS OFF REQUEST ----------
     @Override
-    public void createDaysOffRequest(DaysOffRequestHelper helper) {
+    public void createDaysOffRequest(DaysOffRequestHelper helper, String email) {
 
         DaysOffRequest request = new DaysOffRequest();
-        Employee employee = this.getEmployee(helper.getEmployeeID());
+        Employee employee = this.getEmployeeByEmail(email);
 
         // inherited from document
         request.setEmployee(employee);
@@ -103,19 +103,18 @@ public class WietHRRepository implements IWietHRRepository {
     }
 
     @Override
-    public void updateDaysOffRequest(DaysOffRequestHelper daysOffRequestHelper) {
-        DaysOffRequest daysOffRequest = this.daysOffRequestRepository.findById(daysOffRequestHelper.getDocumentId()).orElseThrow();
-        Employee employee = this.getEmployee(daysOffRequestHelper.getEmployeeID());
+    public void updateDaysOffRequest(DaysOffRequestHelper helper, Employee requestOwner) {
+        DaysOffRequest daysOffRequest = this.daysOffRequestRepository.findById(helper.getDocumentId()).orElseThrow();
 
         // daysOffRequest
-        daysOffRequest.setLeaveType(daysOffRequestHelper.getLeaveType());
+        daysOffRequest.setLeaveType(helper.getLeaveType());
         // document
-        daysOffRequest.setDateFrom(daysOffRequestHelper.getDateFrom());
-        daysOffRequest.setDateTo(daysOffRequestHelper.getDateTo());
+        daysOffRequest.setDateFrom(helper.getDateFrom());
+        daysOffRequest.setDateTo(helper.getDateTo());
         daysOffRequest.setDateIssued(LocalDate.now());
         daysOffRequest.setSigned(false);
-        daysOffRequest.setEmployee(employee);
-        daysOffRequest.setNameAtSigning(employee.getFullName());
+        daysOffRequest.setEmployee(requestOwner);
+        daysOffRequest.setNameAtSigning(requestOwner.getFullName());
 
         this.daysOffRequestRepository.save(daysOffRequest);
     }

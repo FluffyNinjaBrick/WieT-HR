@@ -13,7 +13,6 @@ import java.time.LocalDate;
 public class DaysOffRequestHelper {
 
     private long documentId;
-    private long employeeID;
     private LocalDate dateFrom, dateTo;
     private LeaveType leaveType;
 

@@ -76,11 +76,10 @@ public class RestController {
     @PostMapping(value = "/documents/daysoff")
     public void createDaysOffRequest(
             @RequestBody DaysOffRequestHelper helper,
-            @RequestHeader("Authorization") String token) throws IllegalAccessException
+            @RequestHeader("Authorization") String token)
     {
         String email = jwtUtil.extractUsernameFromRaw(token);
-        roleValidator.validate(email, helper.getEmployeeID());
-        this.repository.createDaysOffRequest(helper);
+        this.repository.createDaysOffRequest(helper, email);
     }
 
     // zmienna z path w DaysOffRequestHelper i post na put
@@ -90,8 +89,9 @@ public class RestController {
             @RequestHeader("Authorization") String token
     ) throws IllegalAccessException {
         String email = jwtUtil.extractUsernameFromRaw(token);
-        this.roleValidator.validate(email, daysOffRequestHelper.getEmployeeID());
-        this.repository.updateDaysOffRequest(daysOffRequestHelper);
+        DaysOffRequest request = this.repository.getDaysOffRequestByID(daysOffRequestHelper.getDocumentId());
+        this.roleValidator.validate(email, request.getEmployee());
+        this.repository.updateDaysOffRequest(daysOffRequestHelper, request.employeeObject());
     }
 
     // id do body

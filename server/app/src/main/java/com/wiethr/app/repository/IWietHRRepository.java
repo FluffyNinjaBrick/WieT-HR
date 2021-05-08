@@ -22,9 +22,9 @@ public interface IWietHRRepository {
 
 
     // ---------- DAYS OFF REQUEST ----------
-    void createDaysOffRequest(DaysOffRequestHelper helper);
+    void createDaysOffRequest(DaysOffRequestHelper helper, String email);
     DaysOffRequest getDaysOffRequestByID(long documentID);
-    void updateDaysOffRequest(DaysOffRequestHelper daysOffRequestHelper);
+    void updateDaysOffRequest(DaysOffRequestHelper daysOffRequestHelper, Employee requestOwner);
     void removeDaysOffRequest(long documentID);
     List<DaysOffRequest> getAllDaysOffRequests();
 
