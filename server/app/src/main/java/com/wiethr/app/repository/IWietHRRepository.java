@@ -4,6 +4,7 @@ import com.wiethr.app.model.*;
 import com.wiethr.app.model.helpers.*;
 
 import java.time.LocalDate;
+import java.time.Year;
 import java.util.List;
 
 public interface IWietHRRepository {
@@ -53,8 +54,13 @@ public interface IWietHRRepository {
     GroupDaysOffDetails getGroupDaysOffLeft(String email);
 
     List<AppreciationBonus> getEmployeeBonuses(long id);
+    void addAppreciationBonus(AddAppreciationBonusHelper bonusHelper);
 
     // ---------- PERMISSIONS ----------
     Permissions createPermissionsFromHelper(PermissionHelper helper);
 
+    // ---------- BONUS BUDGET ----------
+    BonusBudget getBonusBudgetForYear(Year year);
+    float getBonusBudgetLeft(BonusBudget bonusBudget);
+    List<Float> getBonusBudgetUsagePerMonth(BonusBudget bonusBudget);
 }

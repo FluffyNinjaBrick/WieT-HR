@@ -7,6 +7,7 @@ import com.wiethr.app.repository.jpaRepos.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.time.Year;
 import java.util.*;
 import java.time.LocalDate;
 
@@ -371,11 +372,61 @@ public class WietHRRepository implements IWietHRRepository {
     }
 
     @Override
+    public void addAppreciationBonus(AddAppreciationBonusHelper bonusHelper) {
+        Employee employee = employeeRepository.findById(bonusHelper.getEmployeeId()).orElseThrow();
+        BonusBudget bonusBudget = bonusBudgetRepository.findById(bonusHelper.getBonusBudgetId()).orElseThrow();
+        AppreciationBonus appreciationBonus = new AppreciationBonus(
+                employee,
+                bonusHelper.getYearMonth(),
+                bonusHelper.getDateGenerated(),
+                bonusHelper.getValue(),
+                bonusBudget
+        );
+        employee.getAppreciationBonusList().add(appreciationBonus);
+        bonusBudget.getBonusList().add(appreciationBonus);
+
+        employeeRepository.save(employee);
+        bonusBudgetRepository.save(bonusBudget);
+        appreciationBonusRepository.save(appreciationBonus);
+    }
+
+    @Override
     public Permissions createPermissionsFromHelper(PermissionHelper helper) {
         Permissions permissions = new Permissions(helper.isAddUsers(), helper.isModifyBonusBudget());
         for (Employee employee : this.employeeRepository.findAllById(helper.getManagedUsers())) {
             permissions.addManagedUser(employee);
         }
         return permissions;
+    }
+
+    @Override
+    public BonusBudget getBonusBudgetForYear(Year year) {
+        return this.bonusBudgetRepository.getBonusBudgetByYear(year).orElseThrow();
+    }
+
+    @Override
+    public float getBonusBudgetLeft(BonusBudget bonusBudget) {
+        float result = bonusBudget.getValue();
+        for (AppreciationBonus bonus : bonusBudget.getBonusList()) {
+            result -= bonus.getValue();
+        }
+        return result;
+    }
+
+    @Override
+    public List<Float> getBonusBudgetUsagePerMonth(BonusBudget bonusBudget) {
+        List<AppreciationBonus> bonusList = bonusBudget.getBonusList();
+        List<Float> result = new ArrayList<>();
+        for (int i = 0; i < 12; i++) {
+            result.add(0.0f);
+        }
+        int index;
+        float value;
+        for (AppreciationBonus bonus : bonusList) {
+            index = bonus.getYearMonth().getMonthValue() - 1;
+            value = bonus.getValue() + result.get(index);
+            result.add(index, value);
+        }
+        return result;
     }
 }

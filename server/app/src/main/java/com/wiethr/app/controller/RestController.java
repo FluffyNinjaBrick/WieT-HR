@@ -16,6 +16,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.Year;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -48,9 +49,9 @@ public class RestController {
     // ---------- AUTHENTICATION ------------------
     @PostMapping(value = "/authenticate")
     public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest request) throws Exception {
-        try{
+        try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
-        } catch (Exception e){
+        } catch (Exception e) {
 //            throw new Exception("Incorrect email or password");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid username or password");
         }
@@ -76,8 +77,7 @@ public class RestController {
     @PostMapping(value = "/documents/daysoff")
     public void createDaysOffRequest(
             @RequestBody DaysOffRequestHelper helper,
-            @RequestHeader("Authorization") String token)
-    {
+            @RequestHeader("Authorization") String token) {
         String email = jwtUtil.extractUsernameFromRaw(token);
         this.repository.createDaysOffRequest(helper, email);
     }
@@ -295,7 +295,6 @@ public class RestController {
         return this.repository.getGroupDaysOffLeft(jwtUtil.extractUsernameFromRaw(token));
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')")
     @GetMapping("/employees/bonuses")
     public List<AppreciationBonus> getBonuses(
             @RequestHeader("Authorization") String token,
@@ -303,5 +302,29 @@ public class RestController {
     ) throws IllegalAccessException {
         this.roleValidator.validate(jwtUtil.extractUsernameFromRaw(token), employeeID);
         return this.repository.getEmployeeBonuses(employeeID);
+    }
+
+    @PutMapping("/employees/bonuses")
+    public void addAppreciationBonus(
+            @RequestHeader("Authorization") String token,
+            @RequestBody AddAppreciationBonusHelper bonusHelper
+    ) throws IllegalAccessException {
+        this.roleValidator.validate(jwtUtil.extractUsernameFromRaw(token), bonusHelper.getEmployeeId());
+        this.repository.addAppreciationBonus(bonusHelper);
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')")
+    @GetMapping("/bonusBudget")
+    public BonusBudgetInfoHelper getBonusBudgetForYear(
+            @RequestBody Year year
+    ) {
+        BonusBudget budget = this.repository.getBonusBudgetForYear(year);
+        return new BonusBudgetInfoHelper(
+                budget.getId(),
+                budget.getYear(),
+                budget.getValue(),
+                repository.getBonusBudgetLeft(budget),
+                repository.getBonusBudgetUsagePerMonth(budget)
+        );
     }
 }
