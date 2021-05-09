@@ -429,4 +429,31 @@ public class WietHRRepository implements IWietHRRepository {
         }
         return result;
     }
+
+    @Override
+    public BonusesOfAllEmployeesHelper getBonusesForYear(Year year) {
+        BonusesOfAllEmployeesHelper bonusesOfAllEmployeesHelper = new BonusesOfAllEmployeesHelper(year);
+
+        for (Employee employee : this.employeeRepository.findAll()) {
+            BonusesOfEmployeeHelper bonusesOfEmployeeHelper = new BonusesOfEmployeeHelper(
+                    employee.getId(),
+                    employee.getFullName()
+            );
+            for (AppreciationBonus bonus : employee.getAppreciationBonusList()) {
+                if (bonus.getYearMonth().getYear() == year.getValue()) {
+                    int monthIndex = bonus.getYearMonth().getMonthValue() - 1;
+                    float currentEmployeeSum = bonusesOfEmployeeHelper.getEmployeeBonuses().remove(monthIndex);
+                    currentEmployeeSum += bonus.getValue();
+                    bonusesOfEmployeeHelper.getEmployeeBonuses().add(monthIndex, currentEmployeeSum);
+
+                    float currentAllSum = bonusesOfAllEmployeesHelper.getMonthlySummary().remove(monthIndex);
+                    currentAllSum += bonus.getValue();
+                    bonusesOfAllEmployeesHelper.getMonthlySummary().add(monthIndex, currentAllSum);
+                }
+            }
+            bonusesOfAllEmployeesHelper.getBonuses().add(bonusesOfEmployeeHelper);
+        }
+
+        return bonusesOfAllEmployeesHelper;
+    }
 }

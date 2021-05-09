@@ -63,4 +63,5 @@ public interface IWietHRRepository {
     BonusBudget getBonusBudgetForYear(Year year);
     float getBonusBudgetLeft(BonusBudget bonusBudget);
     List<Float> getBonusBudgetUsagePerMonth(BonusBudget bonusBudget);
+    BonusesOfAllEmployeesHelper getBonusesForYear(Year year);
 }

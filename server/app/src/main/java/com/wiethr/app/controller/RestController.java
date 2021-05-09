@@ -314,9 +314,18 @@ public class RestController {
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')")
-    @GetMapping("/bonusBudget")
+    @GetMapping("/employees/bonuses/year")
+    public BonusesOfAllEmployeesHelper getBonusesForYear(
+            @RequestParam Year year
+    ) {
+        return this.repository.getBonusesForYear(year);
+    }
+
+
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')")
+    @GetMapping("/bonus_budget")
     public BonusBudgetInfoHelper getBonusBudgetForYear(
-            @RequestBody Year year
+            @RequestParam Year year
     ) {
         BonusBudget budget = this.repository.getBonusBudgetForYear(year);
         return new BonusBudgetInfoHelper(
