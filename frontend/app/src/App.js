@@ -25,66 +25,71 @@ import RequestsView from "./components/requests/RequestsView";
 import { ProvideAuth } from "./components/auth/useAuth";
 import PrivateRoute from "./components/utils/PrivateRoute";
 import "font-awesome/css/font-awesome.min.css";
+import { QueryClient, QueryClientProvider } from "react-query";
+
+const queryClient = new QueryClient();
 
 function App() {
   return (
-    <ProvideAuth>
-      <Router>
-        <div>
-          <Navigation />
-          <Switch>
-            <PrivateRoute exact path="/" role="any">
-              <Redirect to="/profile" />
-            </PrivateRoute>
-            <PrivateRoute path="/profile" role="any">
-              <Profile />
-            </PrivateRoute>
-            <PrivateRoute path="/delegations/add" role="any">
-              <DelegationCreateForm />
-            </PrivateRoute>
-            <PrivateRoute path="/delegations" role="any">
-              <DelegationsView />
-            </PrivateRoute>
-            <PrivateRoute exact path="/employees" role="ADMIN">
-              <EmployeeListViewAdmin />
-            </PrivateRoute>
-            <PrivateRoute exact path="/employees/requests" role="ADMIN">
-              <RequestsView />
-            </PrivateRoute>
-            <PrivateRoute path="/employees/edit/:id" role="ADMIN">
-              <EmployeeEditView />
-            </PrivateRoute>
-            <PrivateRoute path="/employees/create" role="ADMIN">
-              <EmployeeCreateView />
-            </PrivateRoute>
-            <PrivateRoute path="/employees/delegations" role="ADMIN">
-              <DelegationsAdminView />
-            </PrivateRoute>
-            <PrivateRoute path="/employees/leaves" role="ADMIN">
-              <LeavesViewAdmin />
-            </PrivateRoute>
-            <PrivateRoute path="/employees/bonuses" role="ADMIN">
-              <BonusesViewAdmin />
-            </PrivateRoute>
-            <PrivateRoute path="/leaves/add" role="any">
-              <LeaveCreateForm />
-            </PrivateRoute>
-            <PrivateRoute path="/leaves" role="any">
-              <LeavesView />
-            </PrivateRoute>
-            <PrivateRoute path="/contract" role="any">
-              <ContractView />
-            </PrivateRoute>
-            <PrivateRoute path="/bonuses" role="any">
-              <BonusesView />
-            </PrivateRoute>
-            <Route path="/login">
-              <LoginView />
-            </Route>
-          </Switch>
-        </div>
-      </Router>
-    </ProvideAuth>
+    <QueryClientProvider client={queryClient}>
+      <ProvideAuth>
+        <Router>
+          <div>
+            <Navigation />
+            <Switch>
+              <PrivateRoute exact path="/" role="any">
+                <Redirect to="/profile" />
+              </PrivateRoute>
+              <PrivateRoute path="/profile" role="any">
+                <Profile />
+              </PrivateRoute>
+              <PrivateRoute path="/delegations/add" role="any">
+                <DelegationCreateForm />
+              </PrivateRoute>
+              <PrivateRoute path="/delegations" role="any">
+                <DelegationsView />
+              </PrivateRoute>
+              <PrivateRoute exact path="/employees" role="ADMIN">
+                <EmployeeListViewAdmin />
+              </PrivateRoute>
+              <PrivateRoute exact path="/employees/requests" role="ADMIN">
+                <RequestsView />
+              </PrivateRoute>
+              <PrivateRoute path="/employees/edit/:id" role="ADMIN">
+                <EmployeeEditView />
+              </PrivateRoute>
+              <PrivateRoute path="/employees/create" role="ADMIN">
+                <EmployeeCreateView />
+              </PrivateRoute>
+              <PrivateRoute path="/employees/delegations" role="ADMIN">
+                <DelegationsAdminView />
+              </PrivateRoute>
+              <PrivateRoute path="/employees/leaves" role="ADMIN">
+                <LeavesViewAdmin />
+              </PrivateRoute>
+              <PrivateRoute path="/employees/bonuses" role="ADMIN">
+                <BonusesViewAdmin />
+              </PrivateRoute>
+              <PrivateRoute path="/leaves/add" role="any">
+                <LeaveCreateForm />
+              </PrivateRoute>
+              <PrivateRoute path="/leaves" role="any">
+                <LeavesView />
+              </PrivateRoute>
+              <PrivateRoute path="/contract" role="any">
+                <ContractView />
+              </PrivateRoute>
+              <PrivateRoute path="/bonuses" role="any">
+                <BonusesView />
+              </PrivateRoute>
+              <Route path="/login">
+                <LoginView />
+              </Route>
+            </Switch>
+          </div>
+        </Router>
+      </ProvideAuth>
+    </QueryClientProvider>
   );
 }
 
