@@ -5,7 +5,7 @@ import com.itextpdf.text.DocumentException;
 import com.wiethr.app.model.*;
 import com.wiethr.app.model.helpers.*;
 import com.wiethr.app.repository.GeneratePDF;
-import com.wiethr.app.repository.WietHRRepository;
+import com.wiethr.app.repository.IWietHRRepository;
 import com.wiethr.app.security.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,7 +25,7 @@ import java.util.List;
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class RestController {
 
-    private final WietHRRepository repository;
+    private final IWietHRRepository repository;
     private final AuthenticationManager authenticationManager;
     private final MyUserDetailService userDetailService;
     private final JwtUtil jwtUtil;
@@ -33,7 +33,7 @@ public class RestController {
 
     @Autowired
     public RestController(
-            WietHRRepository repository,
+            IWietHRRepository repository,
             AuthenticationManager authenticationManager,
             MyUserDetailService userDetailService,
             JwtUtil jwtUtil,
@@ -59,6 +59,27 @@ public class RestController {
         final String jwt = jwtUtil.generateToken(userDetails);
         return ResponseEntity.ok(new AuthenticationResponse(jwt, userDetails.getUserRole(), userDetails.getId()));
     }
+
+
+    // ---------- BONUS BUDGET ----------
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PostMapping(value = "/bonusBudget")
+    public void createBonusBudget(@RequestBody BonusBudgetHelper helper) {
+        this.repository.createBonusBudget(helper);
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping(value = "/bonusBudget")
+    public BonusBudget getBudgetForYear(@RequestParam Year year) {
+        return this.repository.getBudgetForYear(year);
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PutMapping(value = "/bonusBudget")
+    public void modifyBonusBudget(@RequestBody BonusBudgetHelper helper) {
+        this.repository.modifyBonusBudget(helper);
+    }
+
 
     // ---------- CONTRACT ----------
     @PreAuthorize("hasAnyRole('ROLE_MANAGER','ROLE_ADMIN')")
@@ -349,11 +370,11 @@ public class RestController {
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')")
     @GetMapping("/bonus_budget")
-    public BonusBudgetInfoHelper getBonusBudgetForYear(
+    public BonusBudgetHelper getBonusBudgetForYear(
             @RequestParam Year year
     ) {
-        BonusBudget budget = this.repository.getBonusBudgetForYear(year);
-        return new BonusBudgetInfoHelper(
+        BonusBudget budget = this.repository.getBudgetForYear(year);
+        return new BonusBudgetHelper(
                 budget.getId(),
                 budget.getYear(),
                 budget.getValue(),

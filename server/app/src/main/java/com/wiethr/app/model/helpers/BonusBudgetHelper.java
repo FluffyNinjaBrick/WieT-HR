@@ -8,7 +8,8 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class BonusBudgetInfoHelper {
+// this will be used both for creating the budget and gathering info about it
+public class BonusBudgetHelper {
 
     private long budgetId;
     private Year year;

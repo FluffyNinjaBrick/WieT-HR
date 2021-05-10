@@ -42,6 +42,127 @@ public class WietHRRepository implements IWietHRRepository {
         this.daysOffRequestRepository = daysOffRequestRepository;
     }
 
+
+    // ---------- APPRECIATION BONUS ---------
+    @Override
+    public List<AppreciationBonus> getEmployeeBonuses(long id) {
+        return this.employeeRepository
+                .findById(id)
+                .orElseThrow()
+                .getAppreciationBonusList();
+    }
+
+    @Override
+    public void addAppreciationBonus(AddAppreciationBonusHelper bonusHelper) {
+        Employee employee = employeeRepository.findById(bonusHelper.getEmployeeId()).orElseThrow();
+        BonusBudget bonusBudget = bonusBudgetRepository.findById(bonusHelper.getBonusBudgetId()).orElseThrow();
+        AppreciationBonus appreciationBonus = new AppreciationBonus(
+                employee,
+                bonusHelper.getYearMonth(),
+                bonusHelper.getDateGenerated(),
+                bonusHelper.getValue(),
+                bonusBudget
+        );
+        employee.getAppreciationBonusList().add(appreciationBonus);
+        bonusBudget.getBonusList().add(appreciationBonus);
+
+        employeeRepository.save(employee);
+        bonusBudgetRepository.save(bonusBudget);
+        appreciationBonusRepository.save(appreciationBonus);
+    }
+
+
+    // ---------- BONUS BUDGET ---------
+    @Override
+    public void createBonusBudget(BonusBudgetHelper helper) {
+
+        BonusBudget currentBudget = null;
+
+        // check if budget for that year already exists, if so - abort, if not - create it
+        try {
+            currentBudget = this.getBudgetForYear(helper.getYear());
+        } catch (Exception e) { /* ignore the not found exception, that's what we want */ }
+
+        if (currentBudget != null)
+            throw new IllegalStateException("Error: budget for year {helper.getYear()} already exists");
+        this.bonusBudgetRepository.save(new BonusBudget(helper.getYear(), helper.getBudgetSize()));
+
+    }
+
+    @Override
+    public void modifyBonusBudget(BonusBudgetHelper helper) throws IllegalStateException {
+
+        BonusBudget budget = this.bonusBudgetRepository.findById(helper.getBudgetId()).orElseThrow();
+
+        // check if we can modify the budget
+        try {
+            if (!budget.getBonusList().isEmpty() || this.getBudgetForYear(helper.getYear()) != null)
+                throw new IllegalStateException("Error: cannot change year for budget");
+        } catch (NoSuchElementException e) { /* ignore the not found exception, that's what we want */ }
+
+        budget.setValue(helper.getBudgetSize());
+        this.bonusBudgetRepository.save(budget);
+    }
+
+    @Override
+    public BonusBudget getBudgetForYear(Year year) {
+        return this.bonusBudgetRepository.getBonusBudgetByYear(year).orElseThrow();
+    }
+
+    @Override
+    public float getBonusBudgetLeft(BonusBudget bonusBudget) {
+        float result = bonusBudget.getValue();
+        for (AppreciationBonus bonus : bonusBudget.getBonusList()) {
+            result -= bonus.getValue();
+        }
+        return result;
+    }
+
+    @Override
+    public List<Float> getBonusBudgetUsagePerMonth(BonusBudget bonusBudget) {
+        List<AppreciationBonus> bonusList = bonusBudget.getBonusList();
+        List<Float> result = new ArrayList<>();
+        for (int i = 0; i < 12; i++) {
+            result.add(0.0f);
+        }
+        int index;
+        float value;
+        for (AppreciationBonus bonus : bonusList) {
+            index = bonus.getYearMonth().getMonthValue() - 1;
+            value = bonus.getValue() + result.get(index);
+            result.add(index, value);
+        }
+        return result;
+    }
+
+    @Override
+    public BonusesOfAllEmployeesHelper getBonusesForYear(Year year) {
+        BonusesOfAllEmployeesHelper bonusesOfAllEmployeesHelper = new BonusesOfAllEmployeesHelper(year);
+
+        for (Employee employee : this.employeeRepository.findAll()) {
+            BonusesOfEmployeeHelper bonusesOfEmployeeHelper = new BonusesOfEmployeeHelper(
+                    employee.getId(),
+                    employee.getFullName()
+            );
+            for (AppreciationBonus bonus : employee.getAppreciationBonusList()) {
+                if (bonus.getYearMonth().getYear() == year.getValue()) {
+                    int monthIndex = bonus.getYearMonth().getMonthValue() - 1;
+                    float currentEmployeeSum = bonusesOfEmployeeHelper.getEmployeeBonuses().remove(monthIndex);
+                    currentEmployeeSum += bonus.getValue();
+                    bonusesOfEmployeeHelper.getEmployeeBonuses().add(monthIndex, currentEmployeeSum);
+                    bonusesOfEmployeeHelper.addBonusToTotal(bonus.getValue());
+
+                    float currentAllSum = bonusesOfAllEmployeesHelper.getMonthlySummary().remove(monthIndex);
+                    currentAllSum += bonus.getValue();
+                    bonusesOfAllEmployeesHelper.getMonthlySummary().add(monthIndex, currentAllSum);
+                }
+            }
+            bonusesOfAllEmployeesHelper.getBonuses().add(bonusesOfEmployeeHelper);
+        }
+
+        return bonusesOfAllEmployeesHelper;
+    }
+
     // ---------- CONTRACT ----------
     @Override
     public void createContract(AddContractHelper helper) {
@@ -391,33 +512,6 @@ public class WietHRRepository implements IWietHRRepository {
     }
 
     @Override
-    public List<AppreciationBonus> getEmployeeBonuses(long id) {
-        return this.employeeRepository
-                .findById(id)
-                .orElseThrow()
-                .getAppreciationBonusList();
-    }
-
-    @Override
-    public void addAppreciationBonus(AddAppreciationBonusHelper bonusHelper) {
-        Employee employee = employeeRepository.findById(bonusHelper.getEmployeeId()).orElseThrow();
-        BonusBudget bonusBudget = bonusBudgetRepository.findById(bonusHelper.getBonusBudgetId()).orElseThrow();
-        AppreciationBonus appreciationBonus = new AppreciationBonus(
-                employee,
-                bonusHelper.getYearMonth(),
-                bonusHelper.getDateGenerated(),
-                bonusHelper.getValue(),
-                bonusBudget
-        );
-        employee.getAppreciationBonusList().add(appreciationBonus);
-        bonusBudget.getBonusList().add(appreciationBonus);
-
-        employeeRepository.save(employee);
-        bonusBudgetRepository.save(bonusBudget);
-        appreciationBonusRepository.save(appreciationBonus);
-    }
-
-    @Override
     public Permissions createPermissionsFromHelper(PermissionHelper helper) {
         Permissions permissions = new Permissions(helper.isAddUsers(), helper.isModifyBonusBudget());
         for (Employee employee : this.employeeRepository.findAllById(helper.getManagedUsers())) {
@@ -426,62 +520,5 @@ public class WietHRRepository implements IWietHRRepository {
         return permissions;
     }
 
-    @Override
-    public BonusBudget getBonusBudgetForYear(Year year) {
-        return this.bonusBudgetRepository.getBonusBudgetByYear(year).orElseThrow();
-    }
 
-    @Override
-    public float getBonusBudgetLeft(BonusBudget bonusBudget) {
-        float result = bonusBudget.getValue();
-        for (AppreciationBonus bonus : bonusBudget.getBonusList()) {
-            result -= bonus.getValue();
-        }
-        return result;
-    }
-
-    @Override
-    public List<Float> getBonusBudgetUsagePerMonth(BonusBudget bonusBudget) {
-        List<AppreciationBonus> bonusList = bonusBudget.getBonusList();
-        List<Float> result = new ArrayList<>();
-        for (int i = 0; i < 12; i++) {
-            result.add(0.0f);
-        }
-        int index;
-        float value;
-        for (AppreciationBonus bonus : bonusList) {
-            index = bonus.getYearMonth().getMonthValue() - 1;
-            value = bonus.getValue() + result.get(index);
-            result.add(index, value);
-        }
-        return result;
-    }
-
-    @Override
-    public BonusesOfAllEmployeesHelper getBonusesForYear(Year year) {
-        BonusesOfAllEmployeesHelper bonusesOfAllEmployeesHelper = new BonusesOfAllEmployeesHelper(year);
-
-        for (Employee employee : this.employeeRepository.findAll()) {
-            BonusesOfEmployeeHelper bonusesOfEmployeeHelper = new BonusesOfEmployeeHelper(
-                    employee.getId(),
-                    employee.getFullName()
-            );
-            for (AppreciationBonus bonus : employee.getAppreciationBonusList()) {
-                if (bonus.getYearMonth().getYear() == year.getValue()) {
-                    int monthIndex = bonus.getYearMonth().getMonthValue() - 1;
-                    float currentEmployeeSum = bonusesOfEmployeeHelper.getEmployeeBonuses().remove(monthIndex);
-                    currentEmployeeSum += bonus.getValue();
-                    bonusesOfEmployeeHelper.getEmployeeBonuses().add(monthIndex, currentEmployeeSum);
-                    bonusesOfEmployeeHelper.addBonusToTotal(bonus.getValue());
-
-                    float currentAllSum = bonusesOfAllEmployeesHelper.getMonthlySummary().remove(monthIndex);
-                    currentAllSum += bonus.getValue();
-                    bonusesOfAllEmployeesHelper.getMonthlySummary().add(monthIndex, currentAllSum);
-                }
-            }
-            bonusesOfAllEmployeesHelper.getBonuses().add(bonusesOfEmployeeHelper);
-        }
-
-        return bonusesOfAllEmployeesHelper;
-    }
 }

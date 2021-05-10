@@ -10,16 +10,21 @@ import java.util.List;
 public interface IWietHRRepository {
 
     // ---------- APPRECIATION BONUS ----------
-
+    List<AppreciationBonus> getEmployeeBonuses(long id);
+    void addAppreciationBonus(AddAppreciationBonusHelper bonusHelper);
 
 
     // ---------- BONUS BUDGET ----------
-
+    void createBonusBudget(BonusBudgetHelper helper);
+    void modifyBonusBudget(BonusBudgetHelper helper);
+    BonusBudget getBudgetForYear(Year year);
+    float getBonusBudgetLeft(BonusBudget bonusBudget);
+    List<Float> getBonusBudgetUsagePerMonth(BonusBudget bonusBudget);
+    BonusesOfAllEmployeesHelper getBonusesForYear(Year year);
 
 
     // ---------- CONTRACT ----------
     void createContract(AddContractHelper helper);
-
 
 
     // ---------- DAYS OFF REQUEST ----------
@@ -28,7 +33,7 @@ public interface IWietHRRepository {
     void updateDaysOffRequest(DaysOffRequestHelper helper, Employee requestOwner);
     void removeDaysOffRequest(long documentID);
     List<DaysOffRequest> getAllDaysOffRequests();
-    void signDaysOffRequest(long documentId, String email);
+    List<DaysOffRequest> getEmployeeDaysOffRequests(long id, LocalDate from, LocalDate to);
 
 
     // ---------- DELEGATION REQUEST ----------
@@ -37,7 +42,8 @@ public interface IWietHRRepository {
     void updateDelegationRequest(DelegationRequestHelper helper, Employee requestOwner);
     void removeDelegationRequest(long documentID);
     List<DelegationRequest> getAllDelegationRequests();
-    void signDelegationRequest(long documentId, String email);
+    List<DelegationRequest> getEmployeeDelegationRequests(long id, LocalDate from, LocalDate to);
+
 
     // ---------- EMPLOYEE ----------
     List<Employee> getAllEmployees();
@@ -48,23 +54,11 @@ public interface IWietHRRepository {
     void createEmployee(AddEmployeeHelper helper);
     void removeEmployee(long id);
     List<AbsentEmployees> getAbsentEmployees(LocalDate from, LocalDate to);
-
-    List<DelegationRequest> getEmployeeDelegationRequests(long id, LocalDate from, LocalDate to);
-    List<DaysOffRequest> getEmployeeDaysOffRequests(long id, LocalDate from, LocalDate to);
-
     EmployeeDaysOffDetails getEmployeeDaysOffLeft(long id);
     GroupDaysOffDetails getGroupDaysOffLeft(String email);
 
-    List<AppreciationBonus> getEmployeeBonuses(long id);
-    void addAppreciationBonus(AddAppreciationBonusHelper bonusHelper);
 
     // ---------- PERMISSIONS ----------
     Permissions createPermissionsFromHelper(PermissionHelper helper);
-
-    // ---------- BONUS BUDGET ----------
-    BonusBudget getBonusBudgetForYear(Year year);
-    float getBonusBudgetLeft(BonusBudget bonusBudget);
-    List<Float> getBonusBudgetUsagePerMonth(BonusBudget bonusBudget);
-    BonusesOfAllEmployeesHelper getBonusesForYear(Year year);
 
 }
