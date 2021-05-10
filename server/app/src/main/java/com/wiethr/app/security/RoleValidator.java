@@ -17,31 +17,30 @@ public class RoleValidator {
     }
 
 
-    public boolean validate(String requestingEmail, long subordinateId) throws IllegalAccessException {
+    public void validate(String requestingEmail, long subordinateId) throws IllegalAccessException {
 
         Employee requesting = this.repository.getEmployeeByEmail(requestingEmail);
 
         // case 1 - employee
         if (requesting.getUserRole() == UserRole.EMPLOYEE) {
-            if (requesting.getId() == subordinateId) return true;
-            else throw new IllegalAccessException("Error: you do not have permission to access this resource");
+            if (requesting.getId() == subordinateId) return;
         }
         // case 2 - manager
         else if (requesting.getUserRole() == UserRole.MANAGER) {
             for (Employee subordinate: requesting.getPermissions().managedUsersObject())
-                if (subordinate.getId() == subordinateId) return true;
-            throw new IllegalAccessException("Error: you do not have permission to access this resource");
+                if (subordinate.getId() == subordinateId) return;
         }
         // case 3 - admin
         else if (requesting.getUserRole() == UserRole.ADMIN) {
-            return true;
+            return;
         }
         throw new IllegalAccessException("Error: you do not have permission to access this resource");
     }
 
-    public boolean validateAbsent(String requestingEmail) {
+    public void validateAbsent(String requestingEmail) throws IllegalAccessException {
         Employee requesting = this.repository.getEmployeeByEmail(requestingEmail);
-        return requesting.getUserRole() == UserRole.MANAGER || requesting.getUserRole() == UserRole.ADMIN;
+        if(!(requesting.getUserRole() == UserRole.MANAGER || requesting.getUserRole() == UserRole.ADMIN))
+            throw new IllegalAccessException("Error: you do not have permission to access this resource"); ;
     }
 
 }
