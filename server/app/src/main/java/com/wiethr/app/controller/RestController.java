@@ -123,6 +123,18 @@ public class RestController {
         return GeneratePDF.fromDaysOffRequest(request);
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
+    @PutMapping(value = "/documents/daysoff/sign")
+    public void signDaysOffRequest(
+            @RequestBody long documentId,
+            @RequestHeader("Authorization") String token
+    ) throws IllegalAccessException {
+        DaysOffRequest request = this.repository.getDaysOffRequestByID(documentId);
+        String email = jwtUtil.extractUsernameFromRaw(token);
+        this.roleValidator.validate(email, request.getEmployee());
+        this.repository.signDaysOffRequest(documentId, email);
+    }
+
 
     // ---------- DELEGATION REQUEST ----------
 
@@ -176,6 +188,19 @@ public class RestController {
         this.roleValidator.validate(email, request.getEmployee());
         return GeneratePDF.fromDelegationRequest(request);
     }
+
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
+    @PutMapping(value = "/documents/delegation/sign")
+    public void signDelegationRequest(
+            @RequestBody long documentId,
+            @RequestHeader("Authorization") String token
+    ) throws IllegalAccessException {
+        DelegationRequest request = this.repository.getDelegationRequestByID(documentId);
+        String email = jwtUtil.extractUsernameFromRaw(token);
+        this.roleValidator.validate(email, request.getEmployee());
+        this.repository.signDelegationRequest(documentId, email);
+    }
+
 
 
     // ---------- EMPLOYEE ----------

@@ -40,7 +40,7 @@ INSERT INTO document(id, date_from, date_issued, date_signed, date_to, name_at_s
 INSERT INTO contract(id, annual_leave_days, duty_allowance, salary, type, working_hours) VALUES (11, 25, 200, 3500, 'EMPLOYMENT', 160);
 INSERT INTO document_signed_by(document,signer_id) VALUES (11, 1);
 
-INSERT INTO document(id, date_from, date_issued, date_signed, date_to, name_at_signing, signed,  employee_id) VALUES (12, '2021-01-01', '2020-12-01', '2020-12-15', '2023-12-30', 'Jan Kowalski', true, 1);
+INSERT INTO document(id, date_from, date_issued, date_signed, date_to, name_at_signing, signed,  employee_id) VALUES (12, '2021-01-01', '2020-12-01', '2020-12-15', '2023-12-30', 'Jan Kowalski', true, 0);
 INSERT INTO contract(id, annual_leave_days, duty_allowance, salary, type, working_hours) VALUES (12, 30, 200, 4500, 'EMPLOYMENT', 160);
 INSERT INTO document_signed_by(document,signer_id) VALUES (12, 1);
 
@@ -58,7 +58,7 @@ INSERT INTO document (id, date_from, date_issued, date_signed, date_to, name_at_
 INSERT INTO DAYS_OFF_REQUEST (id, leave_type) VALUES (3, 'RECREATIONAL');
 INSERT INTO document_signed_by(document,signer_id) VALUES (3, 1);
 
-INSERT INTO document  (id, date_from, date_issued, date_signed, date_to, name_at_signing, signed, employee_id) VALUES (4, '2021-06-18', '2021-05-01', NULL, '2021-06-21', 'Adam Nowak', false, 1);
+INSERT INTO document  (id, date_from, date_issued, date_signed, date_to, name_at_signing, signed, employee_id) VALUES (4, '2021-06-18', '2021-05-01', NULL, '2021-06-21', 'Anna Pastel', false, 3);
 INSERT INTO DAYS_OFF_REQUEST (id, leave_type) VALUES (4, 'RECREATIONAL');
 
 -- -- /* delegation request */

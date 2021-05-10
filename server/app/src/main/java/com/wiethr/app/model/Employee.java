@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.Duration;
 import java.util.List;
 
 @Entity
@@ -65,4 +66,23 @@ public class Employee {
         return this.firstName + " " + this.lastName;
     }
 
+    public void reduceDaysOffRequestLeft(int newDaysOffRequestDuration){
+        int daysLeft = this.lastYearDaysOff + this.thisYearDaysOff;
+
+        if(daysLeft - newDaysOffRequestDuration < 0 ){
+            throw new IllegalArgumentException("Error: the employee has too few days off left");
+        }
+
+        if(this.lastYearDaysOff > 0){
+            if(this.lastYearDaysOff >= newDaysOffRequestDuration){
+                this.lastYearDaysOff -= newDaysOffRequestDuration;
+                return;
+            } else {
+                newDaysOffRequestDuration -= this.lastYearDaysOff;
+                this.lastYearDaysOff = 0;
+            }
+        }
+
+        this.thisYearDaysOff -= newDaysOffRequestDuration;
+    }
 }

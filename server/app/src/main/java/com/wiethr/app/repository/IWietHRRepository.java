@@ -28,6 +28,7 @@ public interface IWietHRRepository {
     void updateDaysOffRequest(DaysOffRequestHelper helper, Employee requestOwner);
     void removeDaysOffRequest(long documentID);
     List<DaysOffRequest> getAllDaysOffRequests();
+    void signDaysOffRequest(long documentId, String email);
 
 
     // ---------- DELEGATION REQUEST ----------
@@ -36,6 +37,7 @@ public interface IWietHRRepository {
     void updateDelegationRequest(DelegationRequestHelper helper, Employee requestOwner);
     void removeDelegationRequest(long documentID);
     List<DelegationRequest> getAllDelegationRequests();
+    void signDelegationRequest(long documentId, String email);
 
     // ---------- EMPLOYEE ----------
     List<Employee> getAllEmployees();
@@ -64,4 +66,5 @@ public interface IWietHRRepository {
     float getBonusBudgetLeft(BonusBudget bonusBudget);
     List<Float> getBonusBudgetUsagePerMonth(BonusBudget bonusBudget);
     BonusesOfAllEmployeesHelper getBonusesForYear(Year year);
+
 }

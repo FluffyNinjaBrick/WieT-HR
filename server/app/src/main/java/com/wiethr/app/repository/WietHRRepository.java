@@ -7,7 +7,9 @@ import com.wiethr.app.repository.jpaRepos.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.time.Duration;
 import java.time.Year;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.time.LocalDate;
 
@@ -136,6 +138,22 @@ public class WietHRRepository implements IWietHRRepository {
         return this.daysOffRequestRepository.findAll();
     }
 
+    @Override
+    public void signDaysOffRequest(long documentId, String email) {
+        Employee signer = this.getEmployeeByEmail(email);
+        DaysOffRequest request = this.getDaysOffRequestByID(documentId);
+
+        long duration =  ChronoUnit.DAYS.between(request.getDateFrom(), request.getDateTo());
+
+        Employee employee = request.employeeObject();
+        employee.reduceDaysOffRequestLeft((int) (duration + 1));
+
+        request.sign(signer);
+
+        this.daysOffRequestRepository.save(request);
+        this.employeeRepository.save(employee);
+    }
+
 
     // ---------- DELEGATION REQUEST ----------
     @Override
@@ -194,6 +212,15 @@ public class WietHRRepository implements IWietHRRepository {
     @Override
     public List<DelegationRequest> getAllDelegationRequests() {
         return this.delegationRequestRepository.findAll();
+    }
+
+    @Override
+    public void signDelegationRequest(long documentId, String email) {
+        Employee signer = this.getEmployeeByEmail(email);
+        DelegationRequest request = this.getDelegationRequestByID(documentId);
+
+        request.sign(signer);
+        this.delegationRequestRepository.save(request);
     }
 
 

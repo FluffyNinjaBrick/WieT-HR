@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
+import java.time.Duration;
 import java.time.LocalDate;
 
 //@MappedSuperclass
@@ -32,7 +33,7 @@ public abstract class Document {
     private LocalDate dateSigned;
 
     @Nullable
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(
             name = "Document_Signed_By",
             joinColumns = {@JoinColumn(name = "document")},
@@ -46,9 +47,10 @@ public abstract class Document {
     private LocalDate dateTo;
 
 
-    public void sign(Employee employee) {
-        signedBy = employee;
+    public void sign(Employee signer) {
+        signedBy = signer;
         signed = true;
+        dateSigned = LocalDate.now();
     }
 
     /**
