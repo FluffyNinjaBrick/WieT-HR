@@ -34,7 +34,7 @@ public interface IWietHRRepository {
     void removeDaysOffRequest(long documentID);
     List<DaysOffRequest> getAllDaysOffRequests();
     List<DaysOffRequest> getEmployeeDaysOffRequests(long id, LocalDate from, LocalDate to);
-
+    void signDaysOffRequest(long documentId, String email);
 
     // ---------- DELEGATION REQUEST ----------
     void createDelegationRequest(DelegationRequestHelper helper, String email);
@@ -43,7 +43,7 @@ public interface IWietHRRepository {
     void removeDelegationRequest(long documentID);
     List<DelegationRequest> getAllDelegationRequests();
     List<DelegationRequest> getEmployeeDelegationRequests(long id, LocalDate from, LocalDate to);
-
+    void signDelegationRequest(long documentId, String email);
 
     // ---------- EMPLOYEE ----------
     List<Employee> getAllEmployees();
