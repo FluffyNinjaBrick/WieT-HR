@@ -445,6 +445,7 @@ public class WietHRRepository implements IWietHRRepository {
                     float currentEmployeeSum = bonusesOfEmployeeHelper.getEmployeeBonuses().remove(monthIndex);
                     currentEmployeeSum += bonus.getValue();
                     bonusesOfEmployeeHelper.getEmployeeBonuses().add(monthIndex, currentEmployeeSum);
+                    bonusesOfEmployeeHelper.addBonusToTotal(bonus.getValue());
 
                     float currentAllSum = bonusesOfAllEmployeesHelper.getMonthlySummary().remove(monthIndex);
                     currentAllSum += bonus.getValue();
