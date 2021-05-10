@@ -1,6 +1,5 @@
 package com.wiethr.app.model.helpers;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.time.Year;

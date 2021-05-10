@@ -5,6 +5,7 @@ import com.itextpdf.text.DocumentException;
 import com.wiethr.app.model.*;
 import com.wiethr.app.model.helpers.*;
 import com.wiethr.app.repository.GeneratePDF;
+import com.wiethr.app.repository.IWietHRRepository;
 import com.wiethr.app.repository.WietHRRepository;
 import com.wiethr.app.security.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ import java.util.List;
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class RestController {
 
-    private final WietHRRepository repository;
+    private final IWietHRRepository repository;
     private final AuthenticationManager authenticationManager;
     private final MyUserDetailService userDetailService;
     private final JwtUtil jwtUtil;
@@ -33,7 +34,7 @@ public class RestController {
 
     @Autowired
     public RestController(
-            WietHRRepository repository,
+            IWietHRRepository repository,
             AuthenticationManager authenticationManager,
             MyUserDetailService userDetailService,
             JwtUtil jwtUtil,
