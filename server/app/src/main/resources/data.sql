@@ -81,6 +81,21 @@ INSERT INTO document_signed_by(document,signer_id) VALUES (8, 1);
 INSERT INTO document (id, date_from, date_issued, date_signed, date_to, name_at_signing, signed, employee_id) VALUES (9, '2021-07-10', '2021-05-01', NULL, '2021-07-16', 'Anna Pastel', false, 3);
 INSERT INTO DELEGATION_REQUEST (id, destination) VALUES (9, 'Szczecin');
 
+-- /* Appreciation Bonus */
+INSERT INTO bonus_budget(id, value, year) VALUES (0, 10000, E'\\xACED00057372000D6A6176612E74696D652E536572955D84BA1B2248B20C0000787077050B000007E478');
+INSERT INTO bonus_budget(id, value, year) VALUES (1, 15000, E'\\xACED00057372000D6A6176612E74696D652E536572955D84BA1B2248B20C0000787077050B000007E578');
+
+INSERT INTO appreciation_bonus(id, date_generated, value, year_month, bonus_bugdet, employee) VALUES (0, '2020-01-03', 2000 ,E'\\xACED00057372000D6A6176612E74696D652E536572955D84BA1B2248B20C0000787077060C000007E40178', 0, 3);
+INSERT INTO appreciation_bonus(id, date_generated, value, year_month, bonus_bugdet, employee) VALUES (1, '2020-02-10', 6000 ,E'\\xACED00057372000D6A6176612E74696D652E536572955D84BA1B2248B20C0000787077060C000007E40278', 0, 1);
+INSERT INTO appreciation_bonus(id, date_generated, value, year_month, bonus_bugdet, employee) VALUES (2, '2020-07-20', 2000 ,E'\\xACED00057372000D6A6176612E74696D652E536572955D84BA1B2248B20C0000787077060C000007E40278', 0, 0);
+
+INSERT INTO appreciation_bonus(id, date_generated, value, year_month, bonus_bugdet, employee) VALUES (3, '2021-03-03', 3000 ,E'\\xACED00057372000D6A6176612E74696D652E536572955D84BA1B2248B20C0000787077060C000007E50378', 1, 2);
+INSERT INTO appreciation_bonus(id, date_generated, value, year_month, bonus_bugdet, employee) VALUES (4, '2021-06-10', 5000 ,E'\\xACED00057372000D6A6176612E74696D652E536572955D84BA1B2248B20C0000787077060C000007E50678', 1, 0);
+INSERT INTO appreciation_bonus(id, date_generated, value, year_month, bonus_bugdet, employee) VALUES (5, '2021-09-01', 2000 ,E'\\xACED00057372000D6A6176612E74696D652E536572955D84BA1B2248B20C0000787077060C000007E50978', 1, 1);
+
+
 alter sequence employee_id_seq restart with 4;
 alter sequence permissions_id_seq restart with 4;
+alter sequence bonus_budget_id_seq restart with 2;
+alter sequence appreciation_bonus_id_seq restart with 6;
 alter sequence doc_gen restart with 62;

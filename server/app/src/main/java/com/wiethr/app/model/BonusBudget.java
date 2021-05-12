@@ -1,5 +1,6 @@
 package com.wiethr.app.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -14,13 +15,14 @@ import java.util.List;
 public class BonusBudget {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     private Year year;
     private Float value;
 
     @OneToMany(mappedBy = "bonusBudget", fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<AppreciationBonus> bonusList;
 
     public BonusBudget(Year year, Float value){

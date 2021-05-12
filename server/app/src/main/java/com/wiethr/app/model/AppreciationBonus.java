@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.Date;
 
@@ -13,7 +14,7 @@ import java.util.Date;
 public class AppreciationBonus {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
 
@@ -22,14 +23,14 @@ public class AppreciationBonus {
     private Employee employee;
 
     private YearMonth yearMonth;
-    private Date dateGenerated;
+    private LocalDate dateGenerated;
     private Float value;
 
     @ManyToOne
     @JoinColumn(name = "bonusBugdet", referencedColumnName = "id", nullable = false)
     private BonusBudget bonusBudget;
 
-    public AppreciationBonus(Employee employee ,YearMonth yearMonth, Date dateGenerated, Float value, BonusBudget bonusBudget){
+    public AppreciationBonus(Employee employee ,YearMonth yearMonth, LocalDate dateGenerated, Float value, BonusBudget bonusBudget){
         this.employee = employee;
         this.yearMonth = yearMonth;
         this.dateGenerated = dateGenerated;
