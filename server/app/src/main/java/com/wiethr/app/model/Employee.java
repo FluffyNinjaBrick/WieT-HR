@@ -1,5 +1,6 @@
 package com.wiethr.app.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wiethr.app.model.enums.EmployeeStatus;
 import com.wiethr.app.model.enums.UserRole;
@@ -50,6 +51,7 @@ public class Employee {
     private int lastYearDaysOff;        // remaining days off carried over from last year
 
 
+    @JsonIgnore
     @OneToMany(mappedBy = "employee", fetch = FetchType.LAZY)
     private List<AppreciationBonus> appreciationBonusList;
 
