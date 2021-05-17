@@ -26,6 +26,7 @@ import { ProvideAuth } from "./components/auth/useAuth";
 import PrivateRoute from "./components/utils/PrivateRoute";
 import "font-awesome/css/font-awesome.min.css";
 import { QueryClient, QueryClientProvider } from "react-query";
+import ChangeBonusView from "./components/bonus/ChangeBonusView";
 
 const queryClient = new QueryClient();
 
@@ -81,6 +82,9 @@ function App() {
               </PrivateRoute>
               <PrivateRoute path="/bonuses" role="any">
                 <BonusesView />
+              </PrivateRoute>
+              <PrivateRoute path="/employees/changeBonus" role="any">
+                <ChangeBonusView />
               </PrivateRoute>
               <Route path="/login">
                 <LoginView />

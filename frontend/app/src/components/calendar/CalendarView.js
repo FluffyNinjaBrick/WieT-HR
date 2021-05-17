@@ -4,6 +4,8 @@ import { Chart } from "react-google-charts";
 import { Table } from "react-bootstrap";
 import { getCurrentUser } from "../../services/AuthService";
 import { LoadingComponent } from "../loader/LoadingView";
+import { Form } from "react-bootstrap";
+import { DatePickerContainer } from "../../styled";
 
 //TODO mozliwosc wyboru roku
 export default function CalendarView() {
@@ -12,11 +14,12 @@ export default function CalendarView() {
 
   const [absentEmployeesData, setAbsentEmployeesData] = useState([]);
   const [currentEmployeesShown, setcurrentEmployeesShown] = useState([]);
+  const [viewedYear, setViewedYear] = useState(new Date().getFullYear());
 
   var currentViewedDay = null;
   const fetchAbsentEmployeesInfo = async () => {
     const absentEmpPerDay = await fetch(
-      API_URL + "employees/getAbsent/2021-01-01/2021-12-31",
+      API_URL + `employees/absent/${viewedYear}-01-01/${viewedYear}-12-31`,
       {
         method: "GET",
         headers: {
@@ -30,7 +33,7 @@ export default function CalendarView() {
 
   useEffect(() => {
     fetchAbsentEmployeesInfo().then((data) => setAbsentEmployeesData(data));
-  }, []);
+  }, [viewedYear]);
 
   function convertAbsentEmployeesInfo() {
     //converted for chart drawing purpose. Structure: [Date, Number of absent employees]
@@ -95,6 +98,10 @@ export default function CalendarView() {
     absentEmployeesMap.set(v["day"], v["absentEmployees"])
   );
 
+  function handleYearChange(e) {
+    setViewedYear(e.target.value);
+  }
+
   const data = [
     [
       {
@@ -116,6 +123,18 @@ export default function CalendarView() {
   } else {
     return (
       <div className="mt-5">
+        <DatePickerContainer className="my-3">
+          <h4 className="m-0 mr-2">Rok: </h4>
+          <Form.Control
+            onChange={handleYearChange}
+            as="select"
+            defaultValue={new Date().getFullYear()}
+          >
+            <option>{new Date().getFullYear() + 1}</option>
+            <option>{new Date().getFullYear()}</option>
+            <option>{new Date().getFullYear() - 1}</option>
+          </Form.Control>
+        </DatePickerContainer>
         <Chart
           // style={{ cursor: "pointer" }}
           width={1000}

@@ -2,6 +2,8 @@ import TableBonuses from "./TableBonuses";
 import { DatePickerContainer, ViewContainer } from "../../styled";
 import { Form } from "react-bootstrap";
 import { useState } from "react";
+import ChangeBonusView from "./ChangeBonusView";
+import BonusBudgetStatistics from "./BonusBudgetStatistics";
 
 export default function BonusesViewAdmin() {
   const [year, setYear] = useState(new Date().getFullYear());
@@ -21,11 +23,13 @@ export default function BonusesViewAdmin() {
           as="select"
           defaultValue={new Date().getFullYear()}
         >
-          <option>2021</option>
-          <option>2020</option>
+          <option>{new Date().getFullYear()}</option>
+          <option>{new Date().getFullYear() - 1}</option>
         </Form.Control>
       </DatePickerContainer>
+      <BonusBudgetStatistics />
       <TableBonuses year={year} />
+      {/* <ChangeBonusView /> */}
     </ViewContainer>
   );
 }

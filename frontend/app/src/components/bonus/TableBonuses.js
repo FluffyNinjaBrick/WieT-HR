@@ -18,7 +18,7 @@ const TableBonuses = ({ year }) => {
   );
 
   useEffect(() => {
-    console.log(apiResponse?.data); //debug
+    // console.log(apiResponse?.data); //debug
     setTableData(apiResponse?.data.bonuses);
   }, [apiResponse]);
 
@@ -218,7 +218,7 @@ const TableBonuses = ({ year }) => {
     },
   ];
 
-  if (isLoading || isFetching || !tableData) {
+  if (isLoading || !tableData) {
     return <LoadingComponent />;
   }
 

@@ -43,7 +43,7 @@ export default function DelegationCreateForm() {
 
     setSubmitting(true);
 
-    const response = await fetch(API_URL + "documents/create/delegation", {
+    const response = await fetch(`${API_URL}delegation`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

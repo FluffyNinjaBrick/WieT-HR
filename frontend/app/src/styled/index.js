@@ -86,3 +86,17 @@ export const DatePickerContainer = styled.div`
   justify-content: center;
 `;
 //
+
+//charts
+export const PieChartContainer = styled.div`
+  height: 300px;
+`;
+//
+
+//
+export const BonusBudgetStatisticsContainer = styled.div`
+  display: grid;
+  grid-template-columns: 4fr 8fr;
+  align-items: center;
+  justify-content: center;
+`;
