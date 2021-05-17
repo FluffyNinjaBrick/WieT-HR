@@ -38,7 +38,7 @@ export default function RequestsView() {
 
   function setupModal(document) {
     setModalShow(true);
-    setCurrendDocument(document);
+    setCurrentDocument(document);
   }
 
   const delegationColumns = [
@@ -218,7 +218,8 @@ export default function RequestsView() {
               <div className="mt-3 mb-5">
                 <h6>Nie znaleziono żadnych oczekujących wniosków o urlop.</h6>
               </div>
-            )}
+              
+            )}            
             <h4 className="my-4 mt-5">Oczekujące wnioski o delegację</h4>
             {allDelegations.length ? (
               <div className="mb-5">

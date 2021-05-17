@@ -19,7 +19,7 @@ export default function BonusPieChart({ data }) {
       cornerRadius={0}
       activeOuterRadiusOffset={8}
       borderWidth={1}
-      colors={{ scheme: "pink_yellowGreen" }}
+      colors={{ scheme: "paired" }}
       borderColor={{ from: "color", modifiers: [["darker", 0.2]] }}
       arcLinkLabelsSkipAngle={10}
       arcLinkLabelsTextColor="#333333"
