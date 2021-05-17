@@ -61,29 +61,75 @@ public class RestController {
     }
 
 
+
+    // ---------- APPRECIATION BONUS ----------
+    @GetMapping("/bonuses")
+    public List<AppreciationBonus> getBonuses(
+            @RequestParam long id,
+            @RequestHeader("Authorization") String token
+    ) throws IllegalAccessException {
+        this.roleValidator.validate(jwtUtil.extractUsernameFromRaw(token), id);
+        return this.repository.getEmployeeBonuses(id);
+    }
+
+
+    @PutMapping("/bonuses")
+    public void addAppreciationBonus(
+            @RequestHeader("Authorization") String token,
+            @RequestBody AddAppreciationBonusHelper bonusHelper
+    ) throws IllegalAccessException {
+        this.roleValidator.validate(jwtUtil.extractUsernameFromRaw(token), bonusHelper.getEmployeeId());
+        this.repository.addAppreciationBonus(bonusHelper);
+    }
+
+
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')")
+    @GetMapping("/bonuses/{year}")
+    public BonusesOfAllEmployeesHelper getBonusesForYear(@PathVariable Year year) {
+        return this.repository.getBonusesForYear(year);
+    }
+
     // ---------- BONUS BUDGET ----------
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PostMapping(value = "/bonusBudget")
+    @PostMapping(value = "/budget")
     public void createBonusBudget(@RequestBody BonusBudgetHelper helper) {
         this.repository.createBonusBudget(helper);
     }
 
+
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @GetMapping(value = "/bonusBudget")
+    @GetMapping(value = "/budget")
     public BonusBudget getBudgetForYear(@RequestParam Year year) {
         return this.repository.getBudgetForYear(year);
     }
 
+
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PutMapping(value = "/bonusBudget")
+    @PutMapping(value = "/budget")
     public void modifyBonusBudget(@RequestBody BonusBudgetHelper helper) {
         this.repository.modifyBonusBudget(helper);
     }
 
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')")
+    @GetMapping("/budget/{year}")
+    public BonusBudgetHelper getBonusBudgetForYear(@PathVariable Year year) {
+
+        BonusBudget budget = this.repository.getBudgetForYear(year);
+
+        return new BonusBudgetHelper(
+                budget.getId(),
+                budget.getYear(),
+                budget.getValue(),
+                repository.getBonusBudgetLeft(budget),
+                repository.getBonusBudgetUsagePerMonth(budget)
+        );
+    }
+
+
     // ---------- CONTRACT ----------
     @PreAuthorize("hasAnyRole('ROLE_MANAGER','ROLE_ADMIN')")
-    @PostMapping(value = "/documents/contract")
+    @PostMapping(value = "/contract")
     public void createContract(
             @RequestBody AddContractHelper helper,
             @RequestHeader("Authorization") String token
@@ -95,7 +141,7 @@ public class RestController {
 
 
     // ---------- DAYS OFF REQUEST ----------
-    @PostMapping(value = "/documents/daysoff")
+    @PostMapping(value = "/daysoff")
     public void createDaysOffRequest(
             @RequestBody DaysOffRequestHelper helper,
             @RequestHeader("Authorization") String token) {
@@ -103,8 +149,8 @@ public class RestController {
         this.repository.createDaysOffRequest(helper, email);
     }
 
-    // zmienna z path w DaysOffRequestHelper i post na put
-    @PutMapping(value = "/documents/daysoff")
+
+    @PutMapping(value = "/daysoff")
     public void updateDaysOffRequest(
             @RequestBody DaysOffRequestHelper daysOffRequestHelper,
             @RequestHeader("Authorization") String token
@@ -115,27 +161,28 @@ public class RestController {
         this.repository.updateDaysOffRequest(daysOffRequestHelper, request.employeeObject());
     }
 
-    // id do body
-    @DeleteMapping(value = "/documents/daysoff")
+
+    @DeleteMapping(value = "/daysoff")
     public void removeDaysOffRequest(
-            @RequestBody long documentID,
+            @RequestParam long id,
             @RequestHeader("Authorization") String token
     ) throws IllegalAccessException {
         String email = jwtUtil.extractUsernameFromRaw(token);
-        this.roleValidator.validate(email, this.repository.getDaysOffRequestByID(documentID).getEmployee());
-        this.repository.removeDaysOffRequest(documentID);
+        this.roleValidator.validate(email, this.repository.getDaysOffRequestByID(id).getEmployee());
+        this.repository.removeDaysOffRequest(id);
     }
 
+
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @GetMapping(value = "/documents/daysoff")
+    @GetMapping(value = "/daysoff")
     public List<DaysOffRequest> getAllDaysOffRequests(@RequestHeader("Authorization") String token) {
         return this.repository.getAllDaysOffRequests();
     }
 
-    // id do body
-    @GetMapping(value = "/documents/daysoff/pdf")
+
+    @GetMapping(value = "/daysoff/pdf")
     public ResponseEntity<byte[]> getDaysOffRequestPDF(
-            @RequestBody long id,
+            @RequestParam long id,
             @RequestHeader("Authorization") String token
     ) throws DocumentException, IllegalAccessException {
         DaysOffRequest request = this.repository.getDaysOffRequestByID(id);
@@ -145,22 +192,20 @@ public class RestController {
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
-    @PutMapping(value = "/documents/daysoff/sign")
+    @PutMapping(value = "/daysoff/sign")
     public void signDaysOffRequest(
-            @RequestBody long documentId,
+            @RequestParam long id,
             @RequestHeader("Authorization") String token
     ) throws IllegalAccessException {
-        DaysOffRequest request = this.repository.getDaysOffRequestByID(documentId);
+        DaysOffRequest request = this.repository.getDaysOffRequestByID(id);
         String email = jwtUtil.extractUsernameFromRaw(token);
         this.roleValidator.validate(email, request.getEmployee());
-        this.repository.signDaysOffRequest(documentId, email);
+        this.repository.signDaysOffRequest(id, email);
     }
 
 
     // ---------- DELEGATION REQUEST ----------
-
-    //zmieniony endpoint
-    @PostMapping(value = "/documents/delegation")
+    @PostMapping(value = "/delegation")
     public void createDelegationRequest(
             @RequestBody DelegationRequestHelper helper,
             @RequestHeader("Authorization") String token
@@ -169,8 +214,8 @@ public class RestController {
         this.repository.createDelegationRequest(helper, email);
     }
 
-    // post na put, usuniecie update ze sciezki, documentId w helperze
-    @PutMapping(value = "/documents/delegation")
+
+    @PutMapping(value = "/delegation")
     public void updateDelegationRequest(
             @RequestBody DelegationRequestHelper helper,
             @RequestHeader("Authorization") String token
@@ -181,27 +226,28 @@ public class RestController {
         this.repository.updateDelegationRequest(helper, request.employeeObject());
     }
 
-    // id do request body, metoda zmieniona na delete
-    @DeleteMapping(value = "/documents/delegation")
+
+    @DeleteMapping(value = "/delegation")
     public void removeDelegationRequest(
-            @RequestBody long documentID,
+            @RequestParam long id,
             @RequestHeader("Authorization") String token
     ) throws IllegalAccessException {
         String email = jwtUtil.extractUsernameFromRaw(token);
-        this.roleValidator.validate(email, this.repository.getDelegationRequestByID(documentID).getEmployee());
-        this.repository.removeDelegationRequest(documentID);
+        this.roleValidator.validate(email, this.repository.getDelegationRequestByID(id).getEmployee());
+        this.repository.removeDelegationRequest(id);
     }
 
+
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @GetMapping(value = "/documents/delegation")
+    @GetMapping(value = "/delegation")
     public List<DelegationRequest> getAllDelegationRequests() {
         return this.repository.getAllDelegationRequests();
     }
 
-    // id do body
-    @GetMapping(value = "/documents/delegation/pdf")
+
+    @GetMapping(value = "/delegation/pdf")
     public ResponseEntity<byte[]> getDelegationRequestPDF(
-            @RequestBody long id,
+            @RequestParam long id,
             @RequestHeader("Authorization") String token
     ) throws DocumentException, IllegalAccessException {
         DelegationRequest request = this.repository.getDelegationRequestByID(id);
@@ -210,16 +256,17 @@ public class RestController {
         return GeneratePDF.fromDelegationRequest(request);
     }
 
+
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
-    @PutMapping(value = "/documents/delegation/sign")
+    @PutMapping(value = "/delegation/sign")
     public void signDelegationRequest(
-            @RequestBody long documentId,
+            @RequestParam long id,
             @RequestHeader("Authorization") String token
     ) throws IllegalAccessException {
-        DelegationRequest request = this.repository.getDelegationRequestByID(documentId);
+        DelegationRequest request = this.repository.getDelegationRequestByID(id);
         String email = jwtUtil.extractUsernameFromRaw(token);
         this.roleValidator.validate(email, request.getEmployee());
-        this.repository.signDelegationRequest(documentId, email);
+        this.repository.signDelegationRequest(id, email);
     }
 
 
@@ -231,10 +278,10 @@ public class RestController {
         return this.repository.getAllEmployees();
     }
 
-    // id do body, employee zamiast employees
+
     @GetMapping(value = "/employee")
     public Employee getEmployeeById(
-            @RequestBody long id,
+            @RequestParam long id,
             @RequestHeader("Authorization") String token
     ) throws IllegalAccessException {
         String email = jwtUtil.extractUsernameFromRaw(token);
@@ -242,21 +289,21 @@ public class RestController {
         return this.repository.getEmployee(id);
     }
 
-    //zmieniony endpoint
+
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
     @PostMapping("/employees")
     public void createEmployee(@RequestBody AddEmployeeHelper helper) {
         this.repository.createEmployee(helper);
     }
 
-    // id do body, zmieniony endpoint
+
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/employees")
-    public void removeEmployee(@RequestBody long id) {
+    public void removeEmployee(@RequestParam long id) {
         this.repository.removeEmployee(id);
     }
 
-    // post na put, zmieniony endpoint
+
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
     @PutMapping("/employees/data")
     @ResponseBody
@@ -269,7 +316,7 @@ public class RestController {
         repository.updateEmployee(helper);
     }
 
-    // post na put, zmieniony endpoint
+
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
     @PutMapping("/employees/permissions")
     @ResponseBody
@@ -294,11 +341,11 @@ public class RestController {
         return this.repository.getAbsentEmployees(LocalDate.parse(from, formatter), LocalDate.parse(to, formatter));
     }
 
-    // id do body, zmieniony endpoint
+
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
     @GetMapping("/employees/delegations/{from}/{to}")
     public List<DelegationRequest> getEmployeeDelegationRequests(
-            @RequestBody long id,
+            @RequestParam long id,
             @PathVariable String from,
             @PathVariable String to,
             @RequestHeader("Authorization") String token
@@ -308,11 +355,11 @@ public class RestController {
         return this.repository.getEmployeeDelegationRequests(id, LocalDate.parse(from, formatter), LocalDate.parse(to, formatter));
     }
 
-    // id do body, zmieniony endpoint
+
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
     @GetMapping("/employees/daysoff/{from}/{to}")
     public List<DaysOffRequest> getEmployeeDaysOffRequests(
-            @RequestBody long id,
+            @RequestParam long id,
             @PathVariable String from,
             @PathVariable String to,
             @RequestHeader("Authorization") String token
@@ -322,16 +369,17 @@ public class RestController {
         return this.repository.getEmployeeDaysOffRequests(id, LocalDate.parse(from, formatter), LocalDate.parse(to, formatter));
     }
 
-    // inny endpoint
+
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
     @GetMapping("/employees/daysoff")
     public EmployeeDaysOffDetails getEmployeeDaysOffLeft(
-            @RequestBody long employeeId,
+            @RequestParam long id,
             @RequestHeader("Authorization") String token
     ) throws IllegalAccessException {
-        this.roleValidator.validate(jwtUtil.extractUsernameFromRaw(token), employeeId);
-        return this.repository.getEmployeeDaysOffLeft(employeeId);
+        this.roleValidator.validate(jwtUtil.extractUsernameFromRaw(token), id);
+        return this.repository.getEmployeeDaysOffLeft(id);
     }
+
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
     @GetMapping("/employees/daysoff/all")
@@ -341,45 +389,7 @@ public class RestController {
         return this.repository.getGroupDaysOffLeft(jwtUtil.extractUsernameFromRaw(token));
     }
 
-    @GetMapping("/employees/bonuses")
-    public List<AppreciationBonus> getBonuses(
-            @RequestHeader("Authorization") String token,
-            @RequestBody long employeeID
-    ) throws IllegalAccessException {
-        this.roleValidator.validate(jwtUtil.extractUsernameFromRaw(token), employeeID);
-        return this.repository.getEmployeeBonuses(employeeID);
-    }
-
-    @PutMapping("/employees/bonuses")
-    public void addAppreciationBonus(
-            @RequestHeader("Authorization") String token,
-            @RequestBody AddAppreciationBonusHelper bonusHelper
-    ) throws IllegalAccessException {
-        this.roleValidator.validate(jwtUtil.extractUsernameFromRaw(token), bonusHelper.getEmployeeId());
-        this.repository.addAppreciationBonus(bonusHelper);
-    }
-
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')")
-    @GetMapping("/employees/bonuses/year")
-    public BonusesOfAllEmployeesHelper getBonusesForYear(
-            @RequestParam Year year
-    ) {
-        return this.repository.getBonusesForYear(year);
-    }
 
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')")
-    @GetMapping("/bonus_budget")
-    public BonusBudgetHelper getBonusBudgetForYear(
-            @RequestParam Year year
-    ) {
-        BonusBudget budget = this.repository.getBudgetForYear(year);
-        return new BonusBudgetHelper(
-                budget.getId(),
-                budget.getYear(),
-                budget.getValue(),
-                repository.getBonusBudgetLeft(budget),
-                repository.getBonusBudgetUsagePerMonth(budget)
-        );
-    }
+
 }
