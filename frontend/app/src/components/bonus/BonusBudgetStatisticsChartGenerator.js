@@ -6,7 +6,7 @@ import BonusPieChart from "../charts/BonusPieChart";
 import { fetchBonusBudgetForYear } from "../../services/EmployeeService";
 import { LoadingComponent } from "../loader/LoadingView";
 
-export default function BonusBudgetStatisticsChartGenerator() {
+export default function BonusBudgetStatisticsChartGenerator({ year }) {
   const [budgetLeft, setBudgetLeft] = useState(0);
   const [budgetSize, setBudgetSize] = useState(0);
 
@@ -16,15 +16,17 @@ export default function BonusBudgetStatisticsChartGenerator() {
     data: apiResponse,
     isFetching,
     refetch,
-  } = useQuery("bonusBudgetStatistics2", () =>
-    fetchBonusBudgetForYear(new Date().getFullYear())
-  );
+  } = useQuery("bonusBudgetStatistics2", () => fetchBonusBudgetForYear(year));
 
   useEffect(() => {
     setBudgetLeft(apiResponse?.data?.budgetLeft);
     setBudgetSize(apiResponse?.data?.budgetSize);
     console.log(budgetLeft + "   " + budgetSize);
   }, [apiResponse]);
+
+  useEffect(() => {
+    refetch();
+  }, [year]);
 
   const chartData = [
     {
@@ -45,8 +47,8 @@ export default function BonusBudgetStatisticsChartGenerator() {
 
   if (error) return "An error has occurred: " + error.message;
 
-  chartData[0].value = budgetSize - budgetLeft;
-  chartData[1].value = budgetLeft;
+  chartData[0].value = budgetLeft;
+  chartData[1].value = budgetSize - budgetLeft;
 
   return <BonusPieChart data={chartData} />;
 }

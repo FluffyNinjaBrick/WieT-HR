@@ -18,16 +18,18 @@ export default function BonusesViewAdmin() {
       <h1 className="my-3">Pracownicy / premie</h1>
       <DatePickerContainer className="my-3">
         <h4 className="m-0 mr-2">Rok: </h4>
-        <Form.Control
-          onChange={handleYearChange}
-          as="select"
-          defaultValue={new Date().getFullYear()}
-        >
-          <option>{new Date().getFullYear()}</option>
-          <option>{new Date().getFullYear() - 1}</option>
-        </Form.Control>
+        <div>
+          <Form.Control
+            onChange={handleYearChange}
+            as="select"
+            defaultValue={new Date().getFullYear()}
+          >
+            <option>{new Date().getFullYear()}</option>
+            <option>{new Date().getFullYear() - 1}</option>
+          </Form.Control>
+        </div>
       </DatePickerContainer>
-      <BonusBudgetStatistics />
+      <BonusBudgetStatistics year={year} />
       <TableBonuses year={year} />
       {/* <ChangeBonusView /> */}
     </ViewContainer>

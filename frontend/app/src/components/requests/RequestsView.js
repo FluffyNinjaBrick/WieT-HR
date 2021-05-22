@@ -22,7 +22,7 @@ export default function RequestsView() {
   const [loading, setLoading] = useState(true);
   const [allDaysOff, setAllDaysOff] = useState([]);
   const [modalShow, setModalShow] = useState(false);
-  const [currentDocument, setCurrendDocument] = useState([]);
+  const [currentDocument, setCurrentDocument] = useState([]);
 
   useEffect(() => {
     setLoading(true);
@@ -218,8 +218,7 @@ export default function RequestsView() {
               <div className="mt-3 mb-5">
                 <h6>Nie znaleziono żadnych oczekujących wniosków o urlop.</h6>
               </div>
-              
-            )}            
+            )}
             <h4 className="my-4 mt-5">Oczekujące wnioski o delegację</h4>
             {allDelegations.length ? (
               <div className="mb-5">

@@ -125,15 +125,17 @@ export default function CalendarView() {
       <div className="mt-5">
         <DatePickerContainer className="my-3">
           <h4 className="m-0 mr-2">Rok: </h4>
-          <Form.Control
-            onChange={handleYearChange}
-            as="select"
-            defaultValue={new Date().getFullYear()}
-          >
-            <option>{new Date().getFullYear() + 1}</option>
-            <option>{new Date().getFullYear()}</option>
-            <option>{new Date().getFullYear() - 1}</option>
-          </Form.Control>
+          <div>
+            <Form.Control
+              onChange={handleYearChange}
+              as="select"
+              defaultValue={new Date().getFullYear()}
+            >
+              <option>{new Date().getFullYear() + 1}</option>
+              <option>{new Date().getFullYear()}</option>
+              <option>{new Date().getFullYear() - 1}</option>
+            </Form.Control>
+          </div>
         </DatePickerContainer>
         <Chart
           // style={{ cursor: "pointer" }}
