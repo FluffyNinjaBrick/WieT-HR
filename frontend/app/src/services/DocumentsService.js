@@ -19,9 +19,9 @@ export const fetchUserDaysOffSummary = async () => {
     Authorization: auth,
   };
 
-  const URL = `employees/getDaysOff/${id}`;
+  const URL = `employees/daysoff?id=${id}`;
 
-  const response = await fetch(API_URL + URL, {
+  const response = await fetch(`${API_URL}${URL}`, {
     method: "GET",
     headers: myHeaders,
   });
@@ -41,9 +41,9 @@ export const fetchUserDaysOff = async () => {
     Authorization: auth,
   };
 
-  const URL = "employees/" + id + "/documents/daysoff/2021-01-01/2021-12-31"; // + currentDate;
+  const URL = `employees/daysoff/2021-01-01/2021-12-31?id=${id}`; // + currentDate;
 
-  const response = await fetch(API_URL + URL, {
+  const response = await fetch(`${API_URL}${URL}`, {
     method: "GET",
     headers: myHeaders,
   });
@@ -63,9 +63,9 @@ export const fetchAllDaysOffRequests = async () => {
     Authorization: auth,
   };
 
-  const URL = "/documents/delegation";
+  const URL = "delegation";
 
-  const response = await fetch(API_URL + URL, {
+  const response = await fetch(`${API_URL}${URL}`, {
     method: "GET",
     headers: myHeaders,
   });
@@ -84,9 +84,9 @@ export const fetchAllDaysOff = async () => {
     Authorization: auth,
   };
 
-  const URL = "documents/daysoff"; // + currentDate;
+  const URL = "daysoff"; // + currentDate;
 
-  const response = await fetch(API_URL + URL, {
+  const response = await fetch(`${API_URL}${URL}`, {
     method: "GET",
     headers: myHeaders,
   });
@@ -106,9 +106,9 @@ export const fetchUserDelegationRequests = async () => {
     Authorization: auth,
   };
 
-  const URL = "employees/" + id + "/documents/delegation/2021-01-01/2021-12-31";
+  const URL = `employees/delegations/2021-01-01/2021-12-31?id=${id}`;
 
-  const response = await fetch(API_URL + URL, {
+  const response = await fetch(`${API_URL}${URL}`, {
     method: "GET",
     headers: myHeaders,
   });
@@ -127,9 +127,9 @@ export const fetchAllDelegations = async () => {
     Authorization: auth,
   };
 
-  const URL = "documents/delegation"; // + currentDate;
+  const URL = "delegation"; // + currentDate;
 
-  const response = await fetch(API_URL + URL, {
+  const response = await fetch(`${API_URL}${URL}`, {
     method: "GET",
     headers: myHeaders,
   });
@@ -148,9 +148,9 @@ export const fetchDelegationDocumentPdf = async (delegationDocument) => {
     Authorization: auth,
   };
 
-  const URL = "documents/delegation/pdf/" + delegationDocument.id;
+  const URL = `delegation/pdf?id=${delegationDocument.id}`;
 
-  const response = await fetch(API_URL + URL, {
+  const response = await fetch(`${API_URL}${URL}`, {
     method: "GET",
     headers: myHeaders,
   });
@@ -173,9 +173,9 @@ export const fetchDaysoffDocumentPdf = async (daysoffDocument) => {
     Authorization: auth,
   };
 
-  const URL = "documents/daysoff/pdf/" + daysoffDocument.id;
+  const URL = `daysoff/pdf?id=${daysoffDocument.id}`;
 
-  const response = await fetch(API_URL + URL, {
+  const response = await fetch(`${API_URL}${URL}`, {
     method: "GET",
     headers: myHeaders,
   });

@@ -43,7 +43,7 @@ export default function LeaveCreateForm() {
 
     setSubmitting(true);
 
-    const response = await fetch(API_URL + "documents/create/daysoff", {
+    const response = await fetch(`${API_URL}daysoff`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

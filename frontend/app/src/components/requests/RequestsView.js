@@ -1,8 +1,9 @@
 import CalendarView from "../calendar/CalendarView";
 import { useEffect, useState } from "react";
-import { fetchEmployees } from "../../services/EmployeeService";
-import { Table } from "react-bootstrap";
+import { Button, Table } from "react-bootstrap";
 import BootstrapTable from "react-bootstrap-table-next";
+import RequestSignModal from "./RequestSignModal";
+
 import filterFactory, {
   textFilter,
   selectFilter,
@@ -20,6 +21,8 @@ export default function RequestsView() {
   const [allDelegations, setAllDelegations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [allDaysOff, setAllDaysOff] = useState([]);
+  const [modalShow, setModalShow] = useState(false);
+  const [currentDocument, setCurrendDocument] = useState([]);
 
   useEffect(() => {
     setLoading(true);
@@ -27,12 +30,16 @@ export default function RequestsView() {
       setAllDaysOff(daysOffData.filter((x) => !x.signed));
     });
     fetchAllDelegations()
-      .then((data) => {
-        console.log(data);
-        setAllDelegations(data.filter((x) => !x.signed));
+      .then((delegations) => {
+        setAllDelegations(delegations.filter((x) => !x.signed));
       })
       .then(() => setLoading(false));
   }, []);
+
+  function setupModal(document) {
+    setModalShow(true);
+    setCurrentDocument(document);
+  }
 
   const delegationColumns = [
     {
@@ -83,6 +90,11 @@ export default function RequestsView() {
         },
         placeholder: "Wszystkie",
       }),
+      headerStyle: { textAlign: "center" },
+    },
+    {
+      dataField: "signDelegationButton",
+      text: "Decyzja",
       headerStyle: { textAlign: "center" },
     },
   ];
@@ -143,6 +155,11 @@ export default function RequestsView() {
       }),
       headerStyle: { textAlign: "center" },
     },
+    {
+      dataField: "signLeaveButton",
+      text: "Decyzja",
+      headerStyle: { textAlign: "center" },
+    },
   ];
 
   if (loading) {
@@ -166,12 +183,28 @@ export default function RequestsView() {
                   keyField="id"
                   data={allDaysOff.map((daysOff) => {
                     let x = {
-                      name: daysOff.nameAtSigning, 
+                      name: daysOff.nameAtSigning,
                       dateFrom: daysOff.dateFrom,
                       dateTo: daysOff.dateTo,
                       leaveType: LeaveTypes[daysOff.leaveType],
                       status: daysOff.signed ? "Zaakceptowany" : "Oczekujący",
                     };
+                    x.signLeaveButton = (
+                      <div>
+                        <Button
+                          style={{ width: "100%", borderRadius: "0" }}
+                          onClick={() => setupModal(daysOff)}
+                        >
+                          Rozpatrz
+                        </Button>
+                        <RequestSignModal
+                          show={modalShow && currentDocument == daysOff}
+                          onHide={() => setModalShow(false)}
+                          leave={daysOff}
+                          type={"leave"}
+                        />
+                      </div>
+                    );
                     return x;
                   })}
                   columns={daysOffColumns}
@@ -185,7 +218,8 @@ export default function RequestsView() {
               <div className="mt-3 mb-5">
                 <h6>Nie znaleziono żadnych oczekujących wniosków o urlop.</h6>
               </div>
-            )}
+              
+            )}            
             <h4 className="my-4 mt-5">Oczekujące wnioski o delegację</h4>
             {allDelegations.length ? (
               <div className="mb-5">
@@ -201,6 +235,22 @@ export default function RequestsView() {
                         ? "Zaakceptowany"
                         : "Oczekujący",
                     };
+                    x.signDelegationButton = (
+                      <div>
+                        <Button
+                          style={{ width: "100%", borderRadius: "0" }}
+                          onClick={() => setupModal(delegation)}
+                        >
+                          Rozpatrz
+                        </Button>
+                        <RequestSignModal
+                          show={modalShow && currentDocument == delegation}
+                          onHide={() => setModalShow(false)}
+                          leave={delegation}
+                          type={"delegation"}
+                        />
+                      </div>
+                    );
                     return x;
                   })}
                   columns={delegationColumns}
