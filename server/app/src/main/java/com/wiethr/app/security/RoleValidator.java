@@ -43,4 +43,10 @@ public class RoleValidator {
             throw new IllegalAccessException("Error: you do not have permission to access this resource"); ;
     }
 
+    public void validatePasswordUpdate(String requestingEmail, long changedId) throws IllegalAccessException {
+        Employee requesting = this.repository.getEmployeeByEmail(requestingEmail);
+        if (requesting.getId() != changedId)
+            throw new IllegalAccessException("Error: you cannot change another user's password");
+    }
+
 }

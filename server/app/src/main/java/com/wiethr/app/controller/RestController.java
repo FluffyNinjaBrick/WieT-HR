@@ -329,6 +329,17 @@ public class RestController {
         this.repository.updateEmployeePermissions(helper);
     }
 
+
+    @PutMapping("/employees/password")
+    public void updatePassword(
+            @RequestBody UpdatePasswordHelper helper,
+            @RequestHeader("Authorization") String token
+    ) throws IllegalAccessException {
+        this.roleValidator.validatePasswordUpdate(jwtUtil.extractUsernameFromRaw(token), helper.getId());
+        this.repository.updatePassword(helper);
+    }
+
+
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
     @GetMapping("/employees/absent/{from}/{to}")
     public List<AbsentEmployees> getAbsentEmployees(

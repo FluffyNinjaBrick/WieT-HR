@@ -383,6 +383,13 @@ public class WietHRRepository implements IWietHRRepository {
     }
 
     @Override
+    public void updatePassword(UpdatePasswordHelper helper) {
+        Employee employee = this.getEmployee(helper.getId());
+        employee.setPassword(helper.getNewPassword());
+        this.employeeRepository.save(employee);
+    }
+
+    @Override
     public void createEmployee(AddEmployeeHelper helper) {
 
         // create and save permissions
