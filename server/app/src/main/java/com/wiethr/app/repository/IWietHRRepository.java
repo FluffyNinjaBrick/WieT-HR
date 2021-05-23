@@ -57,6 +57,7 @@ public interface IWietHRRepository {
     List<AbsentEmployees> getAbsentEmployees(LocalDate from, LocalDate to);
     EmployeeDaysOffDetails getEmployeeDaysOffLeft(long id);
     GroupDaysOffDetails getGroupDaysOffLeft(String email);
+    EmployeesSalariesHelper getSalaries(int year, String email);
 
 
     // ---------- PERMISSIONS ----------

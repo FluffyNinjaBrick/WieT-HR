@@ -401,6 +401,13 @@ public class RestController {
     }
 
 
+    @GetMapping("/employees/salaries/{year}")
+    public EmployeesSalariesHelper getSalaries(
+            @RequestHeader("Authorization") String token,
+            @PathVariable int year
+    ) {
+        return this.repository.getSalaries(year, jwtUtil.extractUsernameFromRaw(token));
+    }
 
 
 }

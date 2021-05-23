@@ -7,8 +7,9 @@ import com.wiethr.app.repository.jpaRepos.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.time.Duration;
 import java.time.Year;
+import java.time.YearMonth;
+import java.time.chrono.ChronoLocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.time.LocalDate;
@@ -199,6 +200,29 @@ public class WietHRRepository implements IWietHRRepository {
         return contracts;
     }
 
+    public List<Contract> getAvailableContracts(String email) {
+        List<Contract> contracts = new ArrayList<>();
+        List<Contract> allContracts = this.contractRepository.findAll();
+        Employee employee = getEmployeeByEmail(email);
+
+        if (employee.getUserRole().equals(UserRole.ADMIN)) {
+            contracts = allContracts;
+        } else if (employee.getUserRole().equals(UserRole.MANAGER)) {
+            for (Contract contract : allContracts) {
+                if (contract.getEmployee() == employee.getId() || employee.getPermissions().getManagedUsers().contains(contract.getEmployee())) {
+                    contracts.add(contract);
+                }
+            }
+        } else {
+            for (Contract contract : allContracts) {
+                if (contract.getEmployee() == employee.getId()) {
+                    contracts.add(contract);
+                }
+            }
+        }
+
+        return contracts;
+    }
 
     // ---------- DAYS OFF REQUEST ----------
     @Override
@@ -516,6 +540,40 @@ public class WietHRRepository implements IWietHRRepository {
 
         return new GroupDaysOffDetails(employeeDaysOffDetails, totalDaysOffUsed, totalDaysOffLeft);
 
+    }
+
+    @Override
+    public EmployeesSalariesHelper getSalaries(int year, String email) {
+        Map<Long, float[]> employeeSalarySumMap = new HashMap<>();
+        float[] monthlySum = new float[12];
+        Arrays.fill(monthlySum, 0);
+        List<Contract> contracts = getAvailableContracts(email);
+        int[] monthLength = new int[12];
+        for (int i = 0; i < 12; i++) {
+            monthLength[i] = YearMonth.of(year, i + 1).lengthOfMonth();
+        }
+
+        for (Contract contract : contracts) {
+            if (contract.getAnnexes().isEmpty()) { // most recent?
+                for (int i = 0; i < 12; i++) {
+                    if (contract.getDateFrom().isBefore(ChronoLocalDate.from(LocalDate.of(year, i + 1, 2))) &&
+                            (contract.getDateTo() == null ||
+                                    contract.getDateTo().isAfter(ChronoLocalDate.from(LocalDate.of(year, i + 1, monthLength[i] - 1))))) {
+                        monthlySum[i] += contract.getSalary();
+                        if (employeeSalarySumMap.containsKey(contract.getEmployee())) {
+                            employeeSalarySumMap.get(contract.getEmployee())[i] += contract.getSalary();
+                        } else {
+                            float[] monthly = new float[12];
+                            Arrays.fill(monthly, 0);
+                            monthly[i] = contract.getSalary();
+                            employeeSalarySumMap.put(contract.getEmployee(), monthly);
+                        }
+                    }
+                }
+            }
+        }
+
+        return new EmployeesSalariesHelper(monthlySum, employeeSalarySumMap);
     }
 
     @Override
