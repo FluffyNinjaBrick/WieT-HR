@@ -599,7 +599,7 @@ public class WietHRRepository implements IWietHRRepository {
 
     @Override
     public EmployeesSalariesHelper getSalaries(int year, String email) {
-        Map<Long, float[]> employeeSalarySumMap = new HashMap<>();
+        Map<Long, EmployeeSalaryHelper> employeeSalarySumMap = new HashMap<>();
         float[] monthlySum = new float[12];
         Arrays.fill(monthlySum, 0);
         List<Contract> contracts = getAvailableContracts(email);
@@ -616,12 +616,14 @@ public class WietHRRepository implements IWietHRRepository {
                                     contract.getDateTo().isAfter(ChronoLocalDate.from(LocalDate.of(year, i + 1, monthLength[i] - 1))))) {
                         monthlySum[i] += contract.getSalary();
                         if (employeeSalarySumMap.containsKey(contract.getEmployee())) {
-                            employeeSalarySumMap.get(contract.getEmployee())[i] += contract.getSalary();
+                            employeeSalarySumMap.get(contract.getEmployee()).getMonthlySum()[i] += contract.getSalary();
                         } else {
+                            Employee employee = this.employeeRepository.findById(contract.getEmployee()).orElseThrow();
                             float[] monthly = new float[12];
                             Arrays.fill(monthly, 0);
                             monthly[i] = contract.getSalary();
-                            employeeSalarySumMap.put(contract.getEmployee(), monthly);
+                            EmployeeSalaryHelper salaryHelper = new EmployeeSalaryHelper(employee.getId(), employee.getFullName(), monthly);
+                            employeeSalarySumMap.put(contract.getEmployee(), salaryHelper);
                         }
                     }
                 }
