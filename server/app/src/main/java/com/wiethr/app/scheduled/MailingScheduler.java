@@ -63,20 +63,20 @@ public class MailingScheduler {
             // skip conditions
             if (
                     c.getDateTo() == null                                // untimed contract
-                            || c.getDateTo().isBefore(LocalDate.now())              // contract over
-                            || c.getDateTo().getYear() != LocalDate.now().getYear() // different year
+                 || c.getDateTo().isBefore(LocalDate.now())              // contract over
+                 || c.getDateTo().getYear() != LocalDate.now().getYear() // different year
             ) continue;
 
             // case 1: contract ends in a week
             if (c.getDateTo().getDayOfYear() - LocalDate.now().getDayOfYear() <= 7 && !weekReminders.contains(c.getId())) {
                 weekReminders.add(c.getId());
-                weekReminderEmails.add(c.employeeObject().getEmail());
+                weekReminderEmails.add(this.repository.getEmployee(c.getEmployee()).getEmail());
             }
 
             // case 2: contract ends in a month
             else if (c.getDateTo().getDayOfYear() - LocalDate.now().getDayOfYear() <= 30 && !monthReminders.contains(c.getId())) {
                 monthReminders.add(c.getId());
-                monthReminderEmails.add(c.employeeObject().getEmail());
+                weekReminderEmails.add(this.repository.getEmployee(c.getEmployee()).getEmail());
             }
 
             // TODO - consider what happens if someone extends a contract a month before it ends
@@ -89,7 +89,8 @@ public class MailingScheduler {
 
         // week reminder message
         if (weekReminderEmails.size() != 0) {
-            String[] weekArray = (String[]) weekReminderEmails.toArray();
+            String[] weekArray = new String[weekReminderEmails.size()];
+            for (int i = 0; i < weekArray.length; i++) weekArray[i] = weekReminderEmails.get(i);
             SimpleMailMessage weekReminderMessage = new SimpleMailMessage();
             weekReminderMessage.setFrom("reminders.wiethr@gmail.com");
             weekReminderMessage.setTo(weekArray);
@@ -103,7 +104,8 @@ public class MailingScheduler {
 
         // month reminder message
         if (monthReminderEmails.size() != 0) {
-            String[] monthArray = (String[]) monthReminderEmails.toArray();
+            String[] monthArray = new String[monthReminderEmails.size()];
+            for (int i = 0; i < monthArray.length; i++) monthArray[i] = monthReminderEmails.get(i);
             SimpleMailMessage monthReminderMessage = new SimpleMailMessage();
             monthReminderMessage.setFrom("reminders.wiethr@gmail.com");
             monthReminderMessage.setTo(monthArray);
