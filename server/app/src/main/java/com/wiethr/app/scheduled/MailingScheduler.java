@@ -41,21 +41,30 @@ public class MailingScheduler {
         props.put("mail.smtp.starttls.enable", "true");
     }
 
+
     @Scheduled(fixedDelayString = "PT24H")
     void emailReminderJob() {
 
-        List<String> monthReminderEmails = new ArrayList<>();
         List<String> weekReminderEmails = new ArrayList<>();
+        List<String> monthReminderEmails = new ArrayList<>();
 
-        // check which contracts end soon
+        findContractsEndingSoon(weekReminderEmails, monthReminderEmails);
+        sendMessages(weekReminderEmails, monthReminderEmails);
+
+    }
+
+
+    // this method finds the contracts ending soon and fills the lists passed to it with the emails of the employees
+    private void findContractsEndingSoon(List<String> weekReminderEmails, List<String> monthReminderEmails) {
+
         List<Contract> contracts = this.repository.getAllContracts();
         for (Contract c: contracts) {
 
             // skip conditions
             if (
                     c.getDateTo() == null                                // untimed contract
-                 || c.getDateTo().isBefore(LocalDate.now())              // contract over
-                 || c.getDateTo().getYear() != LocalDate.now().getYear() // different year
+                            || c.getDateTo().isBefore(LocalDate.now())              // contract over
+                            || c.getDateTo().getYear() != LocalDate.now().getYear() // different year
             ) continue;
 
             // case 1: contract ends in a week
@@ -73,20 +82,39 @@ public class MailingScheduler {
             // TODO - consider what happens if someone extends a contract a month before it ends
         }
 
-        // TODO - create messages and send them
-
-        // create email message instance
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("reminders.wiethr@gmail.com");
-        message.setTo("reminders.wiethr@gmail.com");
-        message.setSubject("Reservation reminder");
-        message.setText("Your reservation is due soon, don't forget!");
-
-        // send message
-        System.out.println("Sending mail...");
-        mailSender.send(message);
-        System.out.println("Mail sent!");
     }
 
+
+    private void sendMessages(List<String> weekReminderEmails, List<String> monthReminderEmails) {
+
+        // week reminder message
+        if (weekReminderEmails.size() != 0) {
+            String[] weekArray = (String[]) weekReminderEmails.toArray();
+            SimpleMailMessage weekReminderMessage = new SimpleMailMessage();
+            weekReminderMessage.setFrom("reminders.wiethr@gmail.com");
+            weekReminderMessage.setTo(weekArray);
+            weekReminderMessage.setSubject("Przypomnienie o końcu umowy");
+            weekReminderMessage.setText("Do końca Twojej umowy pozostał jedynie tydzień.");
+
+            System.out.println("Sending mail...");
+            mailSender.send(weekReminderMessage);
+            System.out.println("Mail sent!");
+        }
+
+        // month reminder message
+        if (monthReminderEmails.size() != 0) {
+            String[] monthArray = (String[]) monthReminderEmails.toArray();
+            SimpleMailMessage monthReminderMessage = new SimpleMailMessage();
+            monthReminderMessage.setFrom("reminders.wiethr@gmail.com");
+            monthReminderMessage.setTo(monthArray);
+            monthReminderMessage.setSubject("Przypomnienie o końcu umowy");
+            monthReminderMessage.setText("Do końca Twojej umowy pozostał jedynie miesiąc.");
+
+            System.out.println("Sending mail...");
+            mailSender.send(monthReminderMessage);
+            System.out.println("Mail sent!");
+        }
+
+    }
 
 }
