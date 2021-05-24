@@ -96,3 +96,40 @@ export const changeBonusBudgetForYear = (year, newBudget) => {
     body: JSON.stringify(newBudget),
   });
 };
+
+export const addBonus = (bonus) => {
+  const user = JSON.parse(getCurrentUser());
+  const token = user ? user.jwt : "";
+  const auth = "Bearer " + token;
+
+  axios({
+    method: "put",
+    url: `${API_URL}bonuses`,
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: auth,
+    },
+    data: {
+      employeeId: bonus.employeeId,
+      yearMonth: `${bonus.year}-${bonus.month}`,
+      dateGenerated: bonus.dateGenerated,
+      value: Number(bonus.value),
+      bonusBudgetId: bonus.bonusBudgetId,
+    },
+  });
+};
+
+export const getBudgetForYear = async (year) => {
+  const user = JSON.parse(getCurrentUser());
+  const token = user ? user.jwt : "";
+  const auth = "Bearer " + token;
+
+  return await axios({
+    method: "get",
+    url: `${API_URL}budget?year=${year}`,
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: auth,
+    },
+  });
+};

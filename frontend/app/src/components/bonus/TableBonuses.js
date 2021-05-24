@@ -2,10 +2,28 @@ import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "react-query";
 import { TableInstance } from "../tables/TableInstance";
 import { LoadingComponent } from "../loader/LoadingView";
-import { fetchEmployeesBonusesForYear } from "../../services/EmployeeService";
+import {
+  fetchEmployeesBonusesForYear,
+  getBudgetForYear,
+} from "../../services/EmployeeService";
+import { Button } from "react-bootstrap";
+import AddBonusModal from "./addBonus/AddBonusModal";
 
-const TableBonuses = ({ year }) => {
+const TableBonuses = ({ year, bonusBudgetId }) => {
   const [tableData, setTableData] = useState(null);
+  const [modalShow, setModalShow] = useState(false);
+  const [modalEmployeeId, setModalEmployeeId] = useState(null);
+  const [modalEmployeeName, setModalEmployeeName] = useState(null);
+
+  //todo: refactor obtaining budgetId
+  const [budgetId, setBudgetId] = useState(null);
+
+  const {
+    isLoading: isLoading2,
+    error: error2,
+    refetch: refetch2,
+    data: budget,
+  } = useQuery("budgetForYear", () => getBudgetForYear(year));
 
   const {
     isLoading,
@@ -18,15 +36,22 @@ const TableBonuses = ({ year }) => {
   );
 
   useEffect(() => {
-    // console.log(apiResponse?.data); //debug
+    console.log(apiResponse?.data); //debug
     setTableData(apiResponse?.data.bonuses);
-  }, [apiResponse]);
+    setBudgetId(budget?.data.id);
+  }, [apiResponse, budget]);
 
   useEffect(() => {
     refetch();
+    refetch2();
   }, [year]);
 
   const tableColumns = [
+    {
+      Header: "Id",
+      accessor: "employeeId",
+      Footer: "",
+    },
     {
       Header: "Imię i nazwisko",
       accessor: "employeeName",
@@ -216,13 +241,31 @@ const TableBonuses = ({ year }) => {
       Header: "SUMA",
       accessor: "employeeBonusesTotal",
     },
+    {
+      Header: "Przydziel premię",
+      accessor: "bonus",
+      Cell: (props) => (
+        //todo: disable buttons when there is no budget left
+        <Button
+          onClick={() => {
+            setModalEmployeeId(props.row.values.employeeId);
+            setModalEmployeeName(props.row.values.employeeName);
+            setModalShow(true);
+          }}
+          variant="primary"
+          className="w-100 h-100"
+        >
+          Przydziel premię
+        </Button>
+      ),
+    },
   ];
 
-  if (isLoading || !tableData) {
+  if (isLoading || !tableData || isLoading2) {
     return <LoadingComponent />;
   }
 
-  if (error) {
+  if (error || error2) {
     return <div>Wystąpił błąd podczas ładowania danych.</div>;
   }
 
@@ -231,7 +274,23 @@ const TableBonuses = ({ year }) => {
   }
 
   return (
-    <TableInstance tableData={tableData || []} tableColumns={tableColumns} />
+    <>
+      <TableInstance
+        tableData={tableData || []}
+        tableColumns={tableColumns}
+        initialState={{
+          hiddenColumns: ["employeeId"],
+        }}
+      />
+      <AddBonusModal
+        show={modalShow}
+        onHide={() => setModalShow(false)}
+        year={year}
+        employeeId={modalEmployeeId}
+        employeeName={modalEmployeeName}
+        bonusBudgetId={budgetId}
+      />
+    </>
   );
 };
 

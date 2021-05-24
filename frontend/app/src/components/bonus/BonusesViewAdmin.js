@@ -4,6 +4,7 @@ import { Form } from "react-bootstrap";
 import { useState } from "react";
 import ChangeBonusView from "./ChangeBonusView";
 import BonusBudgetStatistics from "./BonusBudgetStatistics";
+import AddBonusModal from "./addBonus/AddBonusModal";
 
 export default function BonusesViewAdmin() {
   const [year, setYear] = useState(new Date().getFullYear());
@@ -31,6 +32,7 @@ export default function BonusesViewAdmin() {
       </DatePickerContainer>
       <BonusBudgetStatistics year={year} />
       <TableBonuses year={year} />
+      <AddBonusModal />
       {/* <ChangeBonusView /> */}
     </ViewContainer>
   );
