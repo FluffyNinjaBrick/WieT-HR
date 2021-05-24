@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext, createContext } from "react";
 import { API_URL } from "../../api/Api";
+import axios from "axios";
 
 const authContext = createContext();
 
@@ -38,6 +39,21 @@ function useProvideAuth() {
     setUser(false);
   };
 
+  const changePassword = (newPassword) => {
+    axios({
+      method: "put",
+      url: `${API_URL}employees/password`,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${user.jwt}`,
+      },
+      data: {
+        id: user.id,
+        newPassword: newPassword,
+      },
+    });
+  };
+
   useEffect(() => {
     let u = getCurrentUser();
     setUser(JSON.parse(u));
@@ -51,5 +67,6 @@ function useProvideAuth() {
     user,
     login,
     logout,
+    changePassword,
   };
 }
