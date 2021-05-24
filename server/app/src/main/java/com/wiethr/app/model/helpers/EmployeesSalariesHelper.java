@@ -11,9 +11,10 @@ import java.util.Map;
 public class EmployeesSalariesHelper {
 
     private float[] monthlySum;
-    private Map<Long, EmployeeSalaryHelper> monthlySumPerEmployee;
+//    private Map<Long, EmployeeSalaryHelper> monthlySumPerEmployee;
+    private List<EmployeeSalaryHelper> monthlySumPerEmployee;
 
-    public EmployeesSalariesHelper(float[] monthlySum, Map<Long, EmployeeSalaryHelper> monthlySumPerEmployee) {
+    public EmployeesSalariesHelper(float[] monthlySum, List<EmployeeSalaryHelper> monthlySumPerEmployee) {
         this.monthlySum = monthlySum;
         this.monthlySumPerEmployee = monthlySumPerEmployee;
     }

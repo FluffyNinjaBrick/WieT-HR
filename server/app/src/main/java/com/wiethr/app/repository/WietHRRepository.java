@@ -642,7 +642,7 @@ public class WietHRRepository implements IWietHRRepository {
             }
         }
 
-        return new EmployeesSalariesHelper(monthlySum, employeeSalarySumMap);
+        return new EmployeesSalariesHelper(monthlySum, new ArrayList<>(employeeSalarySumMap.values()));
     }
 
     @Override
