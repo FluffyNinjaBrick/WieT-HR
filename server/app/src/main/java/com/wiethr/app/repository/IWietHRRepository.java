@@ -27,6 +27,8 @@ public interface IWietHRRepository {
     // ---------- CONTRACT ----------
     void createContract(AddContractHelper helper);
     List<Contract> getAllContracts();
+    void createAnnex(AddAnnexHelper addAnnexHelper);
+    void deleteAnnex(long annexId);
 
 
     // ---------- DAYS OFF REQUEST ----------

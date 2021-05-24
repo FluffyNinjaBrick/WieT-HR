@@ -13,6 +13,7 @@ import java.time.chrono.ChronoLocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.time.LocalDate;
+import java.util.stream.Collectors;
 
 
 @Repository
@@ -57,6 +58,15 @@ public class WietHRRepository implements IWietHRRepository {
     public void addAppreciationBonus(AddAppreciationBonusHelper bonusHelper) {
         Employee employee = employeeRepository.findById(bonusHelper.getEmployeeId()).orElseThrow();
         BonusBudget bonusBudget = bonusBudgetRepository.findById(bonusHelper.getBonusBudgetId()).orElseThrow();
+        float checkBudget = bonusBudget.getValue();
+        for (AppreciationBonus bonus : this.appreciationBonusRepository.findAll()) {
+            if (bonus.getBonusBudget().getId() == bonusBudget.getId()) {
+                checkBudget -= bonus.getValue();
+            }
+        }
+        if (checkBudget - bonusHelper.getValue() < 0) {
+            throw new IllegalArgumentException("Bonus cannot be added, budget would be negative");
+        }
         AppreciationBonus appreciationBonus = new AppreciationBonus(
                 employee,
                 bonusHelper.getYearMonth(),
@@ -138,7 +148,8 @@ public class WietHRRepository implements IWietHRRepository {
 
     @Override
     public BonusesOfAllEmployeesHelper getBonusesForYear(Year year) {
-        BonusesOfAllEmployeesHelper bonusesOfAllEmployeesHelper = new BonusesOfAllEmployeesHelper(year);
+        BonusBudget budget = bonusBudgetRepository.getBonusBudgetByYear(year).orElseThrow();
+        BonusesOfAllEmployeesHelper bonusesOfAllEmployeesHelper = new BonusesOfAllEmployeesHelper(budget.getId(), year, budget.getValue());
 
         for (Employee employee : this.employeeRepository.findAll()) {
             BonusesOfEmployeeHelper bonusesOfEmployeeHelper = new BonusesOfEmployeeHelper(
@@ -147,6 +158,7 @@ public class WietHRRepository implements IWietHRRepository {
             );
             for (AppreciationBonus bonus : employee.getAppreciationBonusList()) {
                 if (bonus.getYearMonth().getYear() == year.getValue()) {
+                    bonusesOfAllEmployeesHelper.useBudget(bonus.getValue());
                     int monthIndex = bonus.getYearMonth().getMonthValue() - 1;
                     float currentEmployeeSum = bonusesOfEmployeeHelper.getEmployeeBonuses().remove(monthIndex);
                     currentEmployeeSum += bonus.getValue();
@@ -227,6 +239,49 @@ public class WietHRRepository implements IWietHRRepository {
         }
 
         return contracts;
+    }
+
+    @Override
+    public void createAnnex(AddAnnexHelper addAnnexHelper) {
+        Contract contract = this.contractRepository.findById(addAnnexHelper.getContractId()).orElseThrow();
+        Employee employee = this.employeeRepository.findById(addAnnexHelper.getEmployeeId()).orElseThrow();
+        Contract annex = new Contract(
+                employee,
+                addAnnexHelper.getDateFrom(),
+                addAnnexHelper.getDateTo(),
+                addAnnexHelper.getSalary(),
+                addAnnexHelper.getDutyAllowance(),
+                addAnnexHelper.getWorkingHours(),
+                addAnnexHelper.getAnnualLeaveDays(),
+                addAnnexHelper.getType(),
+                new ArrayList<>()
+        );
+        annex = contractRepository.save(annex);
+        contract.addAnnex(annex);
+        contractRepository.save(contract);
+    }
+
+    @Override
+    public void deleteAnnex(long annexId) {
+        Contract annexToBeRemoved = this.contractRepository.findById(annexId).orElseThrow();
+        if (annexToBeRemoved.isSigned()) {
+            throw new IllegalArgumentException("Cannot delete signed annex");
+        }
+        Contract contract = null;
+
+        for (Contract c : this.contractRepository.findAll()) {
+            if (c.getAnnexes().contains(annexToBeRemoved)) {
+                contract = c;
+            }
+        }
+
+        if (contract == null) {
+            throw new IllegalArgumentException("Annex id doesnt match");
+        }
+
+        contract.getAnnexes().remove(annexToBeRemoved);
+        this.contractRepository.save(contract);
+        this.contractRepository.delete(annexToBeRemoved);
     }
 
     // ---------- DAYS OFF REQUEST ----------
@@ -549,7 +604,7 @@ public class WietHRRepository implements IWietHRRepository {
 
     @Override
     public EmployeesSalariesHelper getSalaries(int year, String email) {
-        Map<Long, float[]> employeeSalarySumMap = new HashMap<>();
+        Map<Long, EmployeeSalaryHelper> employeeSalarySumMap = new HashMap<>();
         float[] monthlySum = new float[12];
         Arrays.fill(monthlySum, 0);
         List<Contract> contracts = getAvailableContracts(email);
@@ -566,12 +621,21 @@ public class WietHRRepository implements IWietHRRepository {
                                     contract.getDateTo().isAfter(ChronoLocalDate.from(LocalDate.of(year, i + 1, monthLength[i] - 1))))) {
                         monthlySum[i] += contract.getSalary();
                         if (employeeSalarySumMap.containsKey(contract.getEmployee())) {
-                            employeeSalarySumMap.get(contract.getEmployee())[i] += contract.getSalary();
+                            EmployeeSalaryHelper salaryHelper = employeeSalarySumMap.get(contract.getEmployee());
+                            salaryHelper.getMonthlySum()[i] += contract.getSalary();
+                            salaryHelper.increaseSum(contract.getSalary());
                         } else {
+                            Employee employee = this.employeeRepository.findById(contract.getEmployee()).orElseThrow();
                             float[] monthly = new float[12];
                             Arrays.fill(monthly, 0);
                             monthly[i] = contract.getSalary();
-                            employeeSalarySumMap.put(contract.getEmployee(), monthly);
+                            EmployeeSalaryHelper salaryHelper = new EmployeeSalaryHelper(
+                                    employee.getId(),
+                                    employee.getFullName(),
+                                    monthly,
+                                    contract.getSalary()
+                            );
+                            employeeSalarySumMap.put(contract.getEmployee(), salaryHelper);
                         }
                     }
                 }

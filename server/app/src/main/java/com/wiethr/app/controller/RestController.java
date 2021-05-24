@@ -139,6 +139,23 @@ public class RestController {
         this.repository.createContract(helper);
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_MANAGER', 'ROLE_ADMIN')")
+    @PostMapping(value = "/contracts/annexes")
+    public void createAnnex(
+            @RequestBody AddAnnexHelper addAnnexHelper,
+            @RequestHeader("Authorization") String token
+    ) throws IllegalAccessException {
+        String email = jwtUtil.extractUsernameFromRaw(token);
+        this.roleValidator.validate(email, addAnnexHelper.getEmployeeId());
+        this.repository.createAnnex(addAnnexHelper);
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_MANAGER', 'ROLE_ADMIN')")
+    @DeleteMapping("/contracts/annexes")
+    public void deleteAnnex(@RequestParam long annexId, @RequestHeader("Authorization") String token) {
+
+    }
+
 
     // ---------- DAYS OFF REQUEST ----------
     @PostMapping(value = "/daysoff")

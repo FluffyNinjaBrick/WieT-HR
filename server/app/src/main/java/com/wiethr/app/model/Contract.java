@@ -3,8 +3,10 @@ package com.wiethr.app.model;
 import com.wiethr.app.model.enums.ContractType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.tomcat.jni.Local;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -28,4 +30,17 @@ public class Contract extends Document {
     )
     private List<Contract> annexes;
 
+    public Contract(Employee employee, LocalDate dateFrom, LocalDate dateTo, float salary, float dutyAllowance, int workingHours, int annualLeaveDays, ContractType type, List<Contract> annexes) {
+        super(employee, LocalDate.now(), dateFrom, dateTo);
+        this.salary = salary;
+        this.dutyAllowance = dutyAllowance;
+        this.workingHours = workingHours;
+        this.annualLeaveDays = annualLeaveDays;
+        this.type = type;
+        this.annexes = annexes;
+    }
+
+    public void addAnnex(Contract annex) {
+        this.annexes.add(annex);
+    }
 }
