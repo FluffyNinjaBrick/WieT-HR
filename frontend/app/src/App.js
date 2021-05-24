@@ -22,6 +22,7 @@ import LeaveCreateForm from "./components/leave/LeaveCreateForm";
 import DelegationCreateForm from "./components/delegation/DelegationCreateForm";
 import DelegationsAdminView from "./components/delegation/DelegationsAdminView";
 import RequestsView from "./components/requests/RequestsView";
+import SalariesViewAdmin from "./components/salaries/SalariesViewAdmin";
 import { ProvideAuth } from "./components/auth/useAuth";
 import PrivateRoute from "./components/utils/PrivateRoute";
 import "font-awesome/css/font-awesome.min.css";
@@ -70,6 +71,9 @@ function App() {
               </PrivateRoute>
               <PrivateRoute path="/employees/bonuses" role="ADMIN">
                 <BonusesViewAdmin />
+              </PrivateRoute>
+              <PrivateRoute path="/employees/salaries" role="ADMIN">
+                <SalariesViewAdmin />
               </PrivateRoute>
               <PrivateRoute path="/leaves/add" role="any">
                 <LeaveCreateForm />

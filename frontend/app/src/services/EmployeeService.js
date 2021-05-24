@@ -133,3 +133,18 @@ export const getBudgetForYear = async (year) => {
     },
   });
 };
+
+export const getSalariesForYear = async (year) => {
+  const user = JSON.parse(getCurrentUser());
+  const token = user ? user.jwt : "";
+  const auth = "Bearer " + token;
+
+  return await axios({
+    methos: "get",
+    url: `${API_URL}employees/salaries/${year}`,
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: auth,
+    },
+  });
+};

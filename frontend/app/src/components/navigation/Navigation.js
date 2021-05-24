@@ -13,39 +13,64 @@ export default function Navigation() {
   return (
     <Navbar bg="light" expand="lg">
       <Navbar.Brand as={Link} to="/profile">
-          WieT-HR
+        WieT-HR
       </Navbar.Brand>
 
       <Navbar.Toggle aria-controls="responsive-navbar-nav" />
       <Navbar.Collapse id="responsive-navbar-nav">
         <Nav className="mr-auto">
-            <Nav.Link as={Link} to="/leaves">Urlopy</Nav.Link>
-            <Nav.Link as={Link} to="/delegations">Delegacje</Nav.Link>
-            <Nav.Link as={Link} to="/bonuses">Premie</Nav.Link>
-            <Nav.Link as={Link} to="/contract">Umowa</Nav.Link>
+          <Nav.Link as={Link} to="/leaves">
+            Urlopy
+          </Nav.Link>
+          <Nav.Link as={Link} to="/delegations">
+            Delegacje
+          </Nav.Link>
+          <Nav.Link as={Link} to="/bonuses">
+            Premie
+          </Nav.Link>
+          <Nav.Link as={Link} to="/contract">
+            Umowa
+          </Nav.Link>
           {auth.user && auth.user.userRole === "ADMIN" && (
             <NavDropdown title="Pracownicy" id="basic-nav-dropdown">
               <NavDropdown.Item>
-                <Nav.Link as={Link} to="/employees">Dane</Nav.Link>
+                <Nav.Link as={Link} to="/employees">
+                  Dane
+                </Nav.Link>
               </NavDropdown.Item>
               <NavDropdown.Item>
-                <Nav.Link as={Link} to="/employees/requests">Wnioski</Nav.Link>
+                <Nav.Link as={Link} to="/employees/requests">
+                  Wnioski
+                </Nav.Link>
               </NavDropdown.Item>
               <NavDropdown.Item>
-                <Nav.Link as={Link} to="/employees/leaves">Urlopy</Nav.Link>
+                <Nav.Link as={Link} to="/employees/leaves">
+                  Urlopy
+                </Nav.Link>
               </NavDropdown.Item>
               <NavDropdown.Item>
-                <Nav.Link as={Link} to="/employees/delegations">Delegacje</Nav.Link>
+                <Nav.Link as={Link} to="/employees/delegations">
+                  Delegacje
+                </Nav.Link>
               </NavDropdown.Item>
               <NavDropdown.Item>
-                <Nav.Link as={Link} to="/employees/bonuses">Premie</Nav.Link>
+                <Nav.Link as={Link} to="/employees/bonuses">
+                  Premie
+                </Nav.Link>
+              </NavDropdown.Item>
+              <NavDropdown.Item>
+                <Nav.Link as={Link} to="/employees/salaries">
+                  Wynagrodzenia
+                </Nav.Link>
               </NavDropdown.Item>
             </NavDropdown>
           )}
         </Nav>
         {auth.user && (
           <Nav className="justify-content-end">
-            <Nav.Link as={Link} to="/profile">Profil</Nav.Link>
+            <Nav.Link as={Link} to="/profile">
+              Profil
+            </Nav.Link>
             <Nav.Link as={Link} onClick={() => auth.logout()}>
               Wyloguj
             </Nav.Link>

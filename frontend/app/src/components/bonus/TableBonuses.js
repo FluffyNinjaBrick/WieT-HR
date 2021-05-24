@@ -14,7 +14,7 @@ const TableBonuses = ({ year, bonusBudgetId }) => {
   const [modalShow, setModalShow] = useState(false);
   const [modalEmployeeId, setModalEmployeeId] = useState(null);
   const [modalEmployeeName, setModalEmployeeName] = useState(null);
-
+  const [budgetLeft, setBudgetLeft] = useState(null);
   //todo: refactor obtaining budgetId
   const [budgetId, setBudgetId] = useState(null);
 
@@ -39,6 +39,7 @@ const TableBonuses = ({ year, bonusBudgetId }) => {
     console.log(apiResponse?.data); //debug
     setTableData(apiResponse?.data.bonuses);
     setBudgetId(budget?.data.id);
+    setBudgetLeft(apiResponse?.data.budgetLeft);
   }, [apiResponse, budget]);
 
   useEffect(() => {
@@ -245,7 +246,6 @@ const TableBonuses = ({ year, bonusBudgetId }) => {
       Header: "Przydziel premię",
       accessor: "bonus",
       Cell: (props) => (
-        //todo: disable buttons when there is no budget left
         <Button
           onClick={() => {
             setModalEmployeeId(props.row.values.employeeId);
@@ -254,6 +254,7 @@ const TableBonuses = ({ year, bonusBudgetId }) => {
           }}
           variant="primary"
           className="w-100 h-100"
+          disabled={budgetLeft <= 0 ? true : false}
         >
           Przydziel premię
         </Button>
@@ -275,6 +276,7 @@ const TableBonuses = ({ year, bonusBudgetId }) => {
 
   return (
     <>
+      {console.log(tableData)}
       <TableInstance
         tableData={tableData || []}
         tableColumns={tableColumns}
