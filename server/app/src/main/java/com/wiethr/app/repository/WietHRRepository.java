@@ -190,6 +190,11 @@ public class WietHRRepository implements IWietHRRepository {
         this.contractRepository.save(contract);
     }
 
+    @Override
+    public List<Contract> getAllContracts() {
+        return this.contractRepository.findAll();
+    }
+
     private List<Contract> getSignedContractsForEmployee(long id) {
         ArrayList<Contract> contracts = new ArrayList<>();
 

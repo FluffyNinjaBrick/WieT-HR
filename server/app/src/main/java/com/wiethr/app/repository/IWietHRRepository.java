@@ -5,6 +5,7 @@ import com.wiethr.app.model.helpers.*;
 
 import java.time.LocalDate;
 import java.time.Year;
+import java.util.ArrayList;
 import java.util.List;
 
 public interface IWietHRRepository {
@@ -25,6 +26,7 @@ public interface IWietHRRepository {
 
     // ---------- CONTRACT ----------
     void createContract(AddContractHelper helper);
+    List<Contract> getAllContracts();
 
 
     // ---------- DAYS OFF REQUEST ----------
