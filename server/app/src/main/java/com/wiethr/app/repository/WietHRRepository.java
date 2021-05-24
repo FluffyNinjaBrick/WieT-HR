@@ -616,13 +616,20 @@ public class WietHRRepository implements IWietHRRepository {
                                     contract.getDateTo().isAfter(ChronoLocalDate.from(LocalDate.of(year, i + 1, monthLength[i] - 1))))) {
                         monthlySum[i] += contract.getSalary();
                         if (employeeSalarySumMap.containsKey(contract.getEmployee())) {
-                            employeeSalarySumMap.get(contract.getEmployee()).getMonthlySum()[i] += contract.getSalary();
+                            EmployeeSalaryHelper salaryHelper = employeeSalarySumMap.get(contract.getEmployee());
+                            salaryHelper.getMonthlySum()[i] += contract.getSalary();
+                            salaryHelper.increaseSum(contract.getSalary());
                         } else {
                             Employee employee = this.employeeRepository.findById(contract.getEmployee()).orElseThrow();
                             float[] monthly = new float[12];
                             Arrays.fill(monthly, 0);
                             monthly[i] = contract.getSalary();
-                            EmployeeSalaryHelper salaryHelper = new EmployeeSalaryHelper(employee.getId(), employee.getFullName(), monthly);
+                            EmployeeSalaryHelper salaryHelper = new EmployeeSalaryHelper(
+                                    employee.getId(),
+                                    employee.getFullName(),
+                                    monthly,
+                                    contract.getSalary()
+                            );
                             employeeSalarySumMap.put(contract.getEmployee(), salaryHelper);
                         }
                     }

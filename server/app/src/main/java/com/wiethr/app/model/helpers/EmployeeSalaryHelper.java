@@ -9,4 +9,9 @@ public class EmployeeSalaryHelper {
     private long employeeId;
     private String employeeName;
     private float[] monthlySum;
+    private float sum;
+
+    public void increaseSum(float value) {
+        this.sum += value;
+    }
 }
