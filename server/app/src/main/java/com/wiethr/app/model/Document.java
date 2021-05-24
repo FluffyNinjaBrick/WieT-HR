@@ -2,6 +2,7 @@ package com.wiethr.app.model;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
@@ -13,6 +14,7 @@ import java.time.LocalDate;
 @Data
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
+@NoArgsConstructor
 public abstract class Document {
 
     @Id
@@ -46,6 +48,12 @@ public abstract class Document {
     @Nullable
     private LocalDate dateTo;
 
+    public Document(Employee employee, LocalDate dateIssued, LocalDate dateFrom, @Nullable LocalDate dateTo) {
+        this.employee = employee;
+        this.dateIssued = dateIssued;
+        this.dateFrom = dateFrom;
+        this.dateTo = dateTo;
+    }
 
     public void sign(Employee signer) {
         signedBy = signer;
