@@ -698,7 +698,16 @@ public class WietHRRepository implements IWietHRRepository {
     @Override
     public Contract getCurrentContractForEmployee(long employeeId) {
         Optional<Contract>contract1 = Utilities.getCurrentContractForEmployee(new ArrayList<>(this.contractRepository.findAll()), employeeId);
-        return contract1.orElse(null);
+        if(contract1.isPresent() ){
+            Contract c = contract1.get();
+            if(c.getDateTo().isAfter(LocalDate.now())){
+                return c;
+            } else {
+                return null;
+            }
+        } else {
+            return null;
+        }
     }
 
     @Override
