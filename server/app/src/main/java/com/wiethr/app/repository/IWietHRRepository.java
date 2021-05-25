@@ -27,8 +27,11 @@ public interface IWietHRRepository {
     // ---------- CONTRACT ----------
     void createContract(AddContractHelper helper);
     List<Contract> getAllContracts();
+    List<Contract> getAvailableContracts(String email);
+    Contract getContractById(long documentID);
+    void signContractAnnex(long documentId, String email);
     void createAnnex(AddAnnexHelper addAnnexHelper);
-    void deleteAnnex(long annexId);
+    void deleteContractAnnex(long annexId);
 
 
     // ---------- DAYS OFF REQUEST ----------
@@ -62,6 +65,7 @@ public interface IWietHRRepository {
     EmployeeDaysOffDetails getEmployeeDaysOffLeft(long id);
     GroupDaysOffDetails getGroupDaysOffLeft(String email);
     EmployeesSalariesHelper getSalaries(int year, String email);
+    Contract getCurrentContractForEmployee(long id);
 
 
     // ---------- PERMISSIONS ----------

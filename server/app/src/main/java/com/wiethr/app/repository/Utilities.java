@@ -1,10 +1,12 @@
 package com.wiethr.app.repository;
+import com.wiethr.app.model.Contract;
 import com.wiethr.app.model.Document;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class Utilities {
@@ -48,6 +50,17 @@ public class Utilities {
                 })
                 .sorted(Comparator.comparing(Document::getDateFrom).reversed())
                 .collect(Collectors.toList());
+    }
+
+    public static Optional<Contract> getCurrentContractForEmployee(ArrayList<Contract> allContracts, long employeeId){
+
+        return allContracts.stream().filter(
+                req ->{
+                    if (req.getEmployee() != employeeId) return false;
+                    if (req.getDateSigned() == null) return false;
+                    return true;
+                }
+        ).sorted(Comparator.comparing(Contract::getDateSigned).reversed()).findFirst();
     }
 
 }

@@ -183,6 +183,14 @@ public class WietHRRepository implements IWietHRRepository {
         Contract contract = new Contract();
         Employee employee = this.getEmployee(helper.getEmployeeID());
 
+        Optional<Contract>contract1 = Utilities.getCurrentContractForEmployee(new ArrayList<>(this.contractRepository.findAll()), employee.getId());
+        if(contract1.isPresent() ){
+            Contract c = contract1.get();
+            if(c.getDateTo().isAfter(LocalDate.now())){
+                throw new IllegalArgumentException("Contract already exists. Create annex to current contract.");
+            }
+        }
+
         // inherited from document
         contract.setEmployee(employee);
         contract.setNameAtSigning(employee.getFullName());
@@ -217,20 +225,29 @@ public class WietHRRepository implements IWietHRRepository {
         return contracts;
     }
 
+    @Override
     public List<Contract> getAvailableContracts(String email) {
+
         List<Contract> contracts = new ArrayList<>();
         List<Contract> allContracts = this.contractRepository.findAll();
         Employee employee = getEmployeeByEmail(email);
 
+        // case 1 - the user is an admin, wants to see everything
         if (employee.getUserRole().equals(UserRole.ADMIN)) {
             contracts = allContracts;
-        } else if (employee.getUserRole().equals(UserRole.MANAGER)) {
+        }
+
+        // case 2 - the user is a manager, wants to see only his contract and those of his subordinates
+        else if (employee.getUserRole().equals(UserRole.MANAGER)) {
             for (Contract contract : allContracts) {
                 if (contract.getEmployee() == employee.getId() || employee.getPermissions().getManagedUsers().contains(contract.getEmployee())) {
                     contracts.add(contract);
                 }
             }
-        } else {
+        }
+
+        // case 3 - the user is a regular employee, can see only his contract
+        else {
             for (Contract contract : allContracts) {
                 if (contract.getEmployee() == employee.getId()) {
                     contracts.add(contract);
@@ -239,6 +256,23 @@ public class WietHRRepository implements IWietHRRepository {
         }
 
         return contracts;
+    }
+
+    @Override
+    public Contract getContractById(long documentID) {
+        return this.contractRepository.findById(documentID).orElseThrow();
+    }
+
+    @Override
+    public void signContractAnnex(long documentId, String email) {
+        Employee signer = this.getEmployeeByEmail(email);
+        Contract contract = this.contractRepository.findById(documentId).orElseThrow();
+        Employee employee = contract.employeeObject();
+
+        employee.setThisYearDaysOff(contract.getAnnualLeaveDays());
+        contract.sign(signer);
+        this.contractRepository.save(contract);
+        this.employeeRepository.save(employee);
     }
 
     @Override
@@ -262,26 +296,26 @@ public class WietHRRepository implements IWietHRRepository {
     }
 
     @Override
-    public void deleteAnnex(long annexId) {
-        Contract annexToBeRemoved = this.contractRepository.findById(annexId).orElseThrow();
-        if (annexToBeRemoved.isSigned()) {
-            throw new IllegalArgumentException("Cannot delete signed annex");
+    public void deleteContractAnnex(long annexId) {
+        Contract contractAnnexToBeRemoved = this.contractRepository.findById(annexId).orElseThrow();
+        if (contractAnnexToBeRemoved.isSigned()) {
+            throw new IllegalArgumentException("Cannot delete signed annex/contract");
         }
         Contract contract = null;
 
         for (Contract c : this.contractRepository.findAll()) {
-            if (c.getAnnexes().contains(annexToBeRemoved)) {
+            if (c.getAnnexes().contains(contractAnnexToBeRemoved)) {
                 contract = c;
             }
         }
 
-        if (contract == null) {
-            throw new IllegalArgumentException("Annex id doesnt match");
+        if (contract != null) {
+            //throw new IllegalArgumentException("Annex id doesnt match");
+            contract.getAnnexes().remove(contractAnnexToBeRemoved);
+            this.contractRepository.save(contract);
         }
 
-        contract.getAnnexes().remove(annexToBeRemoved);
-        this.contractRepository.save(contract);
-        this.contractRepository.delete(annexToBeRemoved);
+        this.contractRepository.delete(contractAnnexToBeRemoved);
     }
 
     // ---------- DAYS OFF REQUEST ----------
@@ -607,42 +641,64 @@ public class WietHRRepository implements IWietHRRepository {
         Map<Long, EmployeeSalaryHelper> employeeSalarySumMap = new HashMap<>();
         float[] monthlySum = new float[12];
         Arrays.fill(monthlySum, 0);
-        List<Contract> contracts = getAvailableContracts(email);
+        //List<Contract> contracts = getAvailableContracts(email);
+        ArrayList<Contract> allContracts = (ArrayList<Contract>) this.contractRepository.findAll();
         int[] monthLength = new int[12];
         for (int i = 0; i < 12; i++) {
             monthLength[i] = YearMonth.of(year, i + 1).lengthOfMonth();
         }
 
+        List<Contract> contracts = new ArrayList<>();
+        for (Employee e: this.getEmployeeByEmail(email).getPermissions().managedUsersObject()) {
+            ArrayList<Contract> employeeContracts = (ArrayList<Contract>) Utilities.getDocumentsBetweenDates(allContracts, e.getId(), LocalDate.of(year,1,1), LocalDate.of(year,12,31));
+            employeeContracts = (ArrayList<Contract>) employeeContracts.stream().filter(Document::isSigned).collect(Collectors.toList());
+            contracts.addAll(employeeContracts);
+        }
+
         for (Contract contract : contracts) {
-            if (contract.getAnnexes().isEmpty()) { // most recent?
-                for (int i = 0; i < 12; i++) {
-                    if (contract.getDateFrom().isBefore(ChronoLocalDate.from(LocalDate.of(year, i + 1, 2))) &&
-                            (contract.getDateTo() == null ||
-                                    contract.getDateTo().isAfter(ChronoLocalDate.from(LocalDate.of(year, i + 1, monthLength[i] - 1))))) {
-                        monthlySum[i] += contract.getSalary();
-                        if (employeeSalarySumMap.containsKey(contract.getEmployee())) {
-                            EmployeeSalaryHelper salaryHelper = employeeSalarySumMap.get(contract.getEmployee());
-                            salaryHelper.getMonthlySum()[i] += contract.getSalary();
-                            salaryHelper.increaseSum(contract.getSalary());
-                        } else {
-                            Employee employee = this.employeeRepository.findById(contract.getEmployee()).orElseThrow();
-                            float[] monthly = new float[12];
-                            Arrays.fill(monthly, 0);
-                            monthly[i] = contract.getSalary();
-                            EmployeeSalaryHelper salaryHelper = new EmployeeSalaryHelper(
-                                    employee.getId(),
-                                    employee.getFullName(),
-                                    monthly,
-                                    contract.getSalary()
-                            );
-                            employeeSalarySumMap.put(contract.getEmployee(), salaryHelper);
-                        }
+            for (int month = 0; month < 12; month++) {
+                if (
+                    contract.getDateFrom().isBefore(LocalDate.of(year, month + 1, 2))
+                    && (
+                       contract.getDateTo() == null
+                    || contract.getDateTo().isAfter(LocalDate.of(year, month + 1, monthLength[month] - 1))
+                    )
+                ) {
+
+                    monthlySum[month] += contract.getSalary();
+
+                    if (employeeSalarySumMap.containsKey(contract.getEmployee())) {
+                        EmployeeSalaryHelper salaryHelper = employeeSalarySumMap.get(contract.getEmployee());
+                        salaryHelper.getMonthlySum()[month] += contract.getSalary();
+                        salaryHelper.increaseSum(contract.getSalary());
                     }
+
+                    else {
+                        Employee employee = this.employeeRepository.findById(contract.getEmployee()).orElseThrow();
+                        float[] monthly = new float[12];
+                        monthly[month] = contract.getSalary();
+
+                        EmployeeSalaryHelper salaryHelper = new EmployeeSalaryHelper(
+                                employee.getId(),
+                                employee.getFullName(),
+                                monthly,
+                                contract.getSalary()
+                        );
+
+                        employeeSalarySumMap.put(contract.getEmployee(), salaryHelper);
+                    }
+
                 }
             }
         }
 
         return new EmployeesSalariesHelper(monthlySum, new ArrayList<>(employeeSalarySumMap.values()));
+    }
+
+    @Override
+    public Contract getCurrentContractForEmployee(long employeeId) {
+        Optional<Contract>contract1 = Utilities.getCurrentContractForEmployee(new ArrayList<>(this.contractRepository.findAll()), employeeId);
+        return contract1.orElse(null);
     }
 
     @Override

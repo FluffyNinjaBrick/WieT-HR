@@ -129,7 +129,7 @@ public class RestController {
 
     // ---------- CONTRACT ----------
     @PreAuthorize("hasAnyRole('ROLE_MANAGER','ROLE_ADMIN')")
-    @PostMapping(value = "/contract")
+    @PostMapping(value = "/contracts")
     public void createContract(
             @RequestBody AddContractHelper helper,
             @RequestHeader("Authorization") String token
@@ -137,6 +137,24 @@ public class RestController {
         String email = jwtUtil.extractUsernameFromRaw(token);
         this.roleValidator.validate(email, helper.getEmployeeID());
         this.repository.createContract(helper);
+    }
+
+
+    @GetMapping(value = "/contracts")
+    public List<Contract> getAvailableContracts(@RequestHeader("Authorization") String token){
+        String email = jwtUtil.extractUsernameFromRaw(token);
+        return this.repository.getAvailableContracts(email);
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_MANAGER', 'ROLE_ADMIN')")
+    @PutMapping(value = "/contract_annex/sign")
+    public void signContractAnnex(
+            @RequestParam long id,
+            @RequestHeader("Authorization") String token
+    ) throws IllegalAccessException {
+        String email = jwtUtil.extractUsernameFromRaw(token);
+        this.roleValidator.validate(email, this.repository.getContractById(id).getEmployee());
+        this.repository.signContractAnnex(id, email);
     }
 
     @PreAuthorize("hasAnyRole('ROLE_MANAGER', 'ROLE_ADMIN')")
@@ -151,9 +169,11 @@ public class RestController {
     }
 
     @PreAuthorize("hasAnyRole('ROLE_MANAGER', 'ROLE_ADMIN')")
-    @DeleteMapping("/contracts/annexes")
-    public void deleteAnnex(@RequestParam long annexId, @RequestHeader("Authorization") String token) {
-
+    @DeleteMapping("/contract_annex")
+    public void deleteContractAnnex(@RequestParam long id, @RequestHeader("Authorization") String token) throws IllegalAccessException {
+        String email = jwtUtil.extractUsernameFromRaw(token);
+        this.roleValidator.validate(email, this.repository.getContractById(id).getEmployee());
+        this.repository.deleteContractAnnex(id);
     }
 
 
@@ -424,6 +444,16 @@ public class RestController {
             @PathVariable int year
     ) {
         return this.repository.getSalaries(year, jwtUtil.extractUsernameFromRaw(token));
+    }
+
+    @GetMapping(value = "/employees/contract")
+    public Contract getCurrentContractForEmployee(
+            @RequestParam long id,
+            @RequestHeader("Authorization") String token
+    ) throws IllegalAccessException {
+        String email = jwtUtil.extractUsernameFromRaw(token);
+        this.roleValidator.validate(email, id);
+        return this.repository.getCurrentContractForEmployee(id);
     }
 
 

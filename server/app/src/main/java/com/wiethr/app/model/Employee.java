@@ -36,7 +36,6 @@ public class Employee {
     private String firstName;
     private String lastName;
     private String password;
-    // TODO - address as String??
     private String address;
     private String phone;
 
