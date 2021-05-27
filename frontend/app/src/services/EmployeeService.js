@@ -140,7 +140,7 @@ export const getSalariesForYear = async (year) => {
   const auth = "Bearer " + token;
 
   return await axios({
-    methos: "get",
+    method: "get",
     url: `${API_URL}employees/salaries/${year}`,
     headers: {
       "Content-Type": "application/json",

@@ -1,6 +1,7 @@
 import { API_URL } from "../api/Api";
 import { getCurrentUser } from "./AuthService";
 import fileDownload from "js-file-download";
+import axios from "axios";
 
 export const LeaveTypes = {
   SICK: "Chorobowy",
@@ -186,4 +187,19 @@ export const fetchDaysoffDocumentPdf = async (daysoffDocument) => {
 
   const pdf = await response.blob();
   fileDownload(pdf, "wniosek_urlop.pdf");
+};
+
+export const fetchContract = async () => {
+  const user = JSON.parse(getCurrentUser());
+  const token = user ? user.jwt : "";
+  const auth = "Bearer " + token;
+
+  return axios({
+    method: "get",
+    url: `${API_URL}contracts`,
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: auth,
+    },
+  });
 };
