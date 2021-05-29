@@ -64,7 +64,7 @@ public class RestController {
 
     // ---------- APPRECIATION BONUS ----------
     @GetMapping("/bonuses")
-    public List<AppreciationBonus> getBonuses(
+    public EmployeeBonusesHelper getBonuses(
             @RequestParam long id,
             @RequestHeader("Authorization") String token
     ) throws IllegalAccessException {

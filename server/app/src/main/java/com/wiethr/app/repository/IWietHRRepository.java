@@ -11,7 +11,7 @@ import java.util.List;
 public interface IWietHRRepository {
 
     // ---------- APPRECIATION BONUS ----------
-    List<AppreciationBonus> getEmployeeBonuses(long id);
+    EmployeeBonusesHelper getEmployeeBonuses(long id);
     void addAppreciationBonus(AddAppreciationBonusHelper bonusHelper);
 
 

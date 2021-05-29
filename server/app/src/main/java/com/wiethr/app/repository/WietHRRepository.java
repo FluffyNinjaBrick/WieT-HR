@@ -47,11 +47,25 @@ public class WietHRRepository implements IWietHRRepository {
 
     // ---------- APPRECIATION BONUS ---------
     @Override
-    public List<AppreciationBonus> getEmployeeBonuses(long id) {
-        return this.employeeRepository
-                .findById(id)
-                .orElseThrow()
-                .getAppreciationBonusList();
+    public EmployeeBonusesHelper getEmployeeBonuses(long id) {
+//        return this.employeeRepository
+//                .findById(id)
+//                .orElseThrow()
+//                .getAppreciationBonusList();
+        Employee employee = this.employeeRepository.findById(id).orElseThrow();
+        Map<Integer, EmployeeBonusesHelper.EmployeeBonusesPerYear> map = new HashMap<>();
+        for (AppreciationBonus bonus : employee.getAppreciationBonusList()) {
+            if (map.containsKey(bonus.getYearMonth().getYear())) {
+                map.get(bonus.getYearMonth().getYear())
+                        .addBonusToMonth(bonus.getYearMonth().getMonthValue(), bonus.getValue());
+            } else {
+                EmployeeBonusesHelper.EmployeeBonusesPerYear employeeBonusesPerYear = new EmployeeBonusesHelper.EmployeeBonusesPerYear(bonus.getYearMonth().getYear());
+                employeeBonusesPerYear.addBonusToMonth(bonus.getYearMonth().getMonthValue(), bonus.getValue());
+                map.put(bonus.getYearMonth().getYear(), employeeBonusesPerYear);
+            }
+        }
+
+        return new EmployeeBonusesHelper(employee.getId(), new ArrayList<>(map.values()));
     }
 
     @Override
