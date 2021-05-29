@@ -22,9 +22,9 @@ public class RoleValidator {
         Employee requesting = this.repository.getEmployeeByEmail(requestingEmail);
 
         // case 1 - employee
-        if (requesting.getUserRole() == UserRole.EMPLOYEE) {
+//        if (requesting.getUserRole() == UserRole.EMPLOYEE) {
             if (requesting.getId() == subordinateId) return;
-        }
+//        }
         // case 2 - manager
         else if (requesting.getUserRole() == UserRole.MANAGER) {
             for (Employee subordinate: requesting.getPermissions().managedUsersObject())
