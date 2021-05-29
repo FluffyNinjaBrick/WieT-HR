@@ -283,6 +283,7 @@ const TableBonuses = ({ year, bonusBudgetId }) => {
         initialState={{
           hiddenColumns: ["employeeId"],
         }}
+        footer={true}
       />
       <AddBonusModal
         show={modalShow}

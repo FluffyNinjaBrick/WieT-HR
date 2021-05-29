@@ -62,6 +62,23 @@ export const fetchEmployeesBonusesForYear = (year) => {
   });
 };
 
+export const fetchEmployeeBonuses = () => {
+  const user = JSON.parse(getCurrentUser());
+  const token = user ? user.jwt : "";
+  const auth = "Bearer " + token;
+  const id = user.id;
+
+  const myHeaders = {
+    "Content-Type": "application/json",
+    Authorization: auth,
+  };
+
+  return axios.get(`${API_URL}bonuses?id=` + id, {
+    method: "GET",
+    headers: myHeaders,
+  });
+};
+
 export const fetchBonusBudgetForYear = (year) => {
   const user = JSON.parse(getCurrentUser());
   const token = user ? user.jwt : "";

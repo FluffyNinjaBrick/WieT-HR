@@ -19,6 +19,7 @@ export const TableLayout = ({
   visibleColumns,
   preGlobalFilteredRows,
   setGlobalFilter,
+  footer,
 }) => {
   return (
     <TableContainer>
@@ -73,7 +74,7 @@ export const TableLayout = ({
             );
           })}
         </tbody>
-        <tfoot>
+        {footer? (<tfoot>
           {footerGroups.map((group) => (
             <tr {...group.getFooterGroupProps()}>
               {group.headers.map((column) => (
@@ -81,7 +82,7 @@ export const TableLayout = ({
               ))}
             </tr>
           ))}
-        </tfoot>
+        </tfoot>) : (<></>)}
       </StyledTable>
     </TableContainer>
   );
