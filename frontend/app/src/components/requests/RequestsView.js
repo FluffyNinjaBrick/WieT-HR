@@ -16,6 +16,7 @@ import {
   fetchAllDaysOff,
   LeaveTypes,
 } from "../../services/DocumentsService";
+import TableDelegationRequests from "./TableDelegationRequests";
 
 export default function RequestsView() {
   const [allDelegations, setAllDelegations] = useState([]);
@@ -24,16 +25,35 @@ export default function RequestsView() {
   const [modalShow, setModalShow] = useState(false);
   const [currentDocument, setCurrentDocument] = useState([]);
 
+  function refetch() {
+    console.log("UPDATING");
+    const x = async () => {
+      setLoading(true);
+      await fetchAllDaysOff().then((daysOffData) => {
+        setAllDaysOff(daysOffData.filter((x) => !x.signed));
+      });
+      await fetchAllDelegations()
+        .then((delegations) => {
+          setAllDelegations(delegations.filter((x) => !x.signed));
+        })
+        .then(() => setLoading(false));
+    };
+    x();
+  }
+
   useEffect(() => {
-    setLoading(true);
-    fetchAllDaysOff().then((daysOffData) => {
-      setAllDaysOff(daysOffData.filter((x) => !x.signed));
-    });
-    fetchAllDelegations()
-      .then((delegations) => {
-        setAllDelegations(delegations.filter((x) => !x.signed));
-      })
-      .then(() => setLoading(false));
+    const x = async () => {
+      setLoading(true);
+      await fetchAllDaysOff().then((daysOffData) => {
+        setAllDaysOff(daysOffData.filter((x) => !x.signed));
+      });
+      await fetchAllDelegations()
+        .then((delegations) => {
+          setAllDelegations(delegations.filter((x) => !x.signed));
+        })
+        .then(() => setLoading(false));
+    };
+    x();
   }, []);
 
   function setupModal(document) {
@@ -202,6 +222,7 @@ export default function RequestsView() {
                           onHide={() => setModalShow(false)}
                           leave={daysOff}
                           type={"leave"}
+                          onSuccess={refetch}
                         />
                       </div>
                     );
@@ -222,6 +243,7 @@ export default function RequestsView() {
             <h4 className="my-4 mt-5">Oczekujące wnioski o delegację</h4>
             {allDelegations.length ? (
               <div className="mb-5">
+                {/* <TableDelegationRequests /> */}
                 <BootstrapTable
                   keyField="id"
                   data={allDelegations.map((delegation) => {
@@ -247,6 +269,7 @@ export default function RequestsView() {
                           onHide={() => setModalShow(false)}
                           leave={delegation}
                           type={"delegation"}
+                          onSuccess={refetch}
                         />
                       </div>
                     );

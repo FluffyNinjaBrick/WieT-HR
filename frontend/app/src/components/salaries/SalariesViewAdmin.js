@@ -13,7 +13,7 @@ export default function SalariesViewAdmin() {
 
   return (
     <ViewContainer>
-      <h1 className="my-3">Pracownicy / Wynagrodzenie</h1>
+      <h1 className="my-3">Pracownicy / wynagrodzenia</h1>
       <DatePickerContainer className="my-3">
         <h4 className="m-0 mr-2">Rok: </h4>
         <div>
