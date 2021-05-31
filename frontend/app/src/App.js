@@ -28,6 +28,7 @@ import PrivateRoute from "./components/utils/PrivateRoute";
 import "font-awesome/css/font-awesome.min.css";
 import { QueryClient, QueryClientProvider } from "react-query";
 import ChangeBonusView from "./components/bonus/ChangeBonusView";
+import AddContractView from "./components/contract/AddContractView";
 
 const queryClient = new QueryClient();
 
@@ -80,6 +81,9 @@ function App() {
               </PrivateRoute>
               <PrivateRoute path="/leaves" role="any">
                 <LeavesView />
+              </PrivateRoute>
+              <PrivateRoute path="/contract/add" role="any">
+                <AddContractView />
               </PrivateRoute>
               <PrivateRoute path="/contract" role="any">
                 <ContractView />

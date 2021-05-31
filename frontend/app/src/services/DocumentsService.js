@@ -202,9 +202,28 @@ export const fetchContract = async () => {
       Authorization: auth,
     },
   });
+};
 
+export const postNewContract = (contract, id) => {
+  const user = JSON.parse(getCurrentUser());
+  const token = user ? user.jwt : "";
+  const auth = "Bearer " + token;
 
-  
+  const data = {
+    employeeID: id,
+    ...contract,
+  }
 
+  console.log(data)
 
+  const myHeaders = {
+    "Content-Type": "application/json",
+    Authorization: auth,
+  };
+
+  return axios.post(`${API_URL}contracts`, {
+    method: "POST",
+    headers: myHeaders,
+    body: JSON.stringify(data),
+  });
 };

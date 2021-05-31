@@ -12,6 +12,7 @@ import filterFactory, {
 } from "react-bootstrap-table2-filter";
 import { ProgressBar } from "react-bootstrap";
 import BootstrapTable from "react-bootstrap-table-next";
+import { AddContractView } from "../contract/AddContractView";
 
 export default function EmployeeListViewAdmin() {
   const [employees, setEmployees] = useState([]);
@@ -75,6 +76,11 @@ export default function EmployeeListViewAdmin() {
       text: "Edycja",
       headerStyle: { textAlign: "center" },
     },
+    {
+      dataField: "addContract",
+      text: "Dodaj umowę",
+      headerStyle: { textAlign: "center" },
+    },
   ];
 
   if (loading) {
@@ -111,7 +117,19 @@ export default function EmployeeListViewAdmin() {
                     style={{ textDecoration: "none" }}
                   >
                     Edytuj
-                    {/* <Button style={{ width: "100%", borderRadius: "0" }}>Edytuj</Button> */}
+                  </Link>
+                );
+                x.addContract = (
+                  <Link
+                    to={{
+                      pathname: "/contract/add",
+                      state: {
+                        employee: employee,
+                      },
+                    }}
+                    style={{ textDecoration: "none" }}
+                  >
+                    Dodaj umowę
                   </Link>
                 );
                 x.statusTranslated =
