@@ -28,11 +28,14 @@ export default function CalendarView() {
         },
       }
     );
-    return absentEmpPerDay.json();
+    let resultJson = await absentEmpPerDay.json();
+    console.log(resultJson);
+    return resultJson;
   };
 
   useEffect(() => {
     fetchAbsentEmployeesInfo().then((data) => setAbsentEmployeesData(data));
+    setcurrentEmployeesShown();
   }, [viewedYear]);
 
   function convertAbsentEmployeesInfo() {
@@ -94,9 +97,11 @@ export default function CalendarView() {
   //map of absent employees on give day. key: Date (yyyy-MM-DD) value:list of absent employees
   var absentEmployeesMap = new Map();
   //converting employee list to map
-  absentEmployeesData.map((v) =>
-    absentEmployeesMap.set(v["day"], v["absentEmployees"])
-  );
+  if (absentEmployeesData.length !== 0) {
+    absentEmployeesData.map((v) =>
+      absentEmployeesMap.set(v["day"], v["absentEmployees"])
+    );
+  }
 
   function handleYearChange(e) {
     setViewedYear(e.target.value);
@@ -118,7 +123,6 @@ export default function CalendarView() {
   var dataWithTypes = data.concat(chartData);
 
   if (absentEmployeesData.length === 0) {
-    // return <Loading />;
     return <LoadingComponent />;
   } else {
     return (
@@ -138,7 +142,6 @@ export default function CalendarView() {
           </div>
         </DatePickerContainer>
         <Chart
-          // style={{ cursor: "pointer" }}
           width={1000}
           height={200}
           chartType="Calendar"
@@ -180,21 +183,24 @@ export default function CalendarView() {
                   (e) => {
                     //converting to date with format of YYYY-MM-DD. Alternatively to slice, split("T")[0] would work
                     var selection = chart.getSelection()[0];
-                    if (selection !== undefined && "row" in selection) {
-                      var checkedDay = new Date(selection["date"])
-                        .toISOString()
-                        .slice(0, 10);
-                      if (currentViewedDay === checkedDay) {
-                        currentViewedDay = null;
-                        setcurrentEmployeesShown();
-                      } else {
-                        var employeesList = absentEmployeesMap.get(checkedDay);
-                        currentViewedDay = checkedDay;
-                        setcurrentEmployeesShown(
-                          generateEmployeeTable(employeesList, checkedDay)
-                        );
+                    try {
+                      if (selection !== undefined && "row" in selection) {
+                        var checkedDay = new Date(selection["date"])
+                          .toISOString()
+                          .slice(0, 10);
+                        if (currentViewedDay === checkedDay) {
+                          currentViewedDay = null;
+                          setcurrentEmployeesShown();
+                        } else {
+                          var employeesList =
+                            absentEmployeesMap.get(checkedDay);
+                          currentViewedDay = checkedDay;
+                          setcurrentEmployeesShown(
+                            generateEmployeeTable(employeesList, checkedDay)
+                          );
+                        }
                       }
-                    }
+                    } catch (error) {}
                   }
                 );
               },
