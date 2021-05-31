@@ -13,6 +13,17 @@ export const TableContainer = styled.div`
   width: 100%;
 `;
 
+export const StyledTableContract = styled.table`
+  border: 1px solid black;
+  border-collapse: collapse;
+
+  td {
+    padding: 0.5em;
+    font-size: 1.4em;
+    border: 1px solid #f3f3f3;
+  }
+`;
+
 export const StyledTable = styled.table`
   width: 100%;
   border-spacing: 0;
@@ -20,6 +31,7 @@ export const StyledTable = styled.table`
   border: 1px solid #dee2e6;
   border-radius: 15px;
   border-collapse: collapse;
+  margin-bottom: 5em;
 
   tr {
     :last-child {

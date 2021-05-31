@@ -6,6 +6,8 @@ export default function AddBonusView({
   employeeName,
   year,
   bonusBudgetId,
+  budgetLeft,
+  update,
 }) {
   return (
     <div>
@@ -17,6 +19,8 @@ export default function AddBonusView({
         employeeName={employeeName}
         year={year}
         bonusBudgetId={bonusBudgetId}
+        budgetLeft={budgetLeft}
+        update={update}
       />
     </div>
   );

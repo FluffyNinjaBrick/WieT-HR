@@ -17,23 +17,26 @@ export default function BonusBudgetStatistics({ year }) {
     data: apiResponse,
     isFetching,
     refetch,
+    status,
   } = useQuery("bonusBudgetStatistics", () => fetchBonusBudgetForYear(year));
 
   useEffect(() => {
+    // console.log("BUDGET STATS", apiResponse?.data);
     setBudgetLeft(apiResponse?.data?.budgetLeft);
     setBudgetSize(apiResponse?.data?.budgetSize);
     setBudgetUsed(
       apiResponse?.data?.budgetSize - apiResponse?.data?.budgetLeft
     );
-    console.log(budgetLeft + "   " + budgetSize);
   }, [apiResponse]);
 
   useEffect(() => {
     refetch();
   }, [year]);
 
+  if (isLoading) return <LoadingComponent />;
+
   return (
-    <div>
+    <>
       <BonusBudgetStatisticsContainer>
         {apiResponse ? (
           <div>
@@ -48,9 +51,13 @@ export default function BonusBudgetStatistics({ year }) {
         )}
 
         <PieChartContainer>
-          <BonusBudgetStatisticsChartGenerator year={year} />
+          <BonusBudgetStatisticsChartGenerator
+            budgetLeft={budgetLeft}
+            budgetUsed={budgetUsed}
+            year={year}
+          />
         </PieChartContainer>
       </BonusBudgetStatisticsContainer>
-    </div>
+    </>
   );
 }

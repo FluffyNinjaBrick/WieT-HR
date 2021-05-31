@@ -1,10 +1,9 @@
 import { Form } from "react-bootstrap";
 import { useState } from "react";
-import { useAuth } from "../../auth/useAuth";
 import Button from "react-bootstrap/Button";
 import { useForm } from "react-hook-form";
 import FormInputErrorMessage from "../../utils/FormInputErrorMessage";
-import { useMutation } from "react-query";
+import { useQueryClient, useMutation, queryCache } from "react-query";
 import { LoadingComponent } from "../../loader/LoadingView";
 import { addBonus } from "../../../services/EmployeeService";
 import RangeSlider from "react-bootstrap-range-slider";
@@ -14,28 +13,41 @@ export default function AddBonusForm({
   year,
   employeeId,
   bonusBudgetId,
+  budgetLeft,
+  update,
 }) {
   const [bonusValue, setBonusValue] = useState(0);
+  const queryClient = useQueryClient();
 
   const {
     register,
     formState: { errors },
     handleSubmit,
+    getValues,
   } = useForm();
 
-  const mutationAddBonus = useMutation((formData) => {
-    const bonus = {
-      month: formData.month,
-      value: bonusValue,
-      dateGenerated: new Date().toISOString().slice(0, 10),
-      employeeId: employeeId,
-      year: year,
-      bonusBudgetId: bonusBudgetId,
-    };
-    addBonus(bonus);
-  });
+  const mutationAddBonus = useMutation(
+    (formData) => {
+      const bonus = {
+        month: formData.month,
+        value: bonusValue,
+        dateGenerated: new Date().toISOString().slice(0, 10),
+        employeeId: employeeId,
+        year: year,
+        bonusBudgetId: bonusBudgetId,
+      };
+      addBonus(bonus);
+    },
+    {
+      onSuccess: () => {
+        update();
+        queryClient.invalidateQueries("employeesBonusesForYear");
+        queryClient.invalidateQueries("bonusBudgetStatistics");
+      },
+    }
+  );
 
-  const handleAddBonus = async (formData) => {
+  const handleAddBonus = (formData) => {
     mutationAddBonus.mutate(formData);
   };
 
@@ -50,7 +62,7 @@ export default function AddBonusForm({
   if (mutationAddBonus.isSuccess) {
     setTimeout(function () {
       onHide();
-    }, 1000);
+    }, 500);
     return <LoadingComponent />;
   }
 
@@ -94,7 +106,7 @@ export default function AddBonusForm({
                 onChange={(changeEvent) =>
                   setBonusValue(changeEvent.target.value)
                 }
-                max={5000} //todo: fetch max from api (remaining bonus budget)
+                max={budgetLeft}
               />
             </div>
             <Form.Control
@@ -103,7 +115,7 @@ export default function AddBonusForm({
                 setBonusValue(changeEvent.target.value)
               }
               type="number"
-              name="value"
+              name="x"
             />
           </div>
         </Form.Group>

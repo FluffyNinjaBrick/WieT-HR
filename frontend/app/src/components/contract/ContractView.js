@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { fetchContract } from "../../services/DocumentsService";
-import "../../styled/ContractTableStyle.css";
+import { StyledTableContract } from "../../styled";
 import { LoadingComponent } from "../loader/LoadingView";
 
 export default function ContractView() {
@@ -19,11 +19,11 @@ export default function ContractView() {
   function getContractTranslation(type) {
     switch (type) {
       case "MANDATE":
-        return "Zlecenie";
+        return "Umowa zlecenie";
       case "EMPLOYMENT":
-        return "O pracę";
+        return "Umowa o pracę";
       case "WORK":
-        return "O dzieło";
+        return "Umowa o dzieło";
       default:
         return "Nieznana";
     }
@@ -34,8 +34,8 @@ export default function ContractView() {
   }
   return (
     <div className="container">
-      <h1 className="my-3">Umowa</h1>
-      <table
+      <h1 className="my-3">Twoja umowa</h1>
+      <StyledTableContract
         style={
           (new Date(contract.dateTo).getTime() - new Date().getTime()) /
             (1000 * 60 * 60 * 24) <
@@ -66,16 +66,16 @@ export default function ContractView() {
             <td>{contract.dateSigned}</td>
           </tr>
           <tr>
-            <td>Zarobki</td>
-            <td>{contract.salary}</td>
+            <td>Zarobki (brutto/msc.)</td>
+            <td>{contract.salary} zł</td>
           </tr>
           <tr>
-            <td>Godziny pracy</td>
+            <td>Godziny pracy w miesiącu</td>
             <td>{contract.workingHours}</td>
           </tr>
           <tr>
-            <td>Dopłata celna</td>
-            <td>{contract.dutyAllowance}</td>
+            <td>Wysługa lat</td>
+            <td>{contract.dutyAllowance} zł</td>
           </tr>
           <tr>
             <td>Dni wolne w roku</td>
@@ -86,7 +86,7 @@ export default function ContractView() {
             <td>{getContractTranslation(contract.type)}</td>
           </tr>
         </tbody>
-      </table>
+      </StyledTableContract>
     </div>
   );
 }

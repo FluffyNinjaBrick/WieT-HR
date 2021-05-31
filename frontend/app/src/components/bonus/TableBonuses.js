@@ -2,49 +2,38 @@ import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "react-query";
 import { TableInstance } from "../tables/TableInstance";
 import { LoadingComponent } from "../loader/LoadingView";
-import {
-  fetchEmployeesBonusesForYear,
-  getBudgetForYear,
-} from "../../services/EmployeeService";
+import { fetchEmployeesBonusesForYear } from "../../services/EmployeeService";
 import { Button } from "react-bootstrap";
 import AddBonusModal from "./addBonus/AddBonusModal";
 
-const TableBonuses = ({ year, bonusBudgetId }) => {
+const TableBonuses = ({ year }) => {
   const [tableData, setTableData] = useState(null);
   const [modalShow, setModalShow] = useState(false);
   const [modalEmployeeId, setModalEmployeeId] = useState(null);
   const [modalEmployeeName, setModalEmployeeName] = useState(null);
-  const [budgetLeft, setBudgetLeft] = useState(null);
-  //todo: refactor obtaining budgetId
-  const [budgetId, setBudgetId] = useState(null);
 
-  const {
-    isLoading: isLoading2,
-    error: error2,
-    refetch: refetch2,
-    data: budget,
-  } = useQuery("budgetForYear", () => getBudgetForYear(year));
+  const [budgetLeft, setBudgetLeft] = useState(null);
+  const [budgetId, setBudgetId] = useState(null);
 
   const {
     isLoading,
     error,
     data: apiResponse,
-    isFetching,
     refetch,
+    isFetching,
+    status,
   } = useQuery("employeesBonusesForYear", () =>
     fetchEmployeesBonusesForYear(year)
   );
 
   useEffect(() => {
-    console.log(apiResponse?.data); //debug
     setTableData(apiResponse?.data.bonuses);
-    setBudgetId(budget?.data.id);
+    setBudgetId(apiResponse?.data.bonusBudgetId);
     setBudgetLeft(apiResponse?.data.budgetLeft);
-  }, [apiResponse, budget]);
+  }, [apiResponse]);
 
   useEffect(() => {
     refetch();
-    refetch2();
   }, [year]);
 
   const tableColumns = [
@@ -262,11 +251,11 @@ const TableBonuses = ({ year, bonusBudgetId }) => {
     },
   ];
 
-  if (isLoading || !tableData || isLoading2) {
+  if (isLoading || !tableData) {
     return <LoadingComponent />;
   }
 
-  if (error || error2) {
+  if (error) {
     return <div>Wystąpił błąd podczas ładowania danych.</div>;
   }
 
@@ -276,7 +265,6 @@ const TableBonuses = ({ year, bonusBudgetId }) => {
 
   return (
     <>
-      {console.log(tableData)}
       <TableInstance
         tableData={tableData || []}
         tableColumns={tableColumns}
@@ -292,6 +280,8 @@ const TableBonuses = ({ year, bonusBudgetId }) => {
         employeeId={modalEmployeeId}
         employeeName={modalEmployeeName}
         bonusBudgetId={budgetId}
+        budgetLeft={budgetLeft}
+        update={refetch}
       />
     </>
   );

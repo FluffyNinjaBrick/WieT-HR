@@ -7,6 +7,8 @@ export default function AddBonusModal({
   employeeName,
   year,
   bonusBudgetId,
+  budgetLeft,
+  update,
   ...props
 }) {
   return (
@@ -29,6 +31,8 @@ export default function AddBonusModal({
           onHide={onHide}
           year={year}
           bonusBudgetId={bonusBudgetId}
+          budgetLeft={budgetLeft}
+          update={update}
         />
       </Modal.Body>
     </Modal>
