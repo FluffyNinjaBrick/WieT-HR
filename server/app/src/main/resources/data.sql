@@ -5,7 +5,7 @@ INSERT INTO EMPLOYEE (id, address, email, first_name, last_name, last_year_days_
 INSERT INTO EMPLOYEE (id, address, email, first_name, last_name, last_year_days_off, password, phone, status, this_year_days_off, user_role, years_of_service) VALUES (1, 'Jasnogórska 1, 30-851 Kraków', 'mail2@mailowo.com', 'Adam', 'Nowak', 0, 'haslo', '212312311', 'WORKING', 25, 'MANAGER', 4);
 INSERT INTO EMPLOYEE (id, address, email, first_name, last_name, last_year_days_off, password, phone, status, this_year_days_off, user_role, years_of_service) VALUES (2, 'Kuźnia Talentów 55b, 30-851 Kraków', 'mail3@mailowo.com', 'Marek', 'Kilof', 0, 'haslo', '123112311', 'WORKING', 19, 'EMPLOYEE', 2);
 INSERT INTO EMPLOYEE (id, address, email, first_name, last_name, last_year_days_off, password, phone, status, this_year_days_off, user_role, years_of_service) VALUES (3, 'Wielki Staw 18, 31-121 Kielce', 'mail4@mailowo.com', 'Anna', 'Pastel', 1, 'haslo', '65736322123', 'WORKING', 25, 'EMPLOYEE', 2);
-
+INSERT INTO EMPLOYEE (id, address, email, first_name, last_name, last_year_days_off, password, phone, status, this_year_days_off, user_role, years_of_service) VALUES (4, 'Stary Dąb 10, 32-121 Wrocław', 'mail5@mailowo.com', 'Krystyna', 'Ośmiornica', 1, 'haslo', '69736552123', 'WORKING', 25, 'EMPLOYEE', 2);
 
 /* example permissions*/
 INSERT INTO PERMISSIONS (id, add_users, modify_bonus_budget) VALUES (0, TRUE, TRUE);
@@ -94,7 +94,7 @@ INSERT INTO appreciation_bonus(id, date_generated, value, year_month, bonus_bugd
 INSERT INTO appreciation_bonus(id, date_generated, value, year_month, bonus_bugdet, employee) VALUES (5, '2021-09-01', 2000 ,E'\\xACED00057372000D6A6176612E74696D652E536572955D84BA1B2248B20C0000787077060C000007E50978', 1, 1);
 
 
-alter sequence employee_id_seq restart with 4;
+alter sequence employee_id_seq restart with 5;
 alter sequence permissions_id_seq restart with 4;
 alter sequence bonus_budget_id_seq restart with 2;
 alter sequence appreciation_bonus_id_seq restart with 6;
