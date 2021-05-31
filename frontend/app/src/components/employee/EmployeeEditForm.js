@@ -51,6 +51,7 @@ export default function EmployeeEditForm() {
         );
       }
       if (employeeToEdit) {
+        console.log(employeeToEdit);
         filteredEmployees = filteredEmployees.filter(
           (e) => e.id !== employeeToEdit.id
         );
@@ -98,7 +99,7 @@ export default function EmployeeEditForm() {
 
     setSubmitting(true);
 
-    await fetch(API_URL + "employees/create", {
+    await fetch(API_URL + "employees", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -210,28 +211,28 @@ export default function EmployeeEditForm() {
             {...register("permissions.modifyBonusBudget", { required: false })}
           />
         </Form.Group>
+        <>
+          <h3 className="mt-5 mb-3">Podwładni (opcjonalne)</h3>
+          <div className="container border row m-0 py-3 px-0">
+            <div className="col-md-6 text-center">
+              <h4 className="mb-4">Wybrani</h4>
+              <SubordinateEmployeeList
+                employees={managedEmployees}
+                onChange={moveToUnmanaged}
+                managed={true}
+              />
+            </div>
 
-        <h3 className="mt-5 mb-3">Podwładni (opcjonalne)</h3>
-        <div className="container border row m-0 py-3 px-0">
-          <div className="col-md-6 text-center">
-            <h4 className="mb-4">Wybrani</h4>
-            <SubordinateEmployeeList
-              employees={managedEmployees}
-              onChange={moveToUnmanaged}
-              managed={true}
-            />
+            <div className="col-md-6 text-center">
+              <h4 className="mb-4">Niewybrani</h4>
+              <SubordinateEmployeeList
+                employees={employees}
+                onChange={moveToManaged}
+                managed={false}
+              />
+            </div>
           </div>
-
-          <div className="col-md-6 text-center">
-            <h4 className="mb-4">Niewybrani</h4>
-            <SubordinateEmployeeList
-              employees={employees}
-              onChange={moveToManaged}
-              managed={false}
-            />
-          </div>
-        </div>
-
+        </>
         <div>
           <Button className="mt-5 mr-3" variant="primary" type="submit">
             {employeeToEdit.hasOwnProperty("firstName")

@@ -1,40 +1,19 @@
-import { useEffect, useMemo, useState } from "react";
-import { useQuery } from "react-query";
+import { useEffect, useState, useMemo } from "react";
 import { TableInstance } from "../tables/TableInstance";
 import { LoadingComponent } from "../loader/LoadingView";
-import { fetchEmployeesBonusesForYear } from "../../services/EmployeeService";
-import { Button } from "react-bootstrap";
-import AddBonusModal from "./addBonus/AddBonusModal";
+import { getSalariesForYear } from "../../services/EmployeeService";
 
-const TableBonuses = ({ year }) => {
-  const [tableData, setTableData] = useState(null);
-  const [modalShow, setModalShow] = useState(false);
-  const [modalEmployeeId, setModalEmployeeId] = useState(null);
-  const [modalEmployeeName, setModalEmployeeName] = useState(null);
-
-  const [budgetLeft, setBudgetLeft] = useState(null);
-  const [budgetId, setBudgetId] = useState(null);
-
-  const {
-    isLoading,
-    error,
-    data: apiResponse,
-    refetch,
-    isFetching,
-    status,
-  } = useQuery("employeesBonusesForYear", () =>
-    fetchEmployeesBonusesForYear(year)
-  );
+export default function TableSalaries(props) {
+  const [tableData, setTableData] = useState([]);
 
   useEffect(() => {
-    setTableData(apiResponse?.data.bonuses);
-    setBudgetId(apiResponse?.data.bonusBudgetId);
-    setBudgetLeft(apiResponse?.data.budgetLeft);
-  }, [apiResponse]);
-
-  useEffect(() => {
-    refetch();
-  }, [year]);
+    const fetchSalaries = async () => {
+      const year = props.year;
+      let salariesResponse = await getSalariesForYear(year);
+      setTableData(salariesResponse?.data.monthlySumPerEmployee);
+    };
+    fetchSalaries();
+  }, [props.year]);
 
   const tableColumns = [
     {
@@ -49,12 +28,13 @@ const TableBonuses = ({ year }) => {
     },
     {
       Header: "Styczeń",
-      accessor: "employeeBonuses[0]",
+      accessor: "sum",
+      accessor: "monthlySum[0]",
       Footer: (summary) => {
         const total = useMemo(
           () =>
             summary.rows.reduce(
-              (sum, row) => row.values["employeeBonuses[0]"] + sum,
+              (sum, row) => row.values["monthlySum[0]"] + sum,
               0
             ),
           [summary.rows]
@@ -64,12 +44,12 @@ const TableBonuses = ({ year }) => {
     },
     {
       Header: "Luty",
-      accessor: "employeeBonuses[1]",
+      accessor: "monthlySum[1]",
       Footer: (summary) => {
         const total = useMemo(
           () =>
             summary.rows.reduce(
-              (sum, row) => row.values["employeeBonuses[1]"] + sum,
+              (sum, row) => row.values["monthlySum[1]"] + sum,
               0
             ),
           [summary.rows]
@@ -79,12 +59,12 @@ const TableBonuses = ({ year }) => {
     },
     {
       Header: "Marzec",
-      accessor: "employeeBonuses[2]",
+      accessor: "monthlySum[2]",
       Footer: (summary) => {
         const total = useMemo(
           () =>
             summary.rows.reduce(
-              (sum, row) => row.values["employeeBonuses[2]"] + sum,
+              (sum, row) => row.values["monthlySum[2]"] + sum,
               0
             ),
           [summary.rows]
@@ -94,12 +74,12 @@ const TableBonuses = ({ year }) => {
     },
     {
       Header: "Kwiecień",
-      accessor: "employeeBonuses[3]",
+      accessor: "monthlySum[3]",
       Footer: (summary) => {
         const total = useMemo(
           () =>
             summary.rows.reduce(
-              (sum, row) => row.values["employeeBonuses[3]"] + sum,
+              (sum, row) => row.values["monthlySum[3]"] + sum,
               0
             ),
           [summary.rows]
@@ -109,12 +89,12 @@ const TableBonuses = ({ year }) => {
     },
     {
       Header: "Maj",
-      accessor: "employeeBonuses[4]",
+      accessor: "monthlySum[4]",
       Footer: (summary) => {
         const total = useMemo(
           () =>
             summary.rows.reduce(
-              (sum, row) => row.values["employeeBonuses[4]"] + sum,
+              (sum, row) => row.values["monthlySum[4]"] + sum,
               0
             ),
           [summary.rows]
@@ -124,12 +104,12 @@ const TableBonuses = ({ year }) => {
     },
     {
       Header: "Czerwiec",
-      accessor: "employeeBonuses[5]",
+      accessor: "monthlySum[5]",
       Footer: (summary) => {
         const total = useMemo(
           () =>
             summary.rows.reduce(
-              (sum, row) => row.values["employeeBonuses[5]"] + sum,
+              (sum, row) => row.values["monthlySum[5]"] + sum,
               0
             ),
           [summary.rows]
@@ -139,12 +119,12 @@ const TableBonuses = ({ year }) => {
     },
     {
       Header: "Lipiec",
-      accessor: "employeeBonuses[6]",
+      accessor: "monthlySum[6]",
       Footer: (summary) => {
         const total = useMemo(
           () =>
             summary.rows.reduce(
-              (sum, row) => row.values["employeeBonuses[6]"] + sum,
+              (sum, row) => row.values["monthlySum[6]"] + sum,
               0
             ),
           [summary.rows]
@@ -154,12 +134,12 @@ const TableBonuses = ({ year }) => {
     },
     {
       Header: "Sierpień",
-      accessor: "employeeBonuses[7]",
+      accessor: "monthlySum[7]",
       Footer: (summary) => {
         const total = useMemo(
           () =>
             summary.rows.reduce(
-              (sum, row) => row.values["employeeBonuses[7]"] + sum,
+              (sum, row) => row.values["monthlySum[7]"] + sum,
               0
             ),
           [summary.rows]
@@ -169,12 +149,12 @@ const TableBonuses = ({ year }) => {
     },
     {
       Header: "Wrzesień",
-      accessor: "employeeBonuses[8]",
+      accessor: "monthlySum[8]",
       Footer: (summary) => {
         const total = useMemo(
           () =>
             summary.rows.reduce(
-              (sum, row) => row.values["employeeBonuses[8]"] + sum,
+              (sum, row) => row.values["monthlySum[8]"] + sum,
               0
             ),
           [summary.rows]
@@ -184,12 +164,12 @@ const TableBonuses = ({ year }) => {
     },
     {
       Header: "Październik",
-      accessor: "employeeBonuses[9]",
+      accessor: "monthlySum[9]",
       Footer: (summary) => {
         const total = useMemo(
           () =>
             summary.rows.reduce(
-              (sum, row) => row.values["employeeBonuses[9]"] + sum,
+              (sum, row) => row.values["monthlySum[9]"] + sum,
               0
             ),
           [summary.rows]
@@ -199,12 +179,12 @@ const TableBonuses = ({ year }) => {
     },
     {
       Header: "Listopad",
-      accessor: "employeeBonuses[10]",
+      accessor: "monthlySum[10]",
       Footer: (summary) => {
         const total = useMemo(
           () =>
             summary.rows.reduce(
-              (sum, row) => row.values["employeeBonuses[10]"] + sum,
+              (sum, row) => row.values["monthlySum[10]"] + sum,
               0
             ),
           [summary.rows]
@@ -214,12 +194,12 @@ const TableBonuses = ({ year }) => {
     },
     {
       Header: "Grudzień",
-      accessor: "employeeBonuses[11]",
+      accessor: "monthlySum[11]",
       Footer: (summary) => {
         const total = useMemo(
           () =>
             summary.rows.reduce(
-              (sum, row) => row.values["employeeBonuses[11]"] + sum,
+              (sum, row) => row.values["monthlySum[11]"] + sum,
               0
             ),
           [summary.rows]
@@ -229,39 +209,11 @@ const TableBonuses = ({ year }) => {
     },
     {
       Header: "SUMA",
-      accessor: "employeeBonusesTotal",
-    },
-    {
-      Header: "Przydziel premię",
-      accessor: "bonus",
-      Cell: (props) => (
-        <Button
-          onClick={() => {
-            setModalEmployeeId(props.row.values.employeeId);
-            setModalEmployeeName(props.row.values.employeeName);
-            setModalShow(true);
-          }}
-          variant="primary"
-          className="w-100 h-100"
-          disabled={budgetLeft <= 0 ? true : false}
-        >
-          Przydziel premię
-        </Button>
-      ),
+      accessor: "sum",
     },
   ];
 
-  if (isLoading || !tableData) {
-    return <LoadingComponent />;
-  }
-
-  if (error) {
-    return <div>Wystąpił błąd podczas ładowania danych.</div>;
-  }
-
-  if (!tableData) {
-    return <div>Nie znaleziono żadnych danych.</div>;
-  }
+  if (tableData === []) return <LoadingComponent />;
 
   return (
     <>
@@ -271,20 +223,7 @@ const TableBonuses = ({ year }) => {
         initialState={{
           hiddenColumns: ["employeeId"],
         }}
-        footer={true}
-      />
-      <AddBonusModal
-        show={modalShow}
-        onHide={() => setModalShow(false)}
-        year={year}
-        employeeId={modalEmployeeId}
-        employeeName={modalEmployeeName}
-        bonusBudgetId={budgetId}
-        budgetLeft={budgetLeft}
-        update={refetch}
       />
     </>
   );
-};
-
-export default TableBonuses;
+}

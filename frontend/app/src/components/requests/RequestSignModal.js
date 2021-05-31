@@ -4,7 +4,7 @@ import { signLeave, signDelegation } from "../../services/SignDocumentsService";
 import { useEffect, useState } from "react";
 import { LeaveTypes } from "../../services/DocumentsService";
 
-export default function RequestSignModal(props) {
+export default function RequestSignModal({ onSuccess, ...props }) {
   const [signed, setSigned] = useState(false);
 
   const DocumentType = {
@@ -20,12 +20,14 @@ export default function RequestSignModal(props) {
     });
   }
 
-  function signDocument(document, type, onHide) {
+  async function signDocument(document, type, onHide) {
     if (type == "leave") {
+      await onSuccess();
       signLeave(document);
       setSigned(true);
       delayHide(onHide, 1000).then(() => setSigned(false));
     } else if (type == "delegation") {
+      await onSuccess();
       signDelegation(document);
       setSigned(true);
       delayHide(onHide, 1000).then(() => setSigned(false));
@@ -70,9 +72,9 @@ export default function RequestSignModal(props) {
             </Button>
             <Button
               className="btn btn-success"
-              onClick={() =>
-                signDocument(props.leave, props.type, props.onHide)
-              }
+              onClick={() => {
+                signDocument(props.leave, props.type, props.onHide);
+              }}
             >
               Zaakceptuj
             </Button>

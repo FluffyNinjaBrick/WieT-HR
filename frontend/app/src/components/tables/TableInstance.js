@@ -2,12 +2,20 @@ import { TableLayout } from "./TableLayout";
 import { useTable, useSortBy, useGlobalFilter } from "react-table";
 import { useMemo } from "react";
 
-export const TableInstance = ({ tableData, tableColumns }) => {
+export const TableInstance = ({ tableData, tableColumns, initialState, footer }) => {
   const [columns, data] = useMemo(() => {
     return [tableColumns, tableData];
   }, [tableData, tableColumns]);
 
-  const tableInstance = useTable({ columns, data }, useGlobalFilter, useSortBy);
+  const tableInstance = useTable(
+    {
+      columns,
+      data,
+      initialState: initialState,
+    },
+    useGlobalFilter,
+    useSortBy
+  );
 
-  return <TableLayout {...tableInstance} />;
+  return <TableLayout {...tableInstance} footer={footer} />;
 };

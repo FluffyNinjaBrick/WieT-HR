@@ -12,6 +12,8 @@ import filterFactory, {
 } from "react-bootstrap-table2-filter";
 import { ProgressBar } from "react-bootstrap";
 import BootstrapTable from "react-bootstrap-table-next";
+import { AddContractView } from "../contract/AddContractView";
+import TableEmployees from "./TableEmployees";
 
 export default function EmployeeListViewAdmin() {
   const [employees, setEmployees] = useState([]);
@@ -70,11 +72,16 @@ export default function EmployeeListViewAdmin() {
       }),
       headerStyle: { textAlign: "center" },
     },
-    {
-      dataField: "editButton",
-      text: "Edycja",
-      headerStyle: { textAlign: "center" },
-    },
+    // {
+    //   dataField: "editButton",
+    //   text: "Edycja",
+    //   headerStyle: { textAlign: "center" },
+    // },
+    // {
+    //   dataField: "addContract",
+    //   text: "Dodaj umowę",
+    //   headerStyle: { textAlign: "center" },
+    // },
   ];
 
   if (loading) {
@@ -84,17 +91,18 @@ export default function EmployeeListViewAdmin() {
   return (
     <div className="container">
       <h1 className="my-3">Pracownicy</h1>
-
       <Link to="/employees/create">
         <Button className="mb-3" variant="primary">
           Dodaj pracownika
         </Button>
       </Link>
       <h4 className="my-3">Wszyscy pracownicy</h4>
+
       <div>
         {loading ? (
           <Loading />
         ) : employees.length ? (
+          // <TableEmployees />
           <div className="mb-5">
             <BootstrapTable
               keyField="id"
@@ -111,9 +119,21 @@ export default function EmployeeListViewAdmin() {
                     style={{ textDecoration: "none" }}
                   >
                     Edytuj
-                    {/* <Button style={{ width: "100%", borderRadius: "0" }}>Edytuj</Button> */}
                   </Link>
                 );
+                // x.addContract = (
+                //   <Link
+                //     to={{
+                //       pathname: "/contract/add",
+                //       state: {
+                //         employee: employee,
+                //       },
+                //     }}
+                //     style={{ textDecoration: "none" }}
+                //   >
+                //     Dodaj umowę
+                //   </Link>
+                // );
                 x.statusTranslated =
                   employee.status === "WORKING" ? "Pracuje" : "Nie pracuje";
                 x.name = employee.firstName + " " + employee.lastName;

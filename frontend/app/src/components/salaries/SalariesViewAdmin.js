@@ -1,12 +1,9 @@
-import TableBonuses from "./TableBonuses";
 import { DatePickerContainer, ViewContainer } from "../../styled";
 import { Form } from "react-bootstrap";
 import { useState } from "react";
-import ChangeBonusView from "./ChangeBonusView";
-import BonusBudgetStatistics from "./BonusBudgetStatistics";
-import AddBonusModal from "./addBonus/AddBonusModal";
+import TableSalaries from "./TableSalaries";
 
-export default function BonusesViewAdmin() {
+export default function SalariesViewAdmin() {
   const [year, setYear] = useState(new Date().getFullYear());
 
   const handleYearChange = (e) => {
@@ -16,7 +13,7 @@ export default function BonusesViewAdmin() {
 
   return (
     <ViewContainer>
-      <h1 className="my-3">Pracownicy / premie</h1>
+      <h1 className="my-3">Pracownicy / wynagrodzenia</h1>
       <DatePickerContainer className="my-3">
         <h4 className="m-0 mr-2">Rok: </h4>
         <div>
@@ -30,10 +27,7 @@ export default function BonusesViewAdmin() {
           </Form.Control>
         </div>
       </DatePickerContainer>
-      <BonusBudgetStatistics year={year} />
-      <TableBonuses year={year} />
-      <AddBonusModal />
-      {/* <ChangeBonusView /> */}
+      <TableSalaries year={year} />
     </ViewContainer>
   );
 }

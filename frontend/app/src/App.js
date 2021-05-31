@@ -22,11 +22,13 @@ import LeaveCreateForm from "./components/leave/LeaveCreateForm";
 import DelegationCreateForm from "./components/delegation/DelegationCreateForm";
 import DelegationsAdminView from "./components/delegation/DelegationsAdminView";
 import RequestsView from "./components/requests/RequestsView";
+import SalariesViewAdmin from "./components/salaries/SalariesViewAdmin";
 import { ProvideAuth } from "./components/auth/useAuth";
 import PrivateRoute from "./components/utils/PrivateRoute";
 import "font-awesome/css/font-awesome.min.css";
 import { QueryClient, QueryClientProvider } from "react-query";
 import ChangeBonusView from "./components/bonus/ChangeBonusView";
+import AddContractView from "./components/contract/AddContractView";
 
 const queryClient = new QueryClient();
 
@@ -71,11 +73,17 @@ function App() {
               <PrivateRoute path="/employees/bonuses" role="ADMIN">
                 <BonusesViewAdmin />
               </PrivateRoute>
+              <PrivateRoute path="/employees/salaries" role="ADMIN">
+                <SalariesViewAdmin />
+              </PrivateRoute>
               <PrivateRoute path="/leaves/add" role="any">
                 <LeaveCreateForm />
               </PrivateRoute>
               <PrivateRoute path="/leaves" role="any">
                 <LeavesView />
+              </PrivateRoute>
+              <PrivateRoute path="/contract/add" role="any">
+                <AddContractView />
               </PrivateRoute>
               <PrivateRoute path="/contract" role="any">
                 <ContractView />
