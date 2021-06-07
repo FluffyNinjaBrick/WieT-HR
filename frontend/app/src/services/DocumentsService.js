@@ -189,18 +189,10 @@ export const fetchDaysoffDocumentPdf = async (daysoffDocument) => {
   fileDownload(pdf, "wniosek_urlop.pdf");
 };
 
-export const fetchContract = async () => {
-  const user = JSON.parse(getCurrentUser());
-  const token = user ? user.jwt : "";
-  const auth = "Bearer " + token;
-
+export const fetchContract = async (id) => {
   return axios({
     method: "get",
-    url: `${API_URL}contracts`,
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: auth,
-    },
+    url: `${API_URL}employees/contract?id=${id}`,
   });
 };
 
@@ -212,18 +204,19 @@ export const postNewContract = (contract, id) => {
   const data = {
     employeeID: id,
     ...contract,
-  }
-
-  console.log(data)
-
-  const myHeaders = {
-    "Content-Type": "application/json",
-    Authorization: auth,
   };
 
-  return axios.post(`${API_URL}contracts`, {
-    method: "POST",
-    headers: myHeaders,
-    body: JSON.stringify(data),
+  console.log(data);
+
+  // const myHeaders = {
+  //   "Content-Type": "application/json",
+  //   Authorization: auth,
+  // };
+
+  return axios({
+    url: `${API_URL}contracts`,
+    method: "post",
+    // headers: myHeaders,
+    data: data,
   });
 };

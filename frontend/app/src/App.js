@@ -82,7 +82,7 @@ function App() {
               <PrivateRoute path="/leaves" role="any">
                 <LeavesView />
               </PrivateRoute>
-              <PrivateRoute path="/contract/add" role="any">
+              <PrivateRoute path="/employees/:id/contract/add" role="any">
                 <AddContractView />
               </PrivateRoute>
               <PrivateRoute path="/contract" role="any">

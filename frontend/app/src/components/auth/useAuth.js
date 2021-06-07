@@ -16,6 +16,11 @@ export const useAuth = () => {
 function useProvideAuth() {
   const [user, setUser] = useState(null);
 
+  if (user) {
+    axios.defaults.headers.common["Authorization"] = "Bearer " + user.jwt;
+    axios.defaults.headers.common["Content-Type"] = "application/json";
+  }
+
   const login = async (email, password) => {
     const response = await fetch(API_URL + "authenticate", {
       method: "POST",

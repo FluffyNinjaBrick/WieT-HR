@@ -27,6 +27,7 @@ const TableBonuses = ({ year }) => {
   );
 
   useEffect(() => {
+    console.log(apiResponse?.data);
     setTableData(apiResponse?.data.bonuses);
     setBudgetId(apiResponse?.data.bonusBudgetId);
     setBudgetLeft(apiResponse?.data.budgetLeft);

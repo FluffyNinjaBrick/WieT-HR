@@ -7,7 +7,10 @@ export default function PrivateRoute({ children, role, ...rest }) {
     <Route
       {...rest}
       render={({ location }) =>
-        auth.user && (role === "any" || auth.user.userRole === role) ? (
+        auth.user &&
+        (role === "any" ||
+          auth.user.userRole === "ADMIN" ||
+          auth.user.userRole === "MANAGER") ? (
           children
         ) : (
           <Redirect

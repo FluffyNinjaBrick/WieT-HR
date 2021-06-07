@@ -8,7 +8,7 @@ import { getCurrentUser } from "../../services/AuthService";
 import { Loading } from "../loader/LoadingView";
 import { postNewContract } from "../../services/DocumentsService";
 
-export default function AddContractForm({employee}) {
+export default function AddContractForm({ employee }) {
   const {
     register,
     formState: { errors },
@@ -26,9 +26,8 @@ export default function AddContractForm({employee}) {
     const user = JSON.parse(getCurrentUser());
     const token = user ? user.jwt : "";
     const auth = "Bearer " + token;
-    console.log(employee.id)
+    console.log(employee.id);
   }, []);
-
 
   const employeeId = employee.id;
 
@@ -39,7 +38,7 @@ export default function AddContractForm({employee}) {
 
     setSubmitSuccessful(true);
     setSubmitting(false);
-};
+  };
 
   const handleCancel = () => {
     history.push("/employees");
@@ -56,44 +55,43 @@ export default function AddContractForm({employee}) {
   return (
     <div className="container col-lg-8 col-md-10 col-sm-12 my-5">
       <Form onSubmit={handleSubmit(createContract)}>
-        
-      <Form.Group>
-            <Form.Label htmlFor="Date">Początek kontraktu</Form.Label>
-            <Form.Control
-              type="date"
-              name="dateFrom"
-              id="dateFrom"
-              {...register("dateFrom", {
-                required: true,
-                validate: () => getValues("dateFrom") <= getValues("dateTo"),
-              })}
-            />
-            {errors.dateFrom && errors.dateFrom.type === "required" && (
-              <FormInputErrorMessage errorMessage="Data jest wymagana" />
-            )}
-            {errors.dateFrom && errors.dateFrom.type === "validate" && (
-              <FormInputErrorMessage errorMessage="Data początku kontraktu nie może być później niż data końca." />
-            )}
-          </Form.Group>
-          <Form.Group>
-            <Form.Label htmlFor="Date">Koniec kontraktu</Form.Label>
-            <Form.Control
-              type="date"
-              name="dateTo"
-              id="dateTo"
-              {...register("dateTo", {
-                required: true,
-                validate: () => getValues("dateFrom") <= getValues("dateTo"),
-              })}
-            />
-            {errors.dateTo && errors.dateTo.type === "required" && (
-              <FormInputErrorMessage errorMessage="Data jest wymagana" />
-            )}
-            {errors.dateTo && errors.dateTo.type === "validate" && (
-              <FormInputErrorMessage errorMessage="Data końca kontraktu nie może być wcześniej niż data początku." />
-            )}
-          </Form.Group>
-      <Form.Group>
+        <Form.Group>
+          <Form.Label htmlFor="Date">Początek kontraktu</Form.Label>
+          <Form.Control
+            type="date"
+            name="dateFrom"
+            id="dateFrom"
+            {...register("dateFrom", {
+              required: true,
+              validate: () => getValues("dateFrom") <= getValues("dateTo"),
+            })}
+          />
+          {errors.dateFrom && errors.dateFrom.type === "required" && (
+            <FormInputErrorMessage errorMessage="Data jest wymagana" />
+          )}
+          {errors.dateFrom && errors.dateFrom.type === "validate" && (
+            <FormInputErrorMessage errorMessage="Data początku kontraktu nie może być później niż data końca." />
+          )}
+        </Form.Group>
+        <Form.Group>
+          <Form.Label htmlFor="Date">Koniec kontraktu</Form.Label>
+          <Form.Control
+            type="date"
+            name="dateTo"
+            id="dateTo"
+            {...register("dateTo", {
+              required: true,
+              validate: () => getValues("dateFrom") <= getValues("dateTo"),
+            })}
+          />
+          {errors.dateTo && errors.dateTo.type === "required" && (
+            <FormInputErrorMessage errorMessage="Data jest wymagana" />
+          )}
+          {errors.dateTo && errors.dateTo.type === "validate" && (
+            <FormInputErrorMessage errorMessage="Data końca kontraktu nie może być wcześniej niż data początku." />
+          )}
+        </Form.Group>
+        <Form.Group>
           <Form.Label htmlFor="salary">Wynagrodzenie (PLN)</Form.Label>
           <Form.Control
             type="number"
@@ -118,7 +116,9 @@ export default function AddContractForm({employee}) {
           )}
         </Form.Group>
         <Form.Group>
-          <Form.Label htmlFor="workingHours">Ilość roboczogodzin w miesiącu</Form.Label>
+          <Form.Label htmlFor="workingHours">
+            Ilość roboczogodzin w miesiącu
+          </Form.Label>
           <Form.Control
             type="number"
             name="workingHours"
@@ -130,7 +130,9 @@ export default function AddContractForm({employee}) {
           )}
         </Form.Group>
         <Form.Group>
-          <Form.Label htmlFor="salary">Przysługujący urlop (w dniach)</Form.Label>
+          <Form.Label htmlFor="salary">
+            Przysługujący urlop (w dniach)
+          </Form.Label>
           <Form.Control
             type="number"
             name="annualLeaveDays"
@@ -142,23 +144,22 @@ export default function AddContractForm({employee}) {
           )}
         </Form.Group>
         <Form.Group>
-              <Form.Label htmlFor="leaveType">Typ kontraktu</Form.Label>
-              <Form.Control
-                as="select"
-                defaultValue="Wybierz typ kontraktu"
-                name="type"
-                id="type"
-                {...register("type", { required: true })}
-              >
-                <option value="MANDATE">Umowa zlecenie</option>
-                <option value="EMPLOYMENT">Umowa o pracę</option>
-                <option value="WORK">Umowa o dzieło</option>
-              </Form.Control>
-            </Form.Group>
+          <Form.Label htmlFor="leaveType">Typ kontraktu</Form.Label>
+          <Form.Control
+            as="select"
+            defaultValue="Wybierz typ kontraktu"
+            name="type"
+            id="type"
+            {...register("type", { required: true })}
+          >
+            <option value="MANDATE">Umowa zlecenie</option>
+            <option value="EMPLOYMENT">Umowa o pracę</option>
+            <option value="WORK">Umowa o dzieło</option>
+          </Form.Control>
+        </Form.Group>
 
-{/* MANDATE, EMPLOYMENT, WORK */}
+        {/* MANDATE, EMPLOYMENT, WORK */}
 
-       
         <div>
           <Button className="mt-5 mr-3" variant="primary" type="submit">
             Dodaj kontrakt
@@ -171,7 +172,6 @@ export default function AddContractForm({employee}) {
             Anuluj
           </Button>
         </div>
-
       </Form>
     </div>
   );
