@@ -208,15 +208,9 @@ export const postNewContract = (contract, id) => {
 
   console.log(data);
 
-  // const myHeaders = {
-  //   "Content-Type": "application/json",
-  //   Authorization: auth,
-  // };
-
   return axios({
     url: `${API_URL}contracts`,
     method: "post",
-    // headers: myHeaders,
     data: data,
   });
 };
