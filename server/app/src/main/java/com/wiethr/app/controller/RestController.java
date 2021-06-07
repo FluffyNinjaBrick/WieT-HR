@@ -309,7 +309,7 @@ public class RestController {
 
 
     // ---------- EMPLOYEE ----------
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')")
     @GetMapping(value = "/employees")
     public List<Employee> getAllEmployees() {
         return this.repository.getAllEmployees();
@@ -390,7 +390,7 @@ public class RestController {
     }
 
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER','ROLE_EMPLOYEE')")
     @GetMapping("/employees/delegations/{from}/{to}")
     public List<DelegationRequest> getEmployeeDelegationRequests(
             @RequestParam long id,
@@ -404,7 +404,7 @@ public class RestController {
     }
 
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER','ROLE_EMPLOYEE')")
     @GetMapping("/employees/daysoff/{from}/{to}")
     public List<DaysOffRequest> getEmployeeDaysOffRequests(
             @RequestParam long id,
@@ -418,7 +418,7 @@ public class RestController {
     }
 
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER','ROLE_EMPLOYEE')")
     @GetMapping("/employees/daysoff")
     public EmployeeDaysOffDetails getEmployeeDaysOffLeft(
             @RequestParam long id,

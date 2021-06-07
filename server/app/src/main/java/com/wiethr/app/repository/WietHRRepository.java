@@ -209,7 +209,7 @@ public class WietHRRepository implements IWietHRRepository {
         contract.setEmployee(employee);
         contract.setNameAtSigning(employee.getFullName());
         contract.setDateIssued(LocalDate.now());
-        contract.setSigned(false);
+        contract.setSigned(true);
         contract.setDateFrom(helper.getDateFrom());
         contract.setDateTo(helper.getDateTo());
 
@@ -220,6 +220,12 @@ public class WietHRRepository implements IWietHRRepository {
         contract.setAnnualLeaveDays(helper.getAnnualLeaveDays());
         contract.setType(helper.getType());
         contract.setAnnexes(new ArrayList<>());
+
+        contract.setDateSigned(LocalDate.now()); //
+        contract.setSignedBy(getEmployee(0)); //
+
+        System.out.println(contract);
+        System.out.println(helper);
 
         this.contractRepository.save(contract);
     }
@@ -547,6 +553,7 @@ public class WietHRRepository implements IWietHRRepository {
         employee.setThisYearDaysOff(helper.getThisYearDaysOff());
         employee.setLastYearDaysOff(helper.getLastYearDaysOff());
         employee.setAppreciationBonusList(new ArrayList<>());
+        employee.setUserRole(UserRole.EMPLOYEE);
 
         this.employeeRepository.save(employee);
     }
@@ -620,7 +627,7 @@ public class WietHRRepository implements IWietHRRepository {
 
         for (DaysOffRequest request : daysOffRequestList) {
             if (!request.isSigned() || request.getDateTo() == null) continue;   // ignore all requests that aren't signed or are indefinite
-            daysUsed = Utilities.getTotalWorkingDays(request.getDateFrom(), request.getDateTo());
+            daysUsed += Utilities.getTotalWorkingDays(request.getDateFrom(), request.getDateTo());
         }
 
         return new EmployeeDaysOffDetails(id, employee.getFullName(), daysUsed, daysLeft);
