@@ -80,23 +80,20 @@ export default function TableEmployees() {
         </Link>
       ),
     },
-    // {
-    //   Header: "Umowa",
-    //   accessor: "umowa",
-    //   Cell: (props) => (
-    //     <Link
-    //       to={{
-    //         pathname: "/contract/add",
-    //         // state: {
-    //         //   employee: employee,
-    //         // },
-    //       }}
-    //       style={{ textDecoration: "none" }}
-    //     >
-    //       Dodaj umowę
-    //     </Link>
-    //   ),
-    // },
+    {
+      Header: "Umowa",
+      accessor: "umowa",
+      Cell: (props) => (
+        <Link
+          to={{
+            pathname: `/employees/${props.row.values.id}/contract/add`,
+          }}
+          style={{ textDecoration: "none" }}
+        >
+          Dodaj umowę
+        </Link>
+      ),
+    },
   ];
 
   return (

@@ -77,11 +77,11 @@ export default function EmployeeListViewAdmin() {
     //   text: "Edycja",
     //   headerStyle: { textAlign: "center" },
     // },
-    // {
-    //   dataField: "addContract",
-    //   text: "Dodaj umowę",
-    //   headerStyle: { textAlign: "center" },
-    // },
+    {
+      dataField: "addContract",
+      text: "Dodaj umowę",
+      headerStyle: { textAlign: "center" },
+    },
   ];
 
   if (loading) {
@@ -121,19 +121,19 @@ export default function EmployeeListViewAdmin() {
                     Edytuj
                   </Link>
                 );
-                // x.addContract = (
-                //   <Link
-                //     to={{
-                //       pathname: "/contract/add",
-                //       state: {
-                //         employee: employee,
-                //       },
-                //     }}
-                //     style={{ textDecoration: "none" }}
-                //   >
-                //     Dodaj umowę
-                //   </Link>
-                // );
+                x.addContract = (
+                  <Link
+                    to={{
+                      pathname: `/employees/${employee.id}/contract/add`,
+                      state: {
+                        employee: employee,
+                      },
+                    }}
+                    style={{ textDecoration: "none" }}
+                  >
+                    Dodaj umowę
+                  </Link>
+                );
                 x.statusTranslated =
                   employee.status === "WORKING" ? "Pracuje" : "Nie pracuje";
                 x.name = employee.firstName + " " + employee.lastName;

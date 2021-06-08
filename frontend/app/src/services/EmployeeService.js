@@ -24,6 +24,13 @@ export const fetchEmployees = async () => {
   return employees;
 };
 
+export const fetchEmployee = (id) => {
+  return axios({
+    method: "get",
+    url: `${API_URL}employee?id=${id}`,
+  });
+};
+
 export const fetchCurrentEmployee = async () => {
   const user = JSON.parse(getCurrentUser());
   const token = user ? user.jwt : "";

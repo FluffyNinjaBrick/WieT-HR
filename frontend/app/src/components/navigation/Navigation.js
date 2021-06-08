@@ -31,7 +31,7 @@ export default function Navigation() {
           <Nav.Link as={Link} to="/contract">
             Umowa
           </Nav.Link>
-          {auth.user && auth.user.userRole === "ADMIN" && (
+          {auth.user && (auth.user.userRole === "ADMIN" || auth.user.userRole === "MANAGER") && (
             <NavDropdown title="Pracownicy" id="basic-nav-dropdown">
               <NavDropdown.Item>
                 <Nav.Link as={Link} to="/employees">
